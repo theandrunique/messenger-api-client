@@ -10,6 +10,7 @@ import { ServiceError } from "../entities";
 import useApi from "../hooks/useApi";
 import useNextLocationParam from "../hooks/useNextLocaionParam";
 import { useNavigate } from "react-router-dom";
+import FullScreenImage from "../components/FullScreenImage";
 
 const schema = zod.object({
   login: zod.string().min(1, "Login is required"),
@@ -53,30 +54,32 @@ function SignInPage() {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center">
-      <Card className="w-[30rem]">
-        <Card.Title>Sign In</Card.Title>
-        <form
-          className="flex flex-col gap-2"
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <Input {...register("login")} type="text" placeholder="login" />
-          <ErrorMessage message={errors.login?.message} />
-          <Input
-            {...register("password")}
-            type="password"
-            placeholder="password"
-          />
-          <ErrorMessage message={errors.password?.message} />
-          <Button disabled={isSubmitting} variant={"primary"}>Sign In</Button>
-          <ErrorMessage message={errors.root?.message} />
-        </form>
-        <div className="text-center text-slate-300">
-          Don't have an account?
-          <LinkButton to={"/sign-up"}>sign up</LinkButton>
-        </div>
-      </Card>
-    </div>
+    <FullScreenImage>
+      <div className="min-h-screen flex justify-center items-center">
+        <Card className="w-[30rem]">
+          <Card.Title>Sign In</Card.Title>
+          <form
+            className="flex flex-col gap-2"
+            onSubmit={handleSubmit(onSubmit)}
+          >
+            <Input {...register("login")} type="text" placeholder="login" />
+            <ErrorMessage message={errors.login?.message} />
+            <Input
+              {...register("password")}
+              type="password"
+              placeholder="password"
+            />
+            <ErrorMessage message={errors.password?.message} />
+            <Button disabled={isSubmitting} variant={"primary"}>Sign In</Button>
+            <ErrorMessage message={errors.root?.message} />
+          </form>
+          <div className="text-center text-slate-300">
+            Don't have an account?
+            <LinkButton to={"/sign-up"}>sign up</LinkButton>
+          </div>
+        </Card>
+      </div>
+    </FullScreenImage>
   );
 }
 

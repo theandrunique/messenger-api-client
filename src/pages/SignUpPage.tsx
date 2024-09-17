@@ -9,6 +9,7 @@ import Button from "../components/ui/Button";
 import LinkButton from "../components/ui/LinkButton";
 import Card from "../components/Card";
 import useApi from "../hooks/useApi";
+import FullScreenImage from "../components/FullScreenImage";
 
 const schema = zod.object({
   username: zod.string(),
@@ -50,28 +51,30 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center">
-      <Card className="w-[30rem]">
-        <Card.Title>Sign Up</Card.Title>
-        <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
-          <Input {...register("username")} type="text" placeholder="username" />
-          <ErrorMessage message={errors.username?.message} />
-          <Input {...register("globalName")} type="text" placeholder="global name" />
-          <ErrorMessage message={errors.globalName?.message} />
-          <Input
-            {...register("password")}
-            type="password"
-            placeholder="password"
-          />
-          <ErrorMessage message={errors.password?.message} />
-          <Button disabled={isSubmitting}>Sign Up</Button>
-          <ErrorMessage message={errors.root?.message} />
-        </form>
-        <div className="text-center text-slate-300">
-          Already have an account?
-          <LinkButton to={"/sign-in"}>sign in</LinkButton>
-        </div>
-      </Card>
-    </div>
+    <FullScreenImage>
+      <div className="min-h-screen flex justify-center items-center">
+        <Card className="w-[30rem]">
+          <Card.Title>Sign Up</Card.Title>
+          <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
+            <Input {...register("username")} type="text" placeholder="username" />
+            <ErrorMessage message={errors.username?.message} />
+            <Input {...register("globalName")} type="text" placeholder="global name" />
+            <ErrorMessage message={errors.globalName?.message} />
+            <Input
+              {...register("password")}
+              type="password"
+              placeholder="password"
+            />
+            <ErrorMessage message={errors.password?.message} />
+            <Button disabled={isSubmitting}>Sign Up</Button>
+            <ErrorMessage message={errors.root?.message} />
+          </form>
+          <div className="text-center text-slate-300">
+            Already have an account?
+            <LinkButton to={"/sign-in"}>sign in</LinkButton>
+          </div>
+        </Card>
+      </div>
+    </FullScreenImage>
   );
 }
