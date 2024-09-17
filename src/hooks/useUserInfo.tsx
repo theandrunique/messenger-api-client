@@ -1,13 +1,15 @@
-import { useQuery, UseQueryResult } from "react-query";
+import { useQuery } from "react-query";
 import { User } from "../entities";
-import { getMe } from "../api/api";
+import useApi from "./useApi";
 
 
-export default function useUserInfo():UseQueryResult<User> {
+export default function useUserInfo(): User | undefined {
+    const { api } = useApi();
+
     const user = useQuery<User>({
         queryKey: ["user"],
-        queryFn: getMe
+        queryFn: () => api.getMe()
     });
 
-    return user;
+    return user.data;
 }

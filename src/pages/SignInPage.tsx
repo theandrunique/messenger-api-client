@@ -1,16 +1,15 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import { getMe, signIn } from "../api/api";
-import { useNavigate } from 'react-router-dom';
-import { ServiceError } from "../entities";
 import zod from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
-import useNextParam from "../hooks/useNextParam";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 import ErrorMessage from "../components/ui/Error";
 import LinkButton from "../components/ui/LinkButton";
 import Card from "../components/Card";
+import { ServiceError } from "../entities";
+import useApi from "../hooks/useApi";
+import useNextLocationParam from "../hooks/useNextLocaionParam";
+import { useNavigate } from "react-router-dom";
 
 const schema = zod.object({
   login: zod.string().min(1, "Login is required"),
@@ -20,8 +19,9 @@ const schema = zod.object({
 type SignInSchema = zod.infer<typeof schema>;
 
 function SignInPage() {
+  const { api, setTokens } = useApi();
+  const nextLocation = useNextLocationParam();
   const navigate = useNavigate();
-  const nextLocation = useNextParam();
 
   const {
     setError,
@@ -32,30 +32,25 @@ function SignInPage() {
 
   const onSubmit: SubmitHandler<SignInSchema> = async (data) => {
     try {
-      const response = await signIn(data.login, data.password);
-      if (response === null) {
-        navigate(nextLocation || "/");
-      }
+      const response = await api.signIn(data.login, data.password);
+      setTokens(response);
+      navigate(nextLocation || "/", { replace: true });
+
     } catch (error) {
-      if (error instanceof ServiceError && error.error.errors) {
-        for (const [field, details] of Object.entries(error.error.errors)) {
-          setError(field as keyof SignInSchema, { type: "manual", message: details.message });
+      if (error instanceof ServiceError) {
+        if (error.errors) {
+          for (const key of Object.keys(error.errors)) {
+              const errorMessage = error.errors[key].join(' ');
+              setError(key as keyof SignInSchema, { message: errorMessage });
+          }
+        } else {
+          setError("root", { message: error.title });
         }
       } else {
         setError("root", { message: "Error: something went wrong" });
       }
     }
   };
-
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        await getMe();
-        navigate(nextLocation || "/");
-      } catch (error) {}
-    }
-    checkSession();
-  }, []);
 
   return (
     <div className="min-h-screen flex justify-center items-center">

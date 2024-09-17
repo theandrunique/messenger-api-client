@@ -1,52 +1,66 @@
-
-export type User = {
-    id: string
-    username: string
-    email: string
-    email_verified: boolean
-    image_url: string | null
-    active: boolean
-    created_at: Date
+export enum TerminateSessions {
+  Week,
+  Month,
+  Month3,
+  Month6,
+  Year,
 }
 
-
-export type FieldError = {
-    code: string
-    message: string
-}
-
-
-export type ValidationError = {
-    code: number;
-    message: string;
-    errors: Record<string, FieldError> | null; 
+export type Email = {
+  data: string;
+  isVerified: boolean;
+  isPublic: boolean;
+  addedAt: Date;
 };
 
-export class ServiceError extends Error {
-    error: ValidationError
-    constructor(error: ValidationError) {
-        super(error.message);
-        this.error = error;
-    }
+export type Phone = {
+  data: string;
+  isVerified: boolean;
+  addedAt: Date;
+};
+
+export type File = {
+  id: string;
+  ownerId: string;
+  contentType: string;
+  fileName: string;
+  url: string;
+  size: number;
+  displaySize: string;
+  sha256: string;
+  uploadedAt: Date;
+};
+
+export type User = {
+  id: string;
+  username: string;
+  usernameUpdatedAt: Date;
+  bio: string;
+  globalName: string;
+  createdAt: Date;
+  passwordUpdatedAt: Date;
+  terminateSessions: TerminateSessions;
+  twoFactorAuthentication: boolean;
+  emails: Email[];
+  phones: Phone[];
+};
+
+export class ServiceError {
+  title: string;
+  errors?: Record<string, string[]>;
+
+  constructor(title: string, errors?: Record<string, string[]>) {
+    this.title = title;
+    this.errors = errors;
+  }
 }
 
-export type OAuthRequest = {
-    response_type: string
-    client_id: string
-    redirect_uri: string
-    scope: string | null
-    state: string | null
-    code_challenge_method: string | null
-    code_challenge: string | null
-}
+export type TokenPair = {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
+};
 
-export type ScopeInfo = {
-  name: string;
-  description: string;
-}
-
-export type OAuthRequestInfo = {
-    scopes: ScopeInfo[]
-    name: string
-    description: string | null
-}
+export type RefreshTokenResponse = {
+  refreshToken: string;
+};

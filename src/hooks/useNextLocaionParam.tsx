@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
-const useNextParam = (): string | null => {
+
+const useNextLocationParam = (): string | null => {
   const [searchParams] = useSearchParams();
   const [nextParam, setNextParam] = useState<string | null>(null);
 
@@ -12,4 +13,4 @@ const useNextParam = (): string | null => {
   return nextParam;
 };
 
-export default useNextParam;
+export default useNextLocationParam;

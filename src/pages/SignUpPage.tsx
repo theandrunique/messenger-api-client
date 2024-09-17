@@ -1,5 +1,4 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import { singUp } from "../api/api";
 import zod from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
@@ -9,28 +8,20 @@ import ErrorMessage from "../components/ui/Error";
 import Button from "../components/ui/Button";
 import LinkButton from "../components/ui/LinkButton";
 import Card from "../components/Card";
+import useApi from "../hooks/useApi";
 
 const schema = zod.object({
-  email: zod.string().email(),
-  username: zod
-    .string()
-    .regex(/^[a-zA-Z0-9]+$/, "Username must only contain letters and numbers")
-    .min(3, "Username must be at least 3 characters")
-    .max(32, "Username must be at most 32 characters"),
-  password: zod
-    .string()
-    .regex(
-      /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-])/,
-      "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character"
-    )
-    .min(8, "Password must be at least 8 characters")
-    .max(32, "Password must be at most 32 characters"),
+  username: zod.string(),
+  globalName: zod.string(),
+  password: zod.string(),
 });
 
 type SignUpSchema = zod.infer<typeof schema>;
 
 export default function SignUpPage() {
   const navigate = useNavigate();
+  const { api } = useApi();
+
   const {
     setError,
     register,
@@ -40,17 +31,17 @@ export default function SignUpPage() {
 
   const onSubmit: SubmitHandler<SignUpSchema> = async (data) => {
     try {
-      const response = await singUp(data.username, data.email, data.password);
-      if (response === null) {
-        navigate("/sign-in");
-      }
+      await api.singUp(data.username, data.globalName, data.password);
+      navigate("/sign-in");
     } catch (error) {
-      if (error instanceof ServiceError && error.error.errors) {
-        for (const [field, details] of Object.entries(error.error.errors)) {
-          setError(field as keyof SignUpSchema, {
-            type: "manual",
-            message: details.message,
-          });
+      if (error instanceof ServiceError) {
+        if (error.errors) {
+          for (const key of Object.keys(error.errors)) {
+              const errorMessage = error.errors[key].join(' ');
+              setError(key as keyof SignUpSchema, { message: errorMessage });
+          }
+        } else {
+          setError("root", { message: error.title });
         }
       } else {
         setError("root", { message: "Error: something went wrong" });
@@ -60,20 +51,13 @@ export default function SignUpPage() {
 
   return (
     <div className="min-h-screen flex justify-center items-center">
-      <Card className="w-[30rem]" >
+      <Card className="w-[30rem]">
         <Card.Title>Sign Up</Card.Title>
-        <form
-          className="flex flex-col gap-2"
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <Input {...register("email")} type="text" placeholder="email" />
-          <ErrorMessage message={errors.email?.message} />
-          <Input
-            {...register("username")}
-            type="text"
-            placeholder="username"
-          />
+        <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
+          <Input {...register("username")} type="text" placeholder="username" />
           <ErrorMessage message={errors.username?.message} />
+          <Input {...register("globalName")} type="text" placeholder="global name" />
+          <ErrorMessage message={errors.globalName?.message} />
           <Input
             {...register("password")}
             type="password"

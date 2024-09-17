@@ -3,8 +3,6 @@ import SignInPage from "./pages/SignInPage";
 import SignUpPage from "./pages/SignUpPage";
 import { QueryClient, QueryClientProvider } from "react-query";
 import Dashboard from "./pages/Dashboard";
-import AuthContext from "./contexts/AuthContext";
-import Authorize from "./pages/Authorize";
 
 const router = createBrowserRouter([
   {
@@ -18,17 +16,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      <AuthContext> 
-        <Dashboard />
-      </AuthContext>
-    ),
-  },
-  {
-    path: "/authorize",
-    element: (
-      <AuthContext>
-        <Authorize />
-      </AuthContext>
+       <Dashboard />
     ),
   }
 ]);
@@ -40,7 +28,7 @@ function App() {
   return (
     <>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
+        <RouterProvider router={router}/>
       </QueryClientProvider>
     </>
   );
