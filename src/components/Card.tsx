@@ -18,7 +18,7 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {}
 const Card: FC<CardProps> & {
   Title: FC<TitleProps>
 } = ({ children, className, ...props }) => {
-  const classInner = "backdrop-blur-sm bg-slate-800/50 p-16 rounded-2xl gap-4 flex flex-col w-[40rem] "
+  const classInner = "backdrop-blur-lg bg-slate-800/50 p-16 rounded-2xl gap-4 flex flex-col w-[40rem] "
 
   return (
     <div className={cn(classInner, className)} {...props}>
