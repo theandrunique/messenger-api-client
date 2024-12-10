@@ -13,6 +13,7 @@ import FullScreenImage from "../components/FullScreenImage";
 
 const schema = zod.object({
   username: zod.string(),
+  email: zod.string().email(),
   globalName: zod.string(),
   password: zod.string(),
 });
@@ -32,14 +33,19 @@ export default function SignUpPage() {
 
   const onSubmit: SubmitHandler<SignUpSchema> = async (data) => {
     try {
-      await api.singUp(data.username, data.globalName, data.password);
+      await api.singUp(
+        data.username,
+        data.email,
+        data.globalName,
+        data.password
+      );
       navigate("/sign-in");
     } catch (error) {
       if (error instanceof ServiceError) {
         if (error.errors) {
           for (const key of Object.keys(error.errors)) {
-              const errorMessage = error.errors[key].join(' ');
-              setError(key as keyof SignUpSchema, { message: errorMessage });
+            const errorMessage = error.errors[key].join(" ");
+            setError(key as keyof SignUpSchema, { message: errorMessage });
           }
         } else {
           setError("root", { message: error.title });
@@ -55,10 +61,23 @@ export default function SignUpPage() {
       <div className="min-h-screen flex justify-center items-center">
         <Card className="w-[30rem]">
           <Card.Title>Sign Up</Card.Title>
-          <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
-            <Input {...register("username")} type="text" placeholder="username" />
+          <form
+            className="flex flex-col gap-2"
+            onSubmit={handleSubmit(onSubmit)}
+          >
+            <Input
+              {...register("username")}
+              type="text"
+              placeholder="username"
+            />
             <ErrorMessage message={errors.username?.message} />
-            <Input {...register("globalName")} type="text" placeholder="global name" />
+            <Input {...register("email")} type="text" placeholder="email" />
+            <ErrorMessage message={errors.email?.message} />
+            <Input
+              {...register("globalName")}
+              type="text"
+              placeholder="global name"
+            />
             <ErrorMessage message={errors.globalName?.message} />
             <Input
               {...register("password")}

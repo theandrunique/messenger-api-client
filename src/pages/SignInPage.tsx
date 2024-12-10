@@ -11,6 +11,8 @@ import useApi from "../hooks/useApi";
 import useNextLocationParam from "../hooks/useNextLocaionParam";
 import { useNavigate } from "react-router-dom";
 import FullScreenImage from "../components/FullScreenImage";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
+import { useRef, useState } from "react";
 
 const schema = zod.object({
   login: zod.string().min(1, "Login is required"),
@@ -23,6 +25,8 @@ function SignInPage() {
   const { api, setTokens } = useApi();
   const nextLocation = useNextLocationParam();
   const navigate = useNavigate();
+  const captchaRef = useRef<HCaptcha>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   const {
     setError,
@@ -33,16 +37,23 @@ function SignInPage() {
 
   const onSubmit: SubmitHandler<SignInSchema> = async (data) => {
     try {
-      const response = await api.signIn(data.login, data.password);
+      if (!captchaToken) {
+        throw new ServiceError("Captcha token is required");
+      }
+
+      const response = await api.signIn(
+        data.login,
+        data.password,
+        captchaToken
+      );
       setTokens(response);
       navigate(nextLocation || "/", { replace: true });
-
     } catch (error) {
       if (error instanceof ServiceError) {
         if (error.errors) {
           for (const key of Object.keys(error.errors)) {
-              const errorMessage = error.errors[key].join(' ');
-              setError(key as keyof SignInSchema, { message: errorMessage });
+            const errorMessage = error.errors[key].join(" ");
+            setError(key as keyof SignInSchema, { message: errorMessage });
           }
         } else {
           setError("root", { message: error.title });
@@ -70,7 +81,14 @@ function SignInPage() {
               placeholder="password"
             />
             <ErrorMessage message={errors.password?.message} />
-            <Button disabled={isSubmitting} variant={"primary"}>Sign In</Button>
+            <HCaptcha
+              onVerify={(token) => setCaptchaToken(token)}
+              size="normal"
+              sitekey="564400fe-45c2-4d96-82c6-8276467aec10"
+            />
+            <Button disabled={isSubmitting} variant={"primary"}>
+              Sign In
+            </Button>
             <ErrorMessage message={errors.root?.message} />
           </form>
           <div className="text-center text-slate-300">

@@ -20,12 +20,14 @@ const useApi = () => {
         setTimeout(refreshSession, tokenPair.expiresIn * 1000);
 
         navigate(nextLocation || "/", { replace: true });
-
       } else {
         throw new Error("Session is invalid");
       }
     } catch {
-      if (location.pathname === "/sign-in" || location.pathname === "/sign-up") {
+      if (
+        location.pathname === "/sign-in" ||
+        location.pathname === "/sign-up"
+      ) {
         return;
       }
 
@@ -52,7 +54,7 @@ const useApi = () => {
 
   return {
     api,
-    setTokens
+    setTokens,
   };
 };
 

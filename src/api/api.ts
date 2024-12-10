@@ -35,30 +35,34 @@ export class ApiClient {
 
   async refreshSession(): Promise<TokenPair | null> {
     const token =
-      await this.axiosInstance.get<RefreshTokenResponse>("/auth/token");
+      await this.axiosInstance.get<string>("/auth/token");
 
-    if (token.data.refreshToken === null) return null;
+    if (token.data === null) return null;
 
     const response = await this.axiosInstance.postForm<TokenPair>(
       "/auth/token",
       {
-        refreshToken: token.data.refreshToken,
+        refreshToken: token.data,
       }
     );
     return response.data;
   }
 
-  async signIn(login: string, password: string): Promise<TokenPair> {
+  async signIn(
+    login: string,
+    password: string,
+    captchaToken: string
+  ): Promise<TokenPair> {
     try {
       const response = await this.axiosInstance.postForm<TokenPair>(
         "/auth/sign-in",
         {
           login: login,
           password: password,
+          captchaToken: captchaToken,
         }
       );
       return response.data;
-
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         const { data } = error.response;
@@ -70,6 +74,7 @@ export class ApiClient {
 
   async singUp(
     username: string,
+    email: string,
     globalName: string,
     password: string
   ): Promise<User> {
@@ -78,6 +83,7 @@ export class ApiClient {
         "/auth/sign-up",
         {
           username: username,
+          email: email,
           globalName: globalName,
           password: password,
         }
