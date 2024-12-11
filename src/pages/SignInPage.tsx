@@ -49,6 +49,8 @@ function SignInPage() {
       setTokens(response);
       navigate(nextLocation || "/", { replace: true });
     } catch (error) {
+      captchaRef.current?.resetCaptcha();
+
       if (error instanceof ServiceError) {
         if (error.errors) {
           for (const key of Object.keys(error.errors)) {
@@ -82,6 +84,7 @@ function SignInPage() {
             />
             <ErrorMessage message={errors.password?.message} />
             <HCaptcha
+              ref={captchaRef}
               onVerify={(token) => setCaptchaToken(token)}
               size="normal"
               sitekey="564400fe-45c2-4d96-82c6-8276467aec10"
