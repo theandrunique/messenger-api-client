@@ -3,6 +3,7 @@ import useChannelsStore from "../store/useChannelsStore";
 import useMessagesStore from "../store/useMessagesStore";
 import { Channel } from "../entities";
 import useScrollState from "../hooks/useScrollState";
+import MessageCard from "./MessageCard";
 
 const ChannelContainerHeader = ({ channel }: { channel: Channel }) => {
   return (
@@ -47,7 +48,12 @@ const ChannelContainer = () => {
     const scrollTop = e.currentTarget.scrollTop;
     const scrollTrigger = 100;
 
-    if (scrollTop < scrollTrigger && hasMore && !isLoadingOlderMessages && ref.current) {
+    if (
+      scrollTop < scrollTrigger &&
+      hasMore &&
+      !isLoadingOlderMessages &&
+      ref.current
+    ) {
       const prevHeight = ref.current.scrollHeight;
       const prevScrollTop = ref.current.scrollTop;
 
@@ -73,15 +79,16 @@ const ChannelContainer = () => {
       <ChannelContainerHeader channel={selectedChannel} />
 
       <div
-        className="flex-1 overflow-y-auto p-4 space-y-4"
+        className="flex-1 overflow-y-auto p-4"
         ref={ref}
         onScroll={handleMessagesScroll}
       >
         {currentMessages.map((message) => (
-          <div key={message.id} className="p-3 bg-gray-800 rounded-lg">
-            <p className="text-sm text-gray-300">{message.author.username}</p>
-            <p className="text-white">{message.content}</p>
-          </div>
+          <MessageCard
+            key={message.id}
+            message={message}
+            channelType={selectedChannel.type}
+          />
         ))}
       </div>
     </div>

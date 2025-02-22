@@ -1,34 +1,64 @@
-import { FC } from "react";
-import { MessageSchema } from "../entities";
+import { forwardRef } from "react";
+import { Attachment, ChannelType, MessageSchema } from "../entities";
+import useAuthStore from "../store/useAuthStore";
 
 interface MessageProps {
   message: MessageSchema;
+  channelType: ChannelType;
 }
 
-const Message: FC<MessageProps> = ({ message }) => {
-  return (
-    <div className="flex flex-col p-2 space-y-2">
-      <div className="flex items-center space-x-2">
-        <div className="w-8 h-8 rounded-full bg-gray-500 text-white flex items-center justify-center text-sm">
-          {message.author.globalName[0].toUpperCase()}
-        </div>
-        <div className="text-sm text-gray-300">{message.author.username}</div>
-      </div>
+export const MessageCard = forwardRef<HTMLDivElement, MessageProps>(
+  ({ message, channelType }, ref) => {
+    const { currentUser } = useAuthStore();
 
-      <div className="p-2 bg-gray-700 rounded-md text-white">
-        {message.content}
-        {message.attachments.length > 0 && (
-          <div className="mt-2 text-xs text-gray-400">
-            {message.attachments.length} вложение(й)
+    const isOwnMessage = message.author.id === currentUser!.id;
+
+    return (
+      <div
+        ref={ref}
+        className={`flex ${isOwnMessage ? "justify-end" : "justify-start"} pb-1`}
+      >
+        {!isOwnMessage && channelType === ChannelType.GROUP && (
+          <div className="text-sm text-gray-300 mb-1">
+            {message.author.username}
           </div>
         )}
+        <div
+          className={`p-2 rounded-lg max-w-xs break-words ${
+            isOwnMessage
+              ? "bg-blue-600 text-white self-end"
+              : "bg-gray-700 text-white"
+          }`}
+        >
+          {message.content}
+          {message.attachments.length > 0 && (
+            <AttachmentPreview attachments={message.attachments} />
+          )}
+          <div className="text-xs text-gray-400 mt-1 text-right">
+            {new Date(message.timestamp).toLocaleString()}
+          </div>
+        </div>
       </div>
+    );
+  }
+);
 
-      <div className="text-xs text-gray-500 self-end">
-        {new Date(message.timestamp).toLocaleTimeString()}
-      </div>
+const AttachmentPreview = ({ attachments }: { attachments: Attachment[] }) => {
+  return (
+    <div className="mt-2 space-y-1">
+      {attachments.map((attachment) => (
+        <a
+          key={attachment.id}
+          href={attachment.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block text-xs text-blue-400 underline truncate"
+        >
+          {attachment.filename} ({(attachment.size / 1024).toFixed(1)} KB)
+        </a>
+      ))}
     </div>
   );
 };
 
-export default Message;
+export default MessageCard;
