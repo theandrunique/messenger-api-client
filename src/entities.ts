@@ -43,8 +43,8 @@ export type TokenPair = {
 };
 
 export enum ChannelType {
-  PRIVATE,
-  GROUP,
+  PRIVATE = "PRIVATE",
+  GROUP = "GROUP",
 }
 
 export type MessageInfo = {

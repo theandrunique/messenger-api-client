@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { Channel, ChannelMember, ChannelType } from "../entities";
+import useAuthStore from "../store/useAuthStore";
 
 interface ChannelCardProps {
   channel: Channel;
@@ -10,7 +11,7 @@ const getChannelImage = (channel: Channel, member: any) => {
   return channel.type === ChannelType.PRIVATE
     ? member?.image
       ? getImageWithSrc(member.image)
-      : getFirstLetterImage(member?.username)
+      : getFirstLetterImage(member?.username || "S")
     : channel.image
       ? getImageWithSrc(channel.image)
       : getFirstLetterImage(channel?.title || "G");
@@ -43,11 +44,13 @@ const getChannelName = (
       ? `${otherMember.username} (${otherMember.globalName})`
       : "Saved Messages";
   } else {
-    return channel.title || "Group Channel";
+    return channel.title || "Unnamed";
   }
 };
 
 const ChannelCard = ({ channel, onClick }: ChannelCardProps): ReactNode => {
+  const { currentUser } = useAuthStore();
+
   const isPrivateChannel = channel.type === ChannelType.PRIVATE;
 
   const lastMessageText = isPrivateChannel
@@ -58,13 +61,12 @@ const ChannelCard = ({ channel, onClick }: ChannelCardProps): ReactNode => {
       ? `${channel.lastMessage.authorUsername}: ${channel.lastMessage.content}`
       : "";
 
-
   const lastMessageTime = channel.lastMessage
     ? new Date(channel.lastMessage.timestamp).toLocaleTimeString()
     : "";
 
   const otherMember = isPrivateChannel
-    ? channel.members.find((member) => member.userId !== "currentUserId") ||
+    ? channel.members.find((member) => member.userId !== currentUser?.id) ||
       null
     : null;
 
