@@ -25,6 +25,8 @@ const useMessagesStore = create<MessagesStoreState>((set, get) => ({
     set({ isMessagesLoading: true, currentChannelId: channelId });
     try {
       const messages = await api.getMessages(channelId, null, limit);
+      messages.reverse();
+
       set({ hasMore: !(messages.length < limit) });
       set({ currentMessages: messages });
     } catch (err) {
@@ -45,7 +47,7 @@ const useMessagesStore = create<MessagesStoreState>((set, get) => ({
 
     const currentMessages = get().currentMessages;
 
-    const lastMessageId = currentMessages[currentMessages.length - 1].id;
+    const lastMessageId = currentMessages[0].id;
 
     try {
       const moreMessages = await api.getMessages(
@@ -53,8 +55,9 @@ const useMessagesStore = create<MessagesStoreState>((set, get) => ({
         lastMessageId,
         limit
       );
+      moreMessages.reverse();
 
-      const totalMessages = [...get().currentMessages, ...moreMessages];
+      const totalMessages = [...moreMessages, ...get().currentMessages];
 
       set({ hasMore: !(moreMessages.length < limit) });
 

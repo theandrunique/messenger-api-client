@@ -47,7 +47,6 @@ const ChannelContainer = () => {
     const scrollTop = e.currentTarget.scrollTop;
 
     if (scrollTop === 0 && hasMore && !isLoadingOlderMessages && ref.current) {
-
       const prevHeight = ref.current.scrollHeight;
 
       loadOlderMessages().then(() => {
