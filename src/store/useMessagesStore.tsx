@@ -12,7 +12,7 @@ interface MessagesStoreState {
   loadOlderMessages: () => Promise<void>;
 }
 
-const limit = 20;
+const limit = 50;
 
 const useMessagesStore = create<MessagesStoreState>((set, get) => ({
   currentMessages: [],
