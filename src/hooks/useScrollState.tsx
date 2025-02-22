@@ -13,10 +13,6 @@ const useScrollState = (): ScrollState => {
 
   const saveScrollPosition = (newKey: string) => {
     if (lastKey.current && containerRef.current) {
-      console.log(
-        `Saving scroll position for key: ${lastKey.current}, value: ${containerRef.current.scrollTop}`
-      );
-
       scrollsPositions.current[lastKey.current] =
         containerRef.current.scrollTop;
     }
@@ -32,9 +28,6 @@ const useScrollState = (): ScrollState => {
         ? scrollsPositions.current[lastKey.current]
         : undefined;
 
-    console.log(
-      `Restoring scroll position for key: ${lastKey.current}, value: ${lastSavedScroll}`
-    );
     const scrollTo =
       lastSavedScroll !== undefined
         ? lastSavedScroll

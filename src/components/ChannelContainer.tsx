@@ -17,8 +17,14 @@ const ChannelContainerHeader = ({ channel }: { channel: Channel }) => {
 const ChannelContainer = () => {
   const { selectedChannel } = useChannelsStore();
 
-  const { currentMessages, isMessagesLoading, loadMessages, hasMore } =
-    useMessagesStore();
+  const {
+    currentMessages,
+    isMessagesLoading,
+    loadMessages,
+    hasMore,
+    loadOlderMessages,
+    isLoadingOlderMessages,
+  } = useMessagesStore();
 
   const { saveScrollPosition, scrollToLastSavedPositionOrEnd, ref } =
     useScrollState();
@@ -35,7 +41,25 @@ const ChannelContainer = () => {
       return;
 
     scrollToLastSavedPositionOrEnd();
-  }, [currentMessages, isMessagesLoading]);
+  }, [isMessagesLoading]);
+
+  const handleMessagesScroll = (e: React.UIEvent) => {
+    const scrollTop = e.currentTarget.scrollTop;
+
+    if (scrollTop === 0 && hasMore && !isLoadingOlderMessages && ref.current) {
+
+      const prevHeight = ref.current.scrollHeight;
+
+      loadOlderMessages().then(() => {
+        setTimeout(() => {
+          if (!ref.current) return;
+          ref.current.scrollTo({
+            top: ref.current.scrollHeight - prevHeight,
+          });
+        }, 0);
+      });
+    }
+  };
 
   if (!selectedChannel) {
     return <div>Select a channel to start chatting</div>;
@@ -47,7 +71,11 @@ const ChannelContainer = () => {
     <div className="flex-1 flex flex-col h-full bg-gray-900">
       <ChannelContainerHeader channel={selectedChannel} />
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4" ref={ref}>
+      <div
+        className="flex-1 overflow-y-auto p-4 space-y-4"
+        ref={ref}
+        onScroll={handleMessagesScroll}
+      >
         {currentMessages.map((message) => (
           <div key={message.id} className="p-3 bg-gray-800 rounded-lg">
             <p className="text-sm text-gray-300">{message.author.username}</p>

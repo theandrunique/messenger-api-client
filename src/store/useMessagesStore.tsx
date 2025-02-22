@@ -7,7 +7,9 @@ interface MessagesStoreState {
   currentChannelId: string | null;
   hasMore: boolean;
   isMessagesLoading: boolean;
+  isLoadingOlderMessages: boolean;
   loadMessages: (channelId: string) => Promise<void>;
+  loadOlderMessages: () => Promise<void>;
 }
 
 const limit = 20;
@@ -17,6 +19,7 @@ const useMessagesStore = create<MessagesStoreState>((set, get) => ({
   currentChannelId: null,
   hasMore: true,
   isMessagesLoading: false,
+  isLoadingOlderMessages: false,
 
   loadMessages: async (channelId: string) => {
     set({ isMessagesLoading: true, currentChannelId: channelId });
@@ -30,15 +33,26 @@ const useMessagesStore = create<MessagesStoreState>((set, get) => ({
       set({ isMessagesLoading: false });
     }
   },
-  loadMoreMessages: async () => {
+
+  loadOlderMessages: async () => {
     const currentChannelId = get().currentChannelId;
 
     if (currentChannelId === null || !get().hasMore) {
       return;
     }
 
+    set({ isLoadingOlderMessages: true });
+
+    const currentMessages = get().currentMessages;
+
+    const lastMessageId = currentMessages[currentMessages.length - 1].id;
+
     try {
-      const moreMessages = await api.getMessages(currentChannelId, null, limit);
+      const moreMessages = await api.getMessages(
+        currentChannelId,
+        lastMessageId,
+        limit
+      );
 
       const totalMessages = [...get().currentMessages, ...moreMessages];
 
@@ -47,6 +61,8 @@ const useMessagesStore = create<MessagesStoreState>((set, get) => ({
       set({ currentMessages: totalMessages });
     } catch (err) {
       console.error("Error fetching messages:", err);
+    } finally {
+      set({ isLoadingOlderMessages: false });
     }
   },
 }));
