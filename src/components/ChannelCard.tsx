@@ -1,0 +1,103 @@
+import { ReactNode } from "react";
+import { Channel, ChannelMember, ChannelType } from "../entities";
+
+interface ChannelCardProps {
+  channel: Channel;
+  onClick: () => void;
+}
+
+const getChannelImage = (channel: Channel, member: any) => {
+  return channel.type === ChannelType.PRIVATE
+    ? member?.image
+      ? getImageWithSrc(member.image)
+      : getFirstLetterImage(member?.username)
+    : channel.image
+      ? getImageWithSrc(channel.image)
+      : getFirstLetterImage(channel?.title || "G");
+};
+
+const getImageWithSrc = (src: string) => {
+  return <img src={src} className="w-full h-full object-cover" />;
+};
+
+const getFirstLetterImage = (source: string) => {
+  return (
+    <div className="w-10 h-10 rounded-full overflow-hidden mr-4">
+      <div className="w-full h-full bg-gray-600 text-white flex items-center justify-center">
+        {source[0].toUpperCase()}
+      </div>
+    </div>
+  );
+};
+
+const hasUnreadMessages = (channel: Channel) => {
+  return channel.lastMessage && channel.readAt < channel.lastMessage.id;
+};
+
+const getChannelName = (
+  channel: Channel,
+  otherMember: ChannelMember | null
+) => {
+  if (channel.type === ChannelType.PRIVATE) {
+    return otherMember
+      ? `${otherMember.username} (${otherMember.globalName})`
+      : "Saved Messages";
+  } else {
+    return channel.title || "Group Channel";
+  }
+};
+
+const ChannelCard = ({ channel, onClick }: ChannelCardProps): ReactNode => {
+  const isPrivateChannel = channel.type === ChannelType.PRIVATE;
+
+  const lastMessageText = isPrivateChannel
+    ? channel.lastMessage
+      ? channel.lastMessage.content
+      : ""
+    : channel.lastMessage
+      ? `${channel.lastMessage.authorUsername}: ${channel.lastMessage.content}`
+      : "";
+
+
+  const lastMessageTime = channel.lastMessage
+    ? new Date(channel.lastMessage.timestamp).toLocaleTimeString()
+    : "";
+
+  const otherMember = isPrivateChannel
+    ? channel.members.find((member) => member.userId !== "currentUserId") ||
+      null
+    : null;
+
+  return (
+    <div
+      onClick={onClick}
+      className="flex items-center p-1 rounded-md cursor-pointer hover:bg-gray-700 transition-colors"
+    >
+      <div className="w-10 h-10 rounded-full overflow-hidden mr-4">
+        {getChannelImage(channel, otherMember)}
+      </div>
+
+      <div className="flex-1 min-w-0">
+        <div className="font-semibold text-white truncate">
+          {getChannelName(channel, otherMember)}
+        </div>
+
+        <div className="flex items-center">
+          <div className="text-sm text-gray-400 truncate">
+            {lastMessageText}
+          </div>
+          {hasUnreadMessages(channel) && (
+            <span className="ml-2 text-xs text-blue-500">●</span>
+          )}
+          <div></div>
+        </div>
+      </div>
+
+      <div className="text-xs text-gray-500 ml-4 shrink-0">
+        {lastMessageTime}
+      </div>
+    </div>
+  );
+};
+
+export default ChannelCard;

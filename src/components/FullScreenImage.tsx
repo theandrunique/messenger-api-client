@@ -7,10 +7,14 @@ interface FullScreenImageProps {
 }
 
 export default function FullScreenImage({ children }: FullScreenImageProps) {
-  return(
-    <div 
+  return (
+    <div
       className="w-full bg-gradient-to-r from-violet-500 to-fuchsia-500"
-      style={{ backgroundImage: `url(${image})`, backgroundSize: "cover", backgroundPosition: "center" }}
+      style={{
+        backgroundImage: `url(${image})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
     >
       {children}
     </div>

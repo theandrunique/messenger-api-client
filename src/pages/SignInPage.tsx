@@ -3,16 +3,13 @@ import zod from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
-import ErrorMessage from "../components/ui/Error";
+import ErrorMessage from "../components/ui/ErrorMessage";
 import LinkButton from "../components/ui/LinkButton";
 import Card from "../components/Card";
 import { ServiceError } from "../entities";
-import useApi from "../hooks/useApi";
-import useNextLocationParam from "../hooks/useNextLocaionParam";
 import { useNavigate } from "react-router-dom";
 import FullScreenImage from "../components/FullScreenImage";
-import HCaptcha from "@hcaptcha/react-hcaptcha";
-import { useRef, useState } from "react";
+import useAuthStore from "../store/useAuthStore";
 
 const schema = zod.object({
   login: zod.string().min(1, "Login is required"),
@@ -22,11 +19,8 @@ const schema = zod.object({
 type SignInSchema = zod.infer<typeof schema>;
 
 function SignInPage() {
-  const { api, setTokens } = useApi();
-  const nextLocation = useNextLocationParam();
   const navigate = useNavigate();
-  const captchaRef = useRef<HCaptcha>(null);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const { signIn } = useAuthStore();
 
   const {
     setError,
@@ -37,28 +31,17 @@ function SignInPage() {
 
   const onSubmit: SubmitHandler<SignInSchema> = async (data) => {
     try {
-      if (!captchaToken) {
-        throw new ServiceError("Captcha token is required");
-      }
-
-      const response = await api.signIn(
-        data.login,
-        data.password,
-        captchaToken
-      );
-      setTokens(response);
-      navigate(nextLocation || "/", { replace: true });
+      await signIn(data.login, data.password);
+      navigate("/", { replace: true });
     } catch (error) {
-      captchaRef.current?.resetCaptcha();
-
       if (error instanceof ServiceError) {
         if (error.errors) {
           for (const key of Object.keys(error.errors)) {
-            const errorMessage = error.errors[key].join(" ");
+            const errorMessage = error.errors[key].join("\n");
             setError(key as keyof SignInSchema, { message: errorMessage });
           }
         } else {
-          setError("root", { message: error.title });
+          setError("root", { message: error.message });
         }
       } else {
         setError("root", { message: "Error: something went wrong" });
@@ -83,12 +66,6 @@ function SignInPage() {
               placeholder="password"
             />
             <ErrorMessage message={errors.password?.message} />
-            <HCaptcha
-              ref={captchaRef}
-              onVerify={(token) => setCaptchaToken(token)}
-              size="normal"
-              sitekey="564400fe-45c2-4d96-82c6-8276467aec10"
-            />
             <Button disabled={isSubmitting} variant={"primary"}>
               Sign In
             </Button>

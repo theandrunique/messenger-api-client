@@ -1,56 +1,36 @@
 export enum TerminateSessions {
-  Week,
-  Month,
-  Month3,
-  Month6,
-  Year,
+  WEEK,
+  MONTH,
+  MONTH3,
+  MONTH6,
+  YEAR,
 }
-
-export type Email = {
-  data: string;
-  isVerified: boolean;
-  isPublic: boolean;
-  addedAt: Date;
-};
-
-export type Phone = {
-  data: string;
-  isVerified: boolean;
-  addedAt: Date;
-};
-
-export type File = {
-  id: string;
-  ownerId: string;
-  contentType: string;
-  fileName: string;
-  url: string;
-  size: number;
-  displaySize: string;
-  sha256: string;
-  uploadedAt: Date;
-};
 
 export type User = {
   id: string;
   username: string;
-  usernameUpdatedAt: Date;
-  bio: string;
   globalName: string;
-  createdAt: Date;
-  passwordUpdatedAt: Date;
+  bio: string | null;
+  image: string | null;
+  timestamp: Date;
   terminateSessions: TerminateSessions;
   twoFactorAuthentication: boolean;
-  emails: Email[];
-  phones: Phone[];
+  email: string;
+  isEmailVerified: boolean;
 };
 
 export class ServiceError {
-  title: string;
+  code: string;
+  message: string;
   errors?: Record<string, string[]>;
 
-  constructor(title: string, errors?: Record<string, string[]>) {
-    this.title = title;
+  constructor(
+    code: string,
+    message: string,
+    errors?: Record<string, string[]>
+  ) {
+    this.code = code;
+    this.message = message;
     this.errors = errors;
   }
 }
@@ -59,8 +39,65 @@ export type TokenPair = {
   accessToken: string;
   refreshToken: string;
   expiresIn: number;
+  issuedAt: Date;
 };
 
-export type RefreshTokenResponse = {
-  refreshToken: string;
+export enum ChannelType {
+  PRIVATE,
+  GROUP,
+}
+
+export type MessageInfo = {
+  id: string;
+  authorId: string;
+  authorUsername: string;
+  authorGlobalName: string;
+  content: string;
+  timestamp: Date;
+  editedTimestamp: Date | null;
+  attachmentsCount: number;
+};
+
+export type ChannelMember = {
+  userId: string;
+  username: string;
+  globalName: string;
+  image: string | null;
+};
+
+export type Channel = {
+  id: string;
+  ownerId: string | null;
+  title: string | null;
+  image: string | null;
+  type: ChannelType;
+  readAt: string;
+  lastMessageTimestamp: Date | null;
+  lastMessage: MessageInfo;
+  members: ChannelMember[];
+};
+
+export type Attachment = {
+  id: string;
+  filename: string;
+  contentType: string;
+  size: number;
+  url: "string";
+};
+
+export type MessageAuthor = {
+  id: string;
+  username: string;
+  globalName: string;
+  image: string | null;
+};
+
+export type MessageSchema = {
+  id: string;
+  channelId: string;
+  content: string;
+  timestamp: Date;
+  editedTimestamp: Date | null;
+  author: MessageAuthor;
+  attachments: Attachment[];
 };

@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 import {
-  RefreshTokenResponse,
+  Channel,
+  MessageSchema,
   ServiceError,
   TokenPair,
   User,
@@ -8,18 +9,17 @@ import {
 
 const apiUrl = "http://localhost:8000";
 
-export class ApiClient {
-  private accessToken: string | null = null;
+class ApiClient {
   axiosInstance: AxiosInstance;
+  accessToken: string | null = null;
 
   constructor() {
     this.axiosInstance = axios.create({
       baseURL: apiUrl,
       withCredentials: true,
     });
-
     this.axiosInstance.interceptors.request.use(
-      (config) => {
+      async (config) => {
         if (this.accessToken) {
           config.headers["Authorization"] = `Bearer ${this.accessToken}`;
         }
@@ -29,44 +29,55 @@ export class ApiClient {
     );
   }
 
-  setToken(token: string) {
-    this.accessToken = token;
+  setAccessToken(accessToken: string) {
+    this.accessToken = accessToken;
   }
 
-  async refreshSession(): Promise<TokenPair | null> {
-    const token =
-      await this.axiosInstance.get<string>("/auth/token");
-
-    if (token.data === null) return null;
-
-    const response = await this.axiosInstance.postForm<TokenPair>(
-      "/auth/token",
-      {
-        refreshToken: token.data,
+  async getCurrentSavedTokenPair(): Promise<TokenPair | null> {
+    try {
+      const sessionInfo =
+        await this.axiosInstance.get<TokenPair>("/auth/token");
+      return sessionInfo.data;
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response) {
+        return null;
       }
-    );
-    return response.data;
+      throw new Error(`Unexpected error has occurred: ${err}`);
+    }
   }
 
-  async signIn(
-    login: string,
-    password: string,
-    captchaToken: string
-  ): Promise<TokenPair> {
+  async refreshSession(session: TokenPair): Promise<TokenPair | null> {
+    try {
+      const response = await this.axiosInstance.postForm<TokenPair>(
+        "/auth/token",
+        {
+          refreshToken: session.refreshToken,
+        }
+      );
+      return response.data;
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response) {
+        return null;
+      }
+      throw new Error(`Unexpected error has occurred: ${err}`);
+    }
+  }
+
+  async signIn(login: string, password: string): Promise<TokenPair> {
     try {
       const response = await this.axiosInstance.postForm<TokenPair>(
         "/auth/sign-in",
         {
           login: login,
           password: password,
-          captchaToken: captchaToken,
+          captchaToken: "kdsj",
         }
       );
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         const { data } = error.response;
-        throw new ServiceError(data.title, data.errors);
+        throw new ServiceError(data.code, data.message, data.errors);
       }
       throw new Error("Something went wrong");
     }
@@ -92,14 +103,39 @@ export class ApiClient {
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         const { data } = error.response;
-        throw new ServiceError(data.title, data.errors);
+        throw new ServiceError(data.code, data.message, data.errors);
       }
       throw new Error("Something went wrong");
     }
   }
 
   async getMe(): Promise<User> {
-    const response = await this.axiosInstance.get<User>("/users/me");
+    const response = await this.axiosInstance.get<User>("/users/@me");
+    return response.data;
+  }
+
+  async getUserChannels(): Promise<Channel[]> {
+    const response = await this.axiosInstance.get<Channel[]>(
+      "/users/@me/channels"
+    );
+    return response.data;
+  }
+
+  async getMessages(
+    channelId: string,
+    before: string | null,
+    limit: number | null
+  ): Promise<MessageSchema[]> {
+    const response = await this.axiosInstance.get<MessageSchema[]>(
+      `/channels/${channelId}/messages`,
+      {
+        params: { before, limit },
+      }
+    );
     return response.data;
   }
 }
+
+const api = new ApiClient();
+
+export default api;

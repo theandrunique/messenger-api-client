@@ -2,7 +2,7 @@ import { FC, HTMLAttributes, ReactNode } from "react";
 import cn from "../utils/cn";
 
 interface TitleProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 const CardTitle: FC<TitleProps> = ({ children }) => {
@@ -10,15 +10,16 @@ const CardTitle: FC<TitleProps> = ({ children }) => {
     <div className="text-3xl text-center font-semibold text-slate-100">
       {children}
     </div>
-  )
+  );
 };
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {}
 
 const Card: FC<CardProps> & {
-  Title: FC<TitleProps>
+  Title: FC<TitleProps>;
 } = ({ children, className, ...props }) => {
-  const classInner = "backdrop-blur-lg bg-slate-800/50 p-16 rounded-2xl gap-4 flex flex-col w-[40rem] "
+  const classInner =
+    "backdrop-blur-lg bg-slate-800/50 p-16 rounded-2xl gap-4 flex flex-col w-[40rem] ";
 
   return (
     <div className={cn(classInner, className)} {...props}>
@@ -26,7 +27,6 @@ const Card: FC<CardProps> & {
     </div>
   );
 };
-
 
 Card.Title = CardTitle;
 

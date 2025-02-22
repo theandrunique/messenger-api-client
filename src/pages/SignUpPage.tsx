@@ -4,12 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { ServiceError } from "../entities";
 import Input from "../components/ui/Input";
-import ErrorMessage from "../components/ui/Error";
+import ErrorMessage from "../components/ui/ErrorMessage";
 import Button from "../components/ui/Button";
 import LinkButton from "../components/ui/LinkButton";
 import Card from "../components/Card";
-import useApi from "../hooks/useApi";
 import FullScreenImage from "../components/FullScreenImage";
+import api from "../api/api";
 
 const schema = zod.object({
   username: zod.string(),
@@ -22,7 +22,6 @@ type SignUpSchema = zod.infer<typeof schema>;
 
 export default function SignUpPage() {
   const navigate = useNavigate();
-  const { api } = useApi();
 
   const {
     setError,
@@ -44,11 +43,11 @@ export default function SignUpPage() {
       if (error instanceof ServiceError) {
         if (error.errors) {
           for (const key of Object.keys(error.errors)) {
-            const errorMessage = error.errors[key].join(" ");
+            const errorMessage = error.errors[key].join("\n");
             setError(key as keyof SignUpSchema, { message: errorMessage });
           }
         } else {
-          setError("root", { message: error.title });
+          setError("root", { message: error.message });
         }
       } else {
         setError("root", { message: "Error: something went wrong" });

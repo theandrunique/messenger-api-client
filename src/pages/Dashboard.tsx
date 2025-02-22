@@ -11,10 +11,22 @@ export default function Dashboard() {
         <Card className="w-[40rem]">
           <Card.Title>Userinfo:</Card.Title>
           <div className="text-lg text-slate-200">
-            <div><strong>Id: </strong>{user?.id}</div>
-            <div><strong>Username: </strong>{user?.username}</div>
-            <div><strong>Global name: </strong>{user?.globalName}</div>
-            <div><strong>Created at: </strong>{user?.createdAt.toString()}</div>
+            <div>
+              <strong>Id: </strong>
+              {user?.id}
+            </div>
+            <div>
+              <strong>Username: </strong>
+              {user?.username}
+            </div>
+            <div>
+              <strong>Global name: </strong>
+              {user?.globalName}
+            </div>
+            <div>
+              <strong>Created at: </strong>
+              {user?.timestamp.toString()}
+            </div>
           </div>
         </Card>
       </div>
