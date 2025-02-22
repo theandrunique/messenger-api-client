@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import useChannelsStore from "../store/useChannelsStore";
 import useMessagesStore from "../store/useMessagesStore";
 import { Channel } from "../entities";
-import useScrollsState from "../hooks/useScrollsState";
+import useScrollState from "../hooks/useScrollState";
 
 const ChannelContainerHeader = ({ channel }: { channel: Channel }) => {
   return (
@@ -20,7 +20,8 @@ const ChannelContainer = () => {
   const { currentMessages, isMessagesLoading, loadMessages, hasMore } =
     useMessagesStore();
 
-  const { saveScrollPosition, scrollToSavedPosition, ref } = useScrollsState();
+  const { saveScrollPosition, scrollToLastSavedPositionOrEnd, ref } =
+    useScrollState();
 
   useEffect(() => {
     if (selectedChannel === null) return;
@@ -33,7 +34,7 @@ const ChannelContainer = () => {
     if (!selectedChannel || isMessagesLoading || currentMessages.length === 0)
       return;
 
-    scrollToSavedPosition();
+    scrollToLastSavedPositionOrEnd();
   }, [currentMessages, isMessagesLoading]);
 
   if (!selectedChannel) {
