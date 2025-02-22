@@ -45,15 +45,17 @@ const ChannelContainer = () => {
 
   const handleMessagesScroll = (e: React.UIEvent) => {
     const scrollTop = e.currentTarget.scrollTop;
+    const scrollTrigger = 100;
 
-    if (scrollTop === 0 && hasMore && !isLoadingOlderMessages && ref.current) {
+    if (scrollTop < scrollTrigger && hasMore && !isLoadingOlderMessages && ref.current) {
       const prevHeight = ref.current.scrollHeight;
+      const prevScrollTop = ref.current.scrollTop;
 
       loadOlderMessages().then(() => {
         setTimeout(() => {
           if (!ref.current) return;
           ref.current.scrollTo({
-            top: ref.current.scrollHeight - prevHeight,
+            top: ref.current.scrollHeight - prevHeight + prevScrollTop,
           });
         }, 0);
       });
