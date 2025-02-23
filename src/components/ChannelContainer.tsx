@@ -1,19 +1,20 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useChannelsStore from "../store/useChannelsStore";
 import useMessagesStore from "../store/useMessagesStore";
-import { Channel } from "../entities";
+import { Attachment, Channel } from "../entities";
 import useScrollState from "../hooks/useScrollState";
 import MessageCard from "./MessageCard";
 import useAuthStore from "../store/useAuthStore";
+import Input from "./ui/Input";
+import MessageInput from "./MessageInput";
 
 const ChannelContainerHeader = ({ channel }: { channel: Channel }) => {
   const currentUser = useAuthStore((store) => store.currentUser);
 
   const getPrivateChannelName = () => {
-    const otherMember = (
+    const otherMember =
       channel.members.find((member) => member.userId !== currentUser?.id) ||
-      null
-    );
+      null;
     if (otherMember !== null) {
       return `${otherMember.username} (${otherMember.globalName})`;
     } else {
@@ -112,6 +113,7 @@ const ChannelContainer = () => {
           />
         ))}
       </div>
+      <MessageInput channelId={selectedChannel.id} />
     </div>
   );
 };

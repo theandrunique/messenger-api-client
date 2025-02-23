@@ -101,3 +101,20 @@ export type MessageSchema = {
   author: MessageAuthor;
   attachments: Attachment[];
 };
+
+export type CloudAttachmentSchema = {
+  id: string | null;
+  uploadUrl: string;
+  uploadFilename: string;
+};
+
+export type CloudAttachmentCreateSchema = {
+  id: string | null;
+  filename: string;
+  fileSize: number;
+};
+
+export type AttachmentUploadSchema = {
+  uploadedFilename: string;
+  filename: string;
+};
