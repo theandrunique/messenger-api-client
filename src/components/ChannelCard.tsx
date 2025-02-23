@@ -49,7 +49,7 @@ const getChannelName = (
 };
 
 const ChannelCard = ({ channel, onClick }: ChannelCardProps): ReactNode => {
-  const { currentUser } = useAuthStore();
+  const currentUser = useAuthStore((store) => store.currentUser);
 
   const isPrivateChannel = channel.type === ChannelType.PRIVATE;
 

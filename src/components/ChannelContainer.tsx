@@ -4,31 +4,49 @@ import useMessagesStore from "../store/useMessagesStore";
 import { Channel } from "../entities";
 import useScrollState from "../hooks/useScrollState";
 import MessageCard from "./MessageCard";
+import useAuthStore from "../store/useAuthStore";
 
 const ChannelContainerHeader = ({ channel }: { channel: Channel }) => {
+  const currentUser = useAuthStore((store) => store.currentUser);
+
+  const getPrivateChannelName = () => {
+    const otherMember = (
+      channel.members.find((member) => member.userId !== currentUser?.id) ||
+      null
+    );
+    if (otherMember !== null) {
+      return `${otherMember.username} (${otherMember.globalName})`;
+    } else {
+      return "Saved Messages";
+    }
+  };
+
   return (
     <div className="border-b border-gray-700 p-4">
       <h2 className="text-xl font-bold text-white">
-        {channel.title || channel.members[0].username}
+        {channel.title || getPrivateChannelName()}
       </h2>
     </div>
   );
 };
 
 const ChannelContainer = () => {
-  const { selectedChannel } = useChannelsStore();
+  const selectedChannel = useChannelsStore((store) => store.selectedChannel);
 
   const {
     currentMessages,
     isMessagesLoading,
     loadMessages,
-    hasMore,
+    hasMore: hasMoreMessages,
     loadOlderMessages,
     isLoadingOlderMessages,
   } = useMessagesStore();
 
-  const { saveScrollPosition, scrollToLastSavedPositionOrEnd, ref } =
-    useScrollState();
+  const {
+    saveScrollPosition,
+    scrollToLastSavedPositionOrEnd,
+    ref: messagesContainerRef,
+  } = useScrollState();
 
   useEffect(() => {
     if (selectedChannel === null) return;
@@ -50,18 +68,21 @@ const ChannelContainer = () => {
 
     if (
       scrollTop < scrollTrigger &&
-      hasMore &&
+      hasMoreMessages &&
       !isLoadingOlderMessages &&
-      ref.current
+      messagesContainerRef.current
     ) {
-      const prevHeight = ref.current.scrollHeight;
-      const prevScrollTop = ref.current.scrollTop;
+      const prevHeight = messagesContainerRef.current.scrollHeight;
+      const prevScrollTop = messagesContainerRef.current.scrollTop;
 
       loadOlderMessages().then(() => {
         setTimeout(() => {
-          if (!ref.current) return;
-          ref.current.scrollTo({
-            top: ref.current.scrollHeight - prevHeight + prevScrollTop,
+          if (!messagesContainerRef.current) return;
+          messagesContainerRef.current.scrollTo({
+            top:
+              messagesContainerRef.current.scrollHeight -
+              prevHeight +
+              prevScrollTop,
           });
         }, 0);
       });
@@ -80,7 +101,7 @@ const ChannelContainer = () => {
 
       <div
         className="flex-1 overflow-y-auto p-4"
-        ref={ref}
+        ref={messagesContainerRef}
         onScroll={handleMessagesScroll}
       >
         {currentMessages.map((message) => (

@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { MessageSchema } from "../entities";
 import api from "../api/api";
 
-interface MessagesStoreState {
+interface MessagesStore {
   currentMessages: MessageSchema[];
   currentChannelId: string | null;
   hasMore: boolean;
@@ -14,7 +14,7 @@ interface MessagesStoreState {
 
 const limit = 50;
 
-const useMessagesStore = create<MessagesStoreState>((set, get) => ({
+const useMessagesStore = create<MessagesStore>((set, get) => ({
   currentMessages: [],
   currentChannelId: null,
   hasMore: true,

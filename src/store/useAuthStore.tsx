@@ -20,14 +20,14 @@ const refreshSession = async (): Promise<TokenPair | null> => {
   return savedTokenPair;
 };
 
-interface AuthStoreState {
+interface AuthStore {
   checkAuth: () => Promise<void>;
   signIn: (login: string, password: string) => Promise<void>;
   isCheckingAuth: boolean;
   currentUser: User | null;
 }
 
-const useAuthStore = create<AuthStoreState>((set, get) => ({
+const useAuthStore = create<AuthStore>((set, get) => ({
   currentUser: null,
   accessToken: null,
   isCheckingAuth: true,
@@ -44,6 +44,7 @@ const useAuthStore = create<AuthStoreState>((set, get) => ({
 
       const currentUser = await api.getMe();
       set({ currentUser: currentUser });
+      setTimeout(() => get().checkAuth(), (tokenPair.expiresIn - 300) * 1000);
     } catch (err) {
       console.error("Error checking auth: ", err);
       set({ currentUser: null });

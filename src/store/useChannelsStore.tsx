@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { Channel } from "../entities";
 import api from "../api/api";
 
-interface ChannelsStoreState {
+interface ChannelsStore {
   channels: Channel[] | null;
   selectedChannel: Channel | null;
   isChannelsLoading: boolean;
@@ -10,7 +10,7 @@ interface ChannelsStoreState {
   selectChannel: (channel: Channel) => void;
 }
 
-const useChannelsStore = create<ChannelsStoreState>((set, get) => ({
+const useChannelsStore = create<ChannelsStore>((set) => ({
   channels: null,
   selectedChannel: null,
   isChannelsLoading: false,
