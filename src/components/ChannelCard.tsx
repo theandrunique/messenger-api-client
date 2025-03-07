@@ -1,13 +1,13 @@
 import { ReactNode } from "react";
-import { Channel, ChannelMember, ChannelType } from "../entities";
 import useAuthStore from "../store/useAuthStore";
+import { ChannelMemberSchema, ChannelSchema, ChannelType } from "../schemas/channel.schema";
 
 interface ChannelCardProps {
-  channel: Channel;
+  channel: ChannelSchema;
   onClick: () => void;
 }
 
-const getChannelImage = (channel: Channel, member: any) => {
+const getChannelImage = (channel: ChannelSchema, member: any) => {
   return channel.type === ChannelType.PRIVATE
     ? member?.image
       ? getImageWithSrc(member.image)
@@ -31,13 +31,13 @@ const getFirstLetterImage = (source: string) => {
   );
 };
 
-const hasUnreadMessages = (channel: Channel) => {
+const hasUnreadMessages = (channel: ChannelSchema) => {
   return channel.lastMessage && channel.readAt < channel.lastMessage.id;
 };
 
 const getChannelName = (
-  channel: Channel,
-  otherMember: ChannelMember | null
+  channel: ChannelSchema,
+  otherMember: ChannelMemberSchema | null
 ) => {
   if (channel.type === ChannelType.PRIVATE) {
     return otherMember
@@ -85,7 +85,7 @@ const ChannelCard = ({ channel, onClick }: ChannelCardProps): ReactNode => {
         </div>
 
         <div className="flex items-center">
-          <div className="text-sm text-gray-400 truncate">
+          <div className="text-sm text-gray-400 max-w-44 truncate">
             {lastMessageText}
           </div>
           {hasUnreadMessages(channel) && (

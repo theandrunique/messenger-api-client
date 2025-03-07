@@ -1,6 +1,7 @@
 import { forwardRef } from "react";
-import { Attachment, ChannelType, MessageSchema } from "../entities";
 import useAuthStore from "../store/useAuthStore";
+import { ChannelType } from "../schemas/channel.schema";
+import { AttachmentSchema, MessageSchema } from "../schemas/message.schema";
 
 interface MessageProps {
   message: MessageSchema;
@@ -43,7 +44,7 @@ export const MessageCard = forwardRef<HTMLDivElement, MessageProps>(
   }
 );
 
-const AttachmentPreview = ({ attachments }: { attachments: Attachment[] }) => {
+const AttachmentPreview = ({ attachments }: { attachments: AttachmentSchema[] }) => {
   return (
     <div className="mt-2 space-y-1">
       {attachments.map((attachment) => (

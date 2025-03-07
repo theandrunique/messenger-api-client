@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import useChannelsStore from "../store/useChannelsStore";
 import useMessagesStore from "../store/useMessagesStore";
-import { Channel } from "../entities";
 import useScrollState from "../hooks/useScrollState";
 import MessageCard from "./MessageCard";
 import useAuthStore from "../store/useAuthStore";
 import MessageInput from "./MessageInput";
+import { ChannelSchema } from "../schemas/channel.schema";
 
-const ChannelContainerHeader = ({ channel }: { channel: Channel }) => {
+const ChannelContainerHeader = ({ channel }: { channel: ChannelSchema }) => {
   const currentUser = useAuthStore((store) => store.currentUser);
 
   const getPrivateChannelName = () => {
@@ -46,6 +46,8 @@ const ChannelContainer = () => {
     saveScrollPosition,
     scrollToLastSavedPositionOrEnd,
     ref: messagesContainerRef,
+    scrollToEnd,
+    isScrolledToBottom,
   } = useScrollState();
 
   useEffect(() => {
@@ -54,6 +56,12 @@ const ChannelContainer = () => {
     saveScrollPosition(selectedChannel.id);
     loadMessages(selectedChannel.id);
   }, [selectedChannel]);
+
+  useEffect(() => {
+    if (isScrolledToBottom()) {
+      scrollToEnd();
+    }
+  }, [currentMessages]);
 
   useEffect(() => {
     if (!selectedChannel || isMessagesLoading || currentMessages.length === 0)

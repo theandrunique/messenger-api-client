@@ -2,7 +2,6 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import zod from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
-import { ServiceError } from "../entities";
 import Input from "../components/ui/Input";
 import ErrorMessage from "../components/ui/ErrorMessage";
 import Button from "../components/ui/Button";
@@ -10,6 +9,7 @@ import LinkButton from "../components/ui/LinkButton";
 import Card from "../components/Card";
 import FullScreenImage from "../components/FullScreenImage";
 import api from "../api/api";
+import { ApiError } from "../schemas/common.schema";
 
 const schema = zod.object({
   username: zod.string(),
@@ -40,7 +40,7 @@ export default function SignUpPage() {
       );
       navigate("/sign-in");
     } catch (error) {
-      if (error instanceof ServiceError) {
+      if (error instanceof ApiError) {
         if (error.errors) {
           for (const key of Object.keys(error.errors)) {
             const errorMessage = error.errors[key].join("\n");

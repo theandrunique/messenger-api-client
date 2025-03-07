@@ -1,14 +1,9 @@
 import axios, { AxiosInstance } from "axios";
-import {
-  Channel,
-  CloudAttachmentResponseSchema,
-  CloudAttachmentCreateSchema,
-  MessageSchema,
-  ServiceError,
-  TokenPair,
-  User,
-  MessageAttachmentUploadSchema,
-} from "../entities";
+import { TokenPairSchema } from "../schemas/auth.schema";
+import { ApiError } from "../schemas/common.schema";
+import { UserSchema } from "../schemas/user.schema";
+import { ChannelSchema } from "../schemas/channel.schema";
+import { CloudAttachmentCreateSchema as CloudAttachmentRequestSchema, CloudAttachmentResponseSchema, MessageAttachmentUploadSchema, MessageSchema } from "../schemas/message.schema";
 
 const apiUrl = "http://localhost:8000";
 
@@ -36,10 +31,10 @@ class ApiClient {
     this.accessToken = accessToken;
   }
 
-  async getCurrentSavedTokenPair(): Promise<TokenPair | null> {
+  async getCurrentSavedTokenPair(): Promise<TokenPairSchema | null> {
     try {
       const sessionInfo =
-        await this.axiosInstance.get<TokenPair>("/auth/token");
+        await this.axiosInstance.get<TokenPairSchema>("/auth/token");
       return sessionInfo.data;
     } catch (err) {
       if (axios.isAxiosError(err) && err.response) {
@@ -49,9 +44,9 @@ class ApiClient {
     }
   }
 
-  async refreshSession(session: TokenPair): Promise<TokenPair | null> {
+  async refreshSession(session: TokenPairSchema): Promise<TokenPairSchema | null> {
     try {
-      const response = await this.axiosInstance.postForm<TokenPair>(
+      const response = await this.axiosInstance.postForm<TokenPairSchema>(
         "/auth/token",
         {
           refreshToken: session.refreshToken,
@@ -66,9 +61,9 @@ class ApiClient {
     }
   }
 
-  async signIn(login: string, password: string): Promise<TokenPair> {
+  async signIn(login: string, password: string): Promise<TokenPairSchema> {
     try {
-      const response = await this.axiosInstance.postForm<TokenPair>(
+      const response = await this.axiosInstance.postForm<TokenPairSchema>(
         "/auth/sign-in",
         {
           login: login,
@@ -80,7 +75,7 @@ class ApiClient {
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         const { data } = error.response;
-        throw new ServiceError(data.code, data.message, data.errors);
+        throw new ApiError(data.code, data.message, data.errors);
       }
       throw new Error("Something went wrong");
     }
@@ -91,9 +86,9 @@ class ApiClient {
     email: string,
     globalName: string,
     password: string
-  ): Promise<User> {
+  ): Promise<UserSchema> {
     try {
-      const response = await this.axiosInstance.postForm<User>(
+      const response = await this.axiosInstance.postForm<UserSchema>(
         "/auth/sign-up",
         {
           username: username,
@@ -106,19 +101,19 @@ class ApiClient {
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         const { data } = error.response;
-        throw new ServiceError(data.code, data.message, data.errors);
+        throw new ApiError(data.code, data.message, data.errors);
       }
       throw new Error("Something went wrong");
     }
   }
 
-  async getMe(): Promise<User> {
-    const response = await this.axiosInstance.get<User>("/users/@me");
+  async getMe(): Promise<UserSchema> {
+    const response = await this.axiosInstance.get<UserSchema>("/users/@me");
     return response.data;
   }
 
-  async getUserChannels(): Promise<Channel[]> {
-    const response = await this.axiosInstance.get<Channel[]>(
+  async getUserChannels(): Promise<ChannelSchema[]> {
+    const response = await this.axiosInstance.get<ChannelSchema[]>(
       "/users/@me/channels"
     );
     return response.data;
@@ -140,7 +135,7 @@ class ApiClient {
 
   async createAttachments(
     channelId: string,
-    attachments: CloudAttachmentCreateSchema[]
+    attachments: CloudAttachmentRequestSchema[]
   ): Promise<CloudAttachmentResponseSchema[]> {
     const response = await this.axiosInstance.post<
       CloudAttachmentResponseSchema[]

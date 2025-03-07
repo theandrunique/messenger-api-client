@@ -6,10 +6,10 @@ import Input from "../components/ui/Input";
 import ErrorMessage from "../components/ui/ErrorMessage";
 import LinkButton from "../components/ui/LinkButton";
 import Card from "../components/Card";
-import { ServiceError } from "../entities";
 import { useNavigate } from "react-router-dom";
 import FullScreenImage from "../components/FullScreenImage";
 import useAuthStore from "../store/useAuthStore";
+import { ApiError } from "../schemas/common.schema";
 
 const schema = zod.object({
   login: zod.string().min(1, "Login is required"),
@@ -34,7 +34,7 @@ function SignInPage() {
       await signIn(data.login, data.password);
       navigate("/", { replace: true });
     } catch (error) {
-      if (error instanceof ServiceError) {
+      if (error instanceof ApiError) {
         if (error.errors) {
           for (const key of Object.keys(error.errors)) {
             const errorMessage = error.errors[key].join("\n");

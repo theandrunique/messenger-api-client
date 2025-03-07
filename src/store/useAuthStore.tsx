@@ -1,8 +1,9 @@
 import { create } from "zustand";
 import api from "../api/api";
-import { TokenPair, User } from "../entities";
+import { TokenPairSchema } from "../schemas/auth.schema";
+import { UserSchema } from "../schemas/user.schema";
 
-const refreshSession = async (): Promise<TokenPair | null> => {
+const refreshSession = async (): Promise<TokenPairSchema | null> => {
   const savedTokenPair = await api.getCurrentSavedTokenPair();
   if (savedTokenPair === null) {
     console.log("No session was found");
@@ -24,7 +25,8 @@ interface AuthStore {
   checkAuth: () => Promise<void>;
   signIn: (login: string, password: string) => Promise<void>;
   isCheckingAuth: boolean;
-  currentUser: User | null;
+  currentUser: UserSchema | null;
+  accessToken: string | null;
 }
 
 const useAuthStore = create<AuthStore>((set, get) => ({
@@ -41,6 +43,8 @@ const useAuthStore = create<AuthStore>((set, get) => ({
       }
 
       api.setAccessToken(tokenPair.accessToken);
+
+      set({ accessToken: tokenPair.accessToken });
 
       const currentUser = await api.getMe();
       set({ currentUser: currentUser });

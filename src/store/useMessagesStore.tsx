@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import { MessageSchema } from "../entities";
 import api from "../api/api";
+import { MessageSchema } from "../schemas/message.schema";
 
 interface MessagesStore {
   currentMessages: MessageSchema[];

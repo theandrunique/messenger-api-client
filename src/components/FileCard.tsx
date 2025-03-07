@@ -1,10 +1,10 @@
 import { FileIcon, X } from "lucide-react";
-import { CloudAttachmentResponseSchema } from "../entities";
+import { CloudAttachmentResponseSchema } from "../schemas/message.schema";
 
 export interface FileInfo {
   cloudAttachment: CloudAttachmentResponseSchema;
   file: File;
-};
+}
 
 const formatFileSize = (size: number) => {
   if (size < 1024) return `${size} B`;
