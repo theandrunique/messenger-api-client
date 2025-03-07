@@ -102,7 +102,7 @@ export type MessageSchema = {
   attachments: Attachment[];
 };
 
-export type CloudAttachmentSchema = {
+export type CloudAttachmentResponseSchema = {
   id: string | null;
   uploadUrl: string;
   uploadFilename: string;
@@ -114,7 +114,7 @@ export type CloudAttachmentCreateSchema = {
   fileSize: number;
 };
 
-export type AttachmentUploadSchema = {
+export type MessageAttachmentUploadSchema = {
   uploadedFilename: string;
   filename: string;
 };

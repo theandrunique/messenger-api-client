@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import useChannelsStore from "../store/useChannelsStore";
 import useMessagesStore from "../store/useMessagesStore";
-import { Attachment, Channel } from "../entities";
+import { Channel } from "../entities";
 import useScrollState from "../hooks/useScrollState";
 import MessageCard from "./MessageCard";
 import useAuthStore from "../store/useAuthStore";
-import Input from "./ui/Input";
 import MessageInput from "./MessageInput";
 
 const ChannelContainerHeader = ({ channel }: { channel: Channel }) => {

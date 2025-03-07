@@ -1,13 +1,13 @@
 import axios, { AxiosInstance } from "axios";
 import {
   Channel,
-  CloudAttachmentSchema,
+  CloudAttachmentResponseSchema,
   CloudAttachmentCreateSchema,
   MessageSchema,
   ServiceError,
   TokenPair,
   User,
-  AttachmentUploadSchema,
+  MessageAttachmentUploadSchema,
 } from "../entities";
 
 const apiUrl = "http://localhost:8000";
@@ -141,13 +141,12 @@ class ApiClient {
   async createAttachments(
     channelId: string,
     attachments: CloudAttachmentCreateSchema[]
-  ): Promise<CloudAttachmentSchema[]> {
-    const response = await this.axiosInstance.post<CloudAttachmentSchema[]>(
-      `/channels/${channelId}/attachments`,
-      {
-        files: attachments,
-      }
-    );
+  ): Promise<CloudAttachmentResponseSchema[]> {
+    const response = await this.axiosInstance.post<
+      CloudAttachmentResponseSchema[]
+    >(`/channels/${channelId}/attachments`, {
+      files: attachments,
+    });
 
     return response.data;
   }
@@ -155,7 +154,7 @@ class ApiClient {
   async postMessage(
     channelId: string,
     content: string,
-    attachments: AttachmentUploadSchema[]
+    attachments: MessageAttachmentUploadSchema[]
   ): Promise<MessageSchema> {
     const response = await this.axiosInstance.post<MessageSchema>(
       `/channels/${channelId}/messages`,
