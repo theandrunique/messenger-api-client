@@ -7,6 +7,8 @@ import useAuthStore from "../store/useAuthStore";
 import MessageInput from "./MessageInput";
 import { ChannelSchema } from "../schemas/channel.schema";
 import SelectChannelMessage from "./SelectChannelMessage";
+import HorizontalDivider from "./HorizontalDivider";
+import React from "react";
 
 const ChannelContainerHeader = ({ channel }: { channel: ChannelSchema }) => {
   const currentUser = useAuthStore((store) => store.currentUser);
@@ -104,6 +106,20 @@ const ChannelContainer = () => {
 
   if (isMessagesLoading) return <div>Loading messages...</div>;
 
+  const groupedMessages = currentMessages.reduce(
+    (acc, message) => {
+      const dateKey = new Date(message.timestamp).toDateString();
+      if (!acc[dateKey]) {
+        acc[dateKey] = [];
+      }
+      acc[dateKey].push(message);
+      return acc;
+    },
+    {} as Record<string, typeof currentMessages>
+  );
+
+  const messageGroups = Object.entries(groupedMessages);
+
   return (
     <div className="flex-1 flex flex-col h-full bg-[#18181b] border-l border-gray-700 overflow-hidden">
       <ChannelContainerHeader channel={selectedChannel} />
@@ -113,12 +129,19 @@ const ChannelContainer = () => {
         ref={messagesContainerRef}
         onScroll={handleMessagesScroll}
       >
-        {currentMessages.map((message) => (
-          <MessageCard
-            key={message.id}
-            message={message}
-            channelType={selectedChannel.type}
-          />
+        {messageGroups.map(([date, messages]) => (
+          <div key={date} className="relative">
+            <HorizontalDivider date={messages[0].timestamp} />
+            <div>
+              {messages.map((message) => (
+                <MessageCard
+                  key={message.id}
+                  message={message}
+                  channelType={selectedChannel.type}
+                />
+              ))}
+            </div>
+          </div>
         ))}
       </div>
       <MessageInput channelId={selectedChannel.id} />
