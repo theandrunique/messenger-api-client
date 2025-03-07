@@ -2,6 +2,7 @@ import ChannelSidebar from "../components/ChannelSidebar";
 import ChannelContainer from "../components/ChannelContainer";
 import { useEffect } from "react";
 import useGateway from "../store/useGateway";
+import Navbar from "../components/Navbar";
 
 function Messenger() {
   const gateway = useGateway();
@@ -9,13 +10,17 @@ function Messenger() {
   useEffect(() => {
     gateway.connect();
 
-    () => gateway.disconnect();
+    return () => gateway.disconnect();
   }, []);
 
   return (
-    <div className="bg-gray-900 text-white h-screen w-screen flex">
-      <ChannelSidebar />
-      <ChannelContainer />
+    <div className="flex flex-col h-screen">
+      <Navbar />
+
+      <div className="flex overflow-hidden h-full">
+        <ChannelSidebar />
+        <ChannelContainer />
+      </div>
     </div>
   );
 }

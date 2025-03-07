@@ -6,6 +6,7 @@ import MessageCard from "./MessageCard";
 import useAuthStore from "../store/useAuthStore";
 import MessageInput from "./MessageInput";
 import { ChannelSchema } from "../schemas/channel.schema";
+import SelectChannelMessage from "./SelectChannelMessage";
 
 const ChannelContainerHeader = ({ channel }: { channel: ChannelSchema }) => {
   const currentUser = useAuthStore((store) => store.currentUser);
@@ -98,13 +99,13 @@ const ChannelContainer = () => {
   };
 
   if (!selectedChannel) {
-    return <div>Select a channel to start chatting</div>;
+    return <SelectChannelMessage />;
   }
 
   if (isMessagesLoading) return <div>Loading messages...</div>;
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-gray-900">
+    <div className="flex-1 flex flex-col h-full bg-[#18181b] border-l border-gray-700 overflow-hidden">
       <ChannelContainerHeader channel={selectedChannel} />
 
       <div

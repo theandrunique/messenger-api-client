@@ -73,7 +73,7 @@ const ChannelCard = ({ channel, onClick }: ChannelCardProps): ReactNode => {
   return (
     <div
       onClick={onClick}
-      className="flex items-center p-1 rounded-md cursor-pointer hover:bg-gray-700 transition-colors"
+      className="flex items-center p-1 rounded-md cursor-pointer hover:bg-[#37373a] transition-colors"
     >
       <div className="w-10 h-10 rounded-full overflow-hidden mr-4">
         {getChannelImage(channel, otherMember)}

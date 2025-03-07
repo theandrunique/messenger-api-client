@@ -23,6 +23,10 @@ function App() {
       <Routes>
         <Route
           path="/"
+          element={currentUser ? <Navigate to="/messenger" /> : <Navigate to="/sign-in" />}
+        />
+        <Route
+          path="/messenger"
           element={currentUser ? <Messenger /> : <Navigate to="/sign-in" />}
         />
         <Route
