@@ -4,6 +4,19 @@ import { SendHorizontal, Paperclip } from "lucide-react";
 import FileCard, { FileInfo } from "./FileCard";
 import Input from "./ui/Input";
 import Button from "./ui/Button";
+import { Slide, toast } from "react-toastify";
+import { ApiError } from "../schemas/common.schema";
+import { create } from "zustand";
+import { CloudAttachmentResponseSchema } from "../schemas/message.schema";
+
+const formatErrorMessage = (err: ApiError): string => {
+  if (err.errors) {
+    const errorMessages = Object.values(err.errors).flat();
+    return errorMessages.join(". ");
+  }
+
+  return err.message || "Unknown error has occurred while uploading file";
+};
 
 interface MessageInputProps {
   channelId: string;
@@ -19,7 +32,7 @@ const FilesCard = ({
   if (files.length === 0) return null;
 
   return (
-    <div className="p-3 bg-gray-900 rounded-lg flex gap-3 flex-wrap">
+    <div className="p-3 rounded-lg flex gap-3 flex-wrap">
       {files.map((fileInfo) => {
         return <FileCard fileInfo={fileInfo} onRemove={onRemove} />;
       })}
@@ -27,39 +40,109 @@ const FilesCard = ({
   );
 };
 
+const error = (message: string) => {
+  toast.error(message, {
+    position: "top-center",
+    closeButton: false,
+    autoClose: 3000,
+    theme: "dark",
+    transition: Slide,
+    style: {
+      fontSize: "14px",
+    },
+  });
+};
+
 const MessageInput = ({ channelId }: MessageInputProps) => {
   const [fileInfos, setFileInfos] = useState<FileInfo[]>([]);
   const [messageContent, setMessageContent] = useState("");
 
-  const uploadFiles = async (files: File[]): Promise<FileInfo[]> => {
+  const getFailedFiles = (
+    files: File[],
+    errors: Record<string, string[]>
+  ): [File, string[]][] => {
+    const failedFiles: [File, string[]][] = [];
+
+    Object.keys(errors).forEach((key) => {
+      const match = key.match(/files\[(\d+)\]/);
+      if (match) {
+        const index = parseInt(match[1], 10);
+        const errorMessages = errors[key];
+        const file = files[index];
+
+        if (file) {
+          failedFiles.push([file, errorMessages]);
+        }
+      }
+    });
+
+    return failedFiles;
+  };
+
+  const createAttachments = async (
+    files: File[]
+  ): Promise<[CloudAttachmentResponseSchema, File][]> => {
+    const attachmentsToUploadArray = files.map((file, index) => ({
+      id: index.toString(),
+      filename: file.name,
+      fileSize: file.size,
+    }));
+
     try {
-      const attachments = files.map((file) => ({
-        id: null,
-        filename: file.name,
-        fileSize: file.size,
-      }));
-
-      const response = await api.createAttachments(channelId, attachments);
-
-      await Promise.all(
-        response.map(async (f, index) => {
-          const file = files[index];
-          await api.uploadFile(f.uploadUrl, file);
-        })
+      const response = await api.createAttachments(
+        channelId,
+        attachmentsToUploadArray
       );
 
-      return response.map((f, index) => ({
-        cloudAttachment: {
-          id: f.id,
-          uploadUrl: f.uploadUrl,
-          uploadFilename: f.uploadFilename,
-        },
-        file: files[index],
-      }));
+      const result: [CloudAttachmentResponseSchema, File][] = [];
+
+      response.forEach((f, index) => {
+        result.push([f, files[index]]);
+      });
+      return result;
     } catch (err) {
-      console.log("Error uploading files: ", err);
-      return [];
+      if (err instanceof ApiError && err.errors) {
+        const failedFiles = getFailedFiles(files, err.errors);
+
+        failedFiles.forEach(([file, errors]) => {
+          const errorMessage = errors.join("\n");
+          error(`File '${file.name}' was not uploaded. ${errorMessage}`);
+        });
+
+        const validFiles = files.filter(
+          (file) => !failedFiles.some(([failed]) => failed.name === file.name)
+        );
+
+        if (validFiles.length > 0) {
+          return createAttachments(validFiles);
+        }
+        return [];
+      }
+      throw err;
     }
+  };
+
+  const uploadFiles = async (files: File[]): Promise<FileInfo[]> => {
+    const response = await createAttachments(files);
+
+    await Promise.all(
+      response.map(async ([attachment, file]) => {
+        try {
+          await api.uploadFile(attachment.uploadUrl, file);
+        } catch (err) {
+          error(`Error while uploading '${file.name}' file. ${err}`);
+        }
+      })
+    );
+
+    return response.map(([attachment, file]) => ({
+      cloudAttachment: {
+        id: attachment.id,
+        uploadUrl: attachment.uploadUrl,
+        uploadFilename: attachment.uploadFilename,
+      },
+      file: file,
+    }));
   };
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {

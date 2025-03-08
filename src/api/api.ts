@@ -3,7 +3,12 @@ import { TokenPairSchema } from "../schemas/auth.schema";
 import { ApiError } from "../schemas/common.schema";
 import { UserSchema } from "../schemas/user.schema";
 import { ChannelSchema } from "../schemas/channel.schema";
-import { CloudAttachmentCreateSchema as CloudAttachmentRequestSchema, CloudAttachmentResponseSchema, MessageAttachmentUploadSchema, MessageSchema } from "../schemas/message.schema";
+import {
+  CloudAttachmentCreateSchema as CloudAttachmentRequestSchema,
+  CloudAttachmentResponseSchema,
+  MessageAttachmentUploadSchema,
+  MessageSchema,
+} from "../schemas/message.schema";
 
 const apiUrl = "http://localhost:8000";
 
@@ -40,11 +45,13 @@ class ApiClient {
       if (axios.isAxiosError(err) && err.response) {
         return null;
       }
-      throw new Error(`Unexpected error has occurred: ${err}`);
+      throw err;
     }
   }
 
-  async refreshSession(session: TokenPairSchema): Promise<TokenPairSchema | null> {
+  async refreshSession(
+    session: TokenPairSchema
+  ): Promise<TokenPairSchema | null> {
     try {
       const response = await this.axiosInstance.postForm<TokenPairSchema>(
         "/auth/token",
@@ -57,7 +64,7 @@ class ApiClient {
       if (axios.isAxiosError(err) && err.response) {
         return null;
       }
-      throw new Error(`Unexpected error has occurred: ${err}`);
+      throw err;
     }
   }
 
@@ -77,7 +84,7 @@ class ApiClient {
         const { data } = error.response;
         throw new ApiError(data.code, data.message, data.errors);
       }
-      throw new Error("Something went wrong");
+      throw error;
     }
   }
 
@@ -103,7 +110,7 @@ class ApiClient {
         const { data } = error.response;
         throw new ApiError(data.code, data.message, data.errors);
       }
-      throw new Error("Something went wrong");
+      throw error;
     }
   }
 
@@ -137,13 +144,21 @@ class ApiClient {
     channelId: string,
     attachments: CloudAttachmentRequestSchema[]
   ): Promise<CloudAttachmentResponseSchema[]> {
-    const response = await this.axiosInstance.post<
-      CloudAttachmentResponseSchema[]
-    >(`/channels/${channelId}/attachments`, {
-      files: attachments,
-    });
+    try {
+      const response = await this.axiosInstance.post<
+        CloudAttachmentResponseSchema[]
+      >(`/channels/${channelId}/attachments`, {
+        files: attachments,
+      });
 
-    return response.data;
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        const { data } = error.response;
+        throw new ApiError(data.code, data.message, data.errors);
+      }
+      throw error;
+    }
   }
 
   async postMessage(

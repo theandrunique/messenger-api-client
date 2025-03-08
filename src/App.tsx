@@ -7,6 +7,7 @@ import useAuthStore from "./store/useAuthStore";
 import { useEffect } from "react";
 import FullScreenLoading from "./components/FullScreenLoading";
 import Settings from "./pages/Settings";
+import { ToastContainer } from 'react-toastify';
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <ToastContainer/>
       <Routes>
         <Route
           path="/"
