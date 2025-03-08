@@ -80,7 +80,7 @@ const MessagesList = ({
         );
       })}
     </>
-  )
+  );
 };
 
 const ChannelContainerHeader = ({ channel }: { channel: ChannelSchema }) => {
@@ -97,13 +97,28 @@ const ChannelContainerHeader = ({ channel }: { channel: ChannelSchema }) => {
     }
   };
 
-  return (
-    <div className="border-b border-gray-700 p-4">
-      <h2 className="text-xl font-bold text-white">
-        {channel.title || getPrivateChannelName()}
-      </h2>
-    </div>
-  );
+  if (channel.type === ChannelType.PRIVATE) {
+    return (
+      <div className="border-b border-gray-700 p-4">
+        <h2 className="text-xl font-bold text-white">
+          {getPrivateChannelName()}
+        </h2>
+      </div>
+    );
+  } else if (channel.type === ChannelType.GROUP) {
+    return (
+      <div className="border-b border-gray-700 px-4 py-2 flex flex-col">
+        <h2 className="text-xl font-bold text-white">
+          {channel.title}
+        </h2>
+        <h5 className="text-sm text-gray-400">
+          {`${channel.members.length} members`}
+        </h5>
+      </div>
+    );
+  } else {
+    throw new Error(`Unknown channel type ${channel.type}`);
+  }
 };
 
 const ChannelContainer = () => {
@@ -188,7 +203,10 @@ const ChannelContainer = () => {
         ref={messagesContainerRef}
         onScroll={handleMessagesScroll}
       >
-        <MessagesList messages={currentMessages} channelType={selectedChannel.type} />
+        <MessagesList
+          messages={currentMessages}
+          channelType={selectedChannel.type}
+        />
       </div>
       <MessageInput channelId={selectedChannel.id} />
     </div>
