@@ -5,11 +5,11 @@ import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 import ErrorMessage from "../components/ui/ErrorMessage";
 import LinkButton from "../components/ui/LinkButton";
-import Card from "../components/Card";
 import { useNavigate } from "react-router-dom";
 import FullScreenImage from "../components/FullScreenImage";
 import useAuthStore from "../store/useAuthStore";
 import { ApiError } from "../schemas/common.schema";
+import SimpleCard from "../components/SimpleCard";
 
 const schema = zod.object({
   login: zod.string().min(1, "Login is required"),
@@ -51,9 +51,9 @@ function SignInPage() {
 
   return (
     <FullScreenImage>
-      <div className="min-h-screen flex justify-center items-center">
-        <Card className="w-[30rem]">
-          <Card.Title>Sign In</Card.Title>
+      <div className="min-h-screen flex justify-center items-center p-4">
+        <SimpleCard className="w-full max-w-md p-16">
+          <div className="text-[#efeff1] text-3xl font-bold text-center mb-5">Sign In</div>
           <form
             className="flex flex-col gap-2"
             onSubmit={handleSubmit(onSubmit)}
@@ -71,11 +71,11 @@ function SignInPage() {
             </Button>
             <ErrorMessage message={errors.root?.message} />
           </form>
-          <div className="text-center text-slate-300">
+          <div className="text-center text-[#efeff1]">
             Don't have an account?
             <LinkButton to={"/sign-up"}>sign up</LinkButton>
           </div>
-        </Card>
+        </SimpleCard>
       </div>
     </FullScreenImage>
   );

@@ -6,10 +6,10 @@ import Input from "../components/ui/Input";
 import ErrorMessage from "../components/ui/ErrorMessage";
 import Button from "../components/ui/Button";
 import LinkButton from "../components/ui/LinkButton";
-import Card from "../components/Card";
 import FullScreenImage from "../components/FullScreenImage";
 import api from "../api/api";
 import { ApiError } from "../schemas/common.schema";
+import SimpleCard from "../components/SimpleCard";
 
 const schema = zod.object({
   username: zod.string(),
@@ -58,8 +58,10 @@ export default function SignUpPage() {
   return (
     <FullScreenImage>
       <div className="min-h-screen flex justify-center items-center">
-        <Card className="w-[30rem]">
-          <Card.Title>Sign Up</Card.Title>
+        <SimpleCard className="w-[30rem] p-16 pt-12">
+          <div className="text-[#efeff1] text-3xl font-bold text-center mb-5">
+            Sign Up
+          </div>
           <form
             className="flex flex-col gap-2"
             onSubmit={handleSubmit(onSubmit)}
@@ -87,11 +89,11 @@ export default function SignUpPage() {
             <Button disabled={isSubmitting}>Sign Up</Button>
             <ErrorMessage message={errors.root?.message} />
           </form>
-          <div className="text-center text-slate-300">
+          <div className="text-center text-[#efeff1]">
             Already have an account?
             <LinkButton to={"/sign-in"}>sign in</LinkButton>
           </div>
-        </Card>
+        </SimpleCard>
       </div>
     </FullScreenImage>
   );

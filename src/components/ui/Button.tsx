@@ -2,11 +2,12 @@ import { cva, VariantProps } from "class-variance-authority";
 import { ButtonHTMLAttributes, forwardRef } from "react";
 import cn from "../../utils/cn";
 
-const buttonVariants = cva("px-4 py-2 rounded text-white font-bold shadow", {
+const buttonVariants = cva("", {
   variants: {
     variant: {
-      primary: "bg-blue-500 hover:bg-blue-600 ",
-      secondary: "bg-gray-500 hover:bg-gray-600",
+      primary: "bg-[#9147ff] hover:bg-[#772ce8]",
+      secondary: "bg-[#2f2f35] hover:bg-[#35353b]",
+      inactive: "bg-[#232328]",
     },
   },
   defaultVariants: {
@@ -22,7 +23,19 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ variant, children, className, ...props }, ref) => {
     return (
       <button
-        className={cn(buttonVariants({ variant }), className)}
+        className={cn(`
+          px-2
+          py-1
+          text-sm
+          text-[#efeff1]
+          rounded-[4px]
+          font-semibold
+          disabled:opacity-50
+          disabled:bg-[#2f2f36]
+          disabled:cursor-not-allowed`,
+          buttonVariants({ variant }),
+          className
+        )}
         {...props}
         ref={ref}
       >

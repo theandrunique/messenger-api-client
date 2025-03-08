@@ -1,12 +1,12 @@
-import { forwardRef, InputHTMLAttributes } from "react";
+import { forwardRef, TextareaHTMLAttributes } from "react";
 import cn from "../../utils/cn";
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {}
+interface TextAreaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {}
 
-const Input = forwardRef<HTMLInputElement, InputProps>(
+const Textarea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
   ({ className, ...props }, ref) => {
     return (
-      <input
+      <textarea
         className={cn(
           `
           p-1
@@ -24,7 +24,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           disabled:opacity-50
           disabled:cursor-not-allowed
           disabled:bg-[#28282c]
-          `,
+      `,
           className
         )}
         {...props}
@@ -34,4 +34,4 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
   }
 );
 
-export default Input;
+export default Textarea;
