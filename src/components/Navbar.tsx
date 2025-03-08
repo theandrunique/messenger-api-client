@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import Avatar from "./Avatar";
 import useAuthStore from "../store/useAuthStore";
+import Input from "./ui/Input";
 
 const Icon = () => {
   return (
@@ -26,10 +27,10 @@ const Icon = () => {
 const SearchBar = () => {
   return (
     <div className="mx-4 my-1">
-      <input
+      <Input
         type="text"
         placeholder="Search..."
-        className="w-full border font-semibold border-gray-500 bg-[#18181b] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 p-1.5"
+        className="w-full font-semibold rounded-lg p-1.5"
       />
     </div>
   );

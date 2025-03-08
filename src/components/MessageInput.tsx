@@ -1,7 +1,9 @@
 import { useState } from "react";
 import api from "../api/api";
-import { CircleFadingPlus } from "lucide-react";
+import { SendHorizontal, Paperclip } from "lucide-react";
 import FileCard, { FileInfo } from "./FileCard";
+import Input from "./ui/Input";
+import Button from "./ui/Button";
 
 interface MessageInputProps {
   channelId: string;
@@ -99,6 +101,13 @@ const MessageInput = ({ channelId }: MessageInputProps) => {
     setFileInfos((prev) => [...prev, ...uploadedFiles]);
   };
 
+  const handleEnterDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   return (
     <>
       <FilesCard
@@ -111,17 +120,18 @@ const MessageInput = ({ channelId }: MessageInputProps) => {
         onDrop={handleDrop}
         className="p-2 rounded-lg flex items-center gap-2"
       >
-        <button
+        <Button
           onClick={() => document.getElementById("fileInput")?.click()}
-          className="px-3 py-2 bg-blue-500 rounded-lg"
+          className="px-2 py-2 rounded-lg"
         >
-          <CircleFadingPlus />
-        </button>
+          <Paperclip />
+        </Button>
 
-        <input
-          className="w-full p-2 border rounded-lg text-black"
+        <Input
+          className="w-full p-2 rounded-lg"
           placeholder="Send a message"
           value={messageContent}
+          onKeyDown={handleEnterDown}
           onChange={(e) => setMessageContent(e.target.value)}
         />
 
@@ -133,12 +143,9 @@ const MessageInput = ({ channelId }: MessageInputProps) => {
           id="fileInput"
         />
 
-        <button
-          onClick={handleSendMessage}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg"
-        >
-          ➤
-        </button>
+        <Button onClick={handleSendMessage} className="px-4 py-2 rounded-lg">
+          <SendHorizontal />
+        </Button>
       </div>
     </>
   );

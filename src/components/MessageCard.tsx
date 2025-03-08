@@ -89,7 +89,7 @@ export const MessageCard = forwardRef<HTMLDivElement, MessageProps>(
           <div
             className={`relative p-3 rounded-2xl break-words ${
               isOwnMessage
-                ? "bg-blue-600 text-white rounded-br-sm"
+                ? "bg-[#9147ff] text-white rounded-br-sm"
                 : "bg-gray-700 text-white rounded-bl-sm"
             }`}
           >
