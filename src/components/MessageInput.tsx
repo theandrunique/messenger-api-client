@@ -120,7 +120,7 @@ const MessageInput = ({ channelId }: MessageInputProps) => {
 
         <input
           className="w-full p-2 border rounded-lg text-black"
-          placeholder="Type a message..."
+          placeholder="Send a message"
           value={messageContent}
           onChange={(e) => setMessageContent(e.target.value)}
         />
