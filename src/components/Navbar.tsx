@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import Avatar from "./Avatar";
+import useAuthStore from "../store/useAuthStore";
 
 const Icon = () => {
   return (
@@ -34,6 +36,10 @@ const SearchBar = () => {
 };
 
 const Navbar = () => {
+  const currentUser = useAuthStore((store) => store.currentUser);
+
+  if (currentUser === null) throw new Error("User is not logged in");
+
   return (
     <div className="block top-0 left-0 w-full bg-[#18181b] sticky border-b border-black">
       <div className="text-white flex justify-between items-center h-14">
@@ -51,10 +57,16 @@ const Navbar = () => {
           <SearchBar />
         </div>
 
-        <div className="flex items-center space-x-4 mx-2">
-          <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center">
-            <span className="text-sm">U</span>
-          </div>
+        <div className="flex items-center space-x-2 mx-2">
+          <button className="hover:bg-[#35353b] px-2 py-0.5 rounded-lg text-xl font-semibold">
+            <Link to="/settings">{currentUser.username}</Link>
+          </button>
+
+          <Avatar
+            avatar={currentUser.image}
+            username={currentUser.username}
+            className="w-8 h-8 rounded-full"
+          />
         </div>
       </div>
     </div>

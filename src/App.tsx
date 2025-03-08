@@ -6,6 +6,7 @@ import Messenger from "./pages/Messenger";
 import useAuthStore from "./store/useAuthStore";
 import { useEffect } from "react";
 import FullScreenLoading from "./components/FullScreenLoading";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -23,7 +24,17 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={currentUser ? <Navigate to="/messenger" /> : <Navigate to="/sign-in" />}
+          element={
+            currentUser ? (
+              <Navigate to="/messenger" />
+            ) : (
+              <Navigate to="/sign-in" />
+            )
+          }
+        />
+        <Route
+          path="/settings"
+          element={currentUser ? <Settings /> : <Navigate to="/sign-in" />}
         />
         <Route
           path="/messenger"
