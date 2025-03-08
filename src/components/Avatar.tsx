@@ -4,7 +4,7 @@ import cn from "../utils/cn";
 const getFirstLetterImage = (source: string, className?: string) => {
   return (
     <div className={cn("overflow-hidden rounded-full", className)}>
-      <div className="w-full h-full bg-gray-600 text-white flex items-center justify-center">
+      <div className="w-full h-full bg-gray-700 text-white flex items-center justify-center">
         {source[0].toUpperCase()}
       </div>
     </div>
