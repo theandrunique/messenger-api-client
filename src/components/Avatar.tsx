@@ -21,14 +21,17 @@ const getImageWithSrc = (src: string, className?: string) => {
 
 interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
   avatar: string | null;
+  userId: string;
   username: string;
 }
 
-const Avatar = ({ avatar, username, className }: AvatarProps) => {
+const Avatar = ({ avatar, userId, username, className }: AvatarProps) => {
+  const url = `https://cc81154d-55c6-4dfe-8f63-10fb9684572e.selstorage.ru/avatars/${userId}/${avatar}`;
+
   if (avatar === null) {
     return getFirstLetterImage(username, className);
   } else {
-    return getImageWithSrc(avatar, className);
+    return getImageWithSrc(url, className);
   }
 };
 

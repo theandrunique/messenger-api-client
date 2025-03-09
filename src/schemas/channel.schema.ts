@@ -18,7 +18,7 @@ export interface ChannelMemberSchema {
   userId: string;
   username: string;
   globalName: string;
-  image: string | null;
+  avatar: string | null;
 }
 
 export interface ChannelSchema {

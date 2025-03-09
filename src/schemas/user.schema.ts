@@ -11,7 +11,7 @@ export interface UserSchema {
   username: string;
   globalName: string;
   bio: string | null;
-  image: string | null;
+  avatar: string | null;
   timestamp: Date;
   terminateSessions: TerminateSessions;
   twoFactorAuthentication: boolean;

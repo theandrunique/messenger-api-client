@@ -1,20 +1,41 @@
 import { ReactNode } from "react";
 import useAuthStore from "../store/useAuthStore";
-import { ChannelMemberSchema, ChannelSchema, ChannelType } from "../schemas/channel.schema";
+import {
+  ChannelMemberSchema,
+  ChannelSchema,
+  ChannelType,
+} from "../schemas/channel.schema";
+import Avatar from "./Avatar";
 
 interface ChannelCardProps {
   channel: ChannelSchema;
   onClick: () => void;
 }
 
-const getChannelImage = (channel: ChannelSchema, member: any) => {
-  return channel.type === ChannelType.PRIVATE
-    ? member?.image
-      ? getImageWithSrc(member.image)
-      : getFirstLetterImage(member?.username || "S")
-    : channel.image
-      ? getImageWithSrc(channel.image)
-      : getFirstLetterImage(channel?.title || "G");
+const getChannelImage = (channel: ChannelSchema, member: ChannelMemberSchema | null) => {
+  if (channel.type === ChannelType.PRIVATE) {
+    if (member === null) {
+      return getFirstLetterImage("S");
+    }
+
+    if (member.avatar !== null) {
+      return (
+        <Avatar
+          userId={member.userId}
+          avatar={member.avatar}
+          username={member.username}
+        />
+      )
+    } else {
+      return getFirstLetterImage(member.username);
+    }
+  } else {
+    if (channel.image !== null) {
+      return getImageWithSrc(channel.image)
+    } else {
+      return getFirstLetterImage(channel?.title || "G");
+    }
+  }
 };
 
 const getImageWithSrc = (src: string) => {

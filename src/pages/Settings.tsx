@@ -40,7 +40,8 @@ const ProfilePictureForm = () => {
       <div className="flex">
         <div>
           <Avatar
-            avatar={currentUser.image}
+            userId={currentUser.id}
+            avatar={currentUser.avatar}
             username={currentUser.username}
             className="w-24 h-24 rounded-full bg-[#374151]"
           />
@@ -114,7 +115,9 @@ const ProfileSettingsForm = () => {
         <SimpleCard.Divider />
 
         <div className="flex justify-end px-5 py-3">
-          <Button disabled={isSubmitting || !isValid || true}>Save Changes</Button>
+          <Button disabled={isSubmitting || !isValid || true}>
+            Save Changes
+          </Button>
         </div>
       </form>
     </SimpleCard>

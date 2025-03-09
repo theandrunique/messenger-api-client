@@ -64,7 +64,8 @@ const Navbar = () => {
           </button>
 
           <Avatar
-            avatar={currentUser.image}
+            userId={currentUser.id}
+            avatar={currentUser.avatar}
             username={currentUser.username}
             className="w-8 h-8 rounded-full"
           />

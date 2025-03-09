@@ -57,15 +57,14 @@ export const MessageCard = forwardRef<HTMLDivElement, MessageProps>(
         ref={ref}
         className={`flex items-end ${
           isOwnMessage ? "justify-end" : "justify-start"
-        } gap-2 pb-1 group ${
-          showAvatar ? 'mb-2' : ''
-        }`}
+        } gap-2 pb-1 group ${showAvatar ? "mb-2" : ""}`}
       >
         {isGroup && !isOwnMessage && (
           <div className="w-8 h-8 overflow-hidden">
             {showAvatar ? (
               <Avatar
-                avatar={message.author.image}
+                userId={message.author.id}
+                avatar={message.author.avatar}
                 username={message.author.username}
                 className="w-full h-full"
               />
