@@ -63,6 +63,7 @@ const EmailVerificationModal = ({
           transition: Slide,
         });
       }
+      throw err;
     } finally {
       setIsLoading(false);
     }
@@ -84,7 +85,11 @@ const EmailVerificationModal = ({
         />
 
         <div className="flex w-full justify-end">
-          <Button disabled={!code.trim() || isLoading} variant={"primary"} onClick={submitHandler}>
+          <Button
+            disabled={!code.trim() || isLoading}
+            variant={"primary"}
+            onClick={submitHandler}
+          >
             {isLoading ? "Verifying..." : "Submit"}
           </Button>
         </div>

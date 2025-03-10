@@ -18,7 +18,7 @@ const SmallHeader = ({ content }: { content: string }) => {
 
 const Settings = () => {
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen min-w-2xl">
       <Navbar />
 
       <div className="flex-1 overflow-y-auto p-8 bg-[#0e0e10]">

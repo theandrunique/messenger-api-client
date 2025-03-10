@@ -4,3 +4,7 @@ export interface TokenPairSchema {
   expiresIn: number;
   issuedAt: Date;
 }
+
+export interface MfaEnableResponseSchema {
+  otpAuthUrl: string;
+}

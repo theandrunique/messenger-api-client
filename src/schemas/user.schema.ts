@@ -14,7 +14,7 @@ export interface UserSchema {
   avatar: string | null;
   timestamp: Date;
   terminateSessions: TerminateSessions;
-  twoFactorAuthentication: boolean;
+  mfa: boolean;
   email: string;
   isEmailVerified: boolean;
 }

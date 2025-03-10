@@ -1,5 +1,8 @@
 import axios, { AxiosInstance } from "axios";
-import { TokenPairSchema } from "../schemas/auth.schema";
+import {
+  MfaEnableResponseSchema,
+  TokenPairSchema,
+} from "../schemas/auth.schema";
 import { ApiError } from "../schemas/common.schema";
 import { UserSchema } from "../schemas/user.schema";
 import { ChannelSchema } from "../schemas/channel.schema";
@@ -192,12 +195,12 @@ class ApiClient {
 
   async updateAvatar(file: File): Promise<void> {
     var formData = new FormData();
-    formData.append("file", file)
+    formData.append("file", file);
 
     await this.axiosInstance.put("/users/@me/avatar", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
-      }
+      },
     });
   }
 
@@ -208,6 +211,30 @@ class ApiClient {
   async verifyEmail(code: string): Promise<void> {
     try {
       await this.axiosInstance.post("/users/@me/email/verify", { code });
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        const { data } = error.response;
+        throw new ApiError(data.code, data.message, data.errors);
+      }
+      throw error;
+    }
+  }
+
+  async enableMfa(
+    password: string,
+    emailCode: string | null
+  ): Promise<MfaEnableResponseSchema> {
+    try {
+      const body: Record<string, string> = { password: password };
+      if (emailCode) {
+        body.emailCode = emailCode;
+      }
+
+      const response = await this.axiosInstance.post<MfaEnableResponseSchema>(
+        "/users/@me/mfa/totp/enable",
+        body
+      );
+      return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         const { data } = error.response;
