@@ -56,13 +56,17 @@ const Modal = ({
       onClick={handleOverlayClick}
       {...props}
     >
-      <div className="bg-[#1f1f23] rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-start px-3 pt-3">
-          <Button variant={"icon"} onClick={onClose}>
-            <ArrowLeft className="w-6 h-6" />
-          </Button>
+      <div className="w-screen h-screen overflow-y-auto">
+        <div className="flex min-h-full items-center justify-center p-4">
+          <div className="bg-[#1f1f23] rounded-lg max-w-md w-full">
+            <div className="flex justify-start px-3 pt-3">
+              <Button variant={"icon"} onClick={onClose}>
+                <ArrowLeft className="w-6 h-6" />
+              </Button>
+            </div>
+            <div className="p-4 pt-0">{children}</div>
+          </div>
         </div>
-        <div className="p-4 pt-0">{children}</div>
       </div>
     </div>,
     document.body
