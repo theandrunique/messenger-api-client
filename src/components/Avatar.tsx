@@ -26,7 +26,7 @@ interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const Avatar = ({ avatar, userId, username, className }: AvatarProps) => {
-  const url = `https://cc81154d-55c6-4dfe-8f63-10fb9684572e.selstorage.ru/avatars/${userId}/${avatar}`;
+  const url = `https://public-s3.theandru.ru/avatars/${userId}/${avatar}`;
 
   if (avatar === null) {
     return getFirstLetterImage(username, className);
