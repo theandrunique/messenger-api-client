@@ -31,7 +31,7 @@ const useFocusTrap = (ref: React.RefObject<HTMLElement>, open: boolean) => {
     document.addEventListener("keydown", handleTab);
     return () => document.removeEventListener("keydown", handleTab);
   }, [open, ref]);
-}
+};
 
 interface ModalProps extends HTMLAttributes<HTMLDivElement> {
   onClose: () => void;
@@ -90,13 +90,13 @@ const Modal = ({
     >
       <div className="w-screen h-screen overflow-y-auto">
         <div className="flex min-h-full items-center justify-center p-4">
-          <div className="bg-[#1f1f23] rounded-lg max-w-md w-full">
+          <div className="bg-[#18181b] rounded-lg">
             <div className="flex justify-start px-3 pt-3">
               <Button variant={"icon"} onClick={onClose}>
                 <ArrowLeft className="w-6 h-6" />
               </Button>
             </div>
-            <div className="p-4 pt-0">{children}</div>
+            <div>{children}</div>
           </div>
         </div>
       </div>
