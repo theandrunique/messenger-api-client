@@ -8,7 +8,7 @@ const buttonVariants = cva("", {
       primary: "bg-[#9147ff] hover:bg-[#772ce8]",
       secondary: "bg-[#2f2f35] hover:bg-[#35353b]",
       icon: "bg-transparent hover:bg-[#35353b]",
-      destructive: ""
+      destructive: "",
     },
   },
   defaultVariants: {
@@ -24,7 +24,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ variant, children, className, ...props }, ref) => {
     return (
       <button
-        className={cn(`
+        className={cn(
+          `
           px-2
           py-1
           text-sm
