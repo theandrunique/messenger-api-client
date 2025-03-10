@@ -24,6 +24,7 @@ const refreshSession = async (): Promise<TokenPairSchema | null> => {
 interface AuthStore {
   checkAuth: () => Promise<void>;
   signIn: (login: string, password: string) => Promise<void>;
+  updateUser: () => Promise<void>;
   isCheckingAuth: boolean;
   currentUser: UserSchema | null;
   accessToken: string | null;
@@ -60,6 +61,11 @@ const useAuthStore = create<AuthStore>((set, get) => ({
   signIn: async (login: string, password: string) => {
     await api.signIn(login, password);
     get().checkAuth();
+  },
+
+  updateUser: async () => {
+    const user = await api.getMe();
+    set({ currentUser: user });
   },
 }));
 

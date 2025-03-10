@@ -185,6 +185,21 @@ class ApiClient {
       transformRequest: [(data) => data],
     });
   }
+
+  async removeAvatar(): Promise<void> {
+    await this.axiosInstance.delete("/users/@me/avatar");
+  }
+
+  async updateAvatar(file: File): Promise<void> {
+    var formData = new FormData();
+    formData.append("file", file)
+
+    await this.axiosInstance.put("/users/@me/avatar", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      }
+    });
+  }
 }
 
 const api = new ApiClient();
