@@ -3,6 +3,7 @@ import Avatar from "./Avatar";
 import useAuthStore from "../store/useAuthStore";
 import Input from "./ui/Input";
 
+
 const Icon = () => {
   return (
     <div className="flex items-center">
@@ -42,7 +43,7 @@ const Navbar = () => {
   if (currentUser === null) throw new Error("User is not logged in");
 
   return (
-    <div className="block top-0 left-0 w-full bg-[#18181b] sticky border-b border-black">
+    <div className="sticky top-0 left-0 w-full bg-[#18181b] border-b border-black">
       <div className="text-white flex justify-between items-center h-14">
         <div className="flex items-center space-x-6 ml-2">
           <Icon />
