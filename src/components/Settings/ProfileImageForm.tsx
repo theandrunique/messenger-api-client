@@ -229,7 +229,7 @@ const ProfileImageForm = () => {
               </Button>
               {currentUser.avatar ? (
                 <Button
-                  variant={"icon"}
+                  variant={"secondary"}
                   onClick={() => setDeleteModalOpen(true)}
                 >
                   Clear Profile Picture
@@ -239,7 +239,7 @@ const ProfileImageForm = () => {
 
             <div className="text-[#efeff1] text-sm">
               Must be JPEG, PNG, WebP or GIF and cannot exceed 10MB.
-              <div className="opacity-50">Min recommended size is 512x512.</div>
+              <div className="opacity-60">Min recommended size is 512x512.</div>
             </div>
           </div>
         </div>

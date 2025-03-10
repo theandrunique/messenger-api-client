@@ -200,6 +200,22 @@ class ApiClient {
       }
     });
   }
+
+  async requestEmailVerificationCode(): Promise<void> {
+    await this.axiosInstance.post("/users/@me/email/request-verify-code");
+  }
+
+  async verifyEmail(code: string): Promise<void> {
+    try {
+      await this.axiosInstance.post("/users/@me/email/verify", { code });
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        const { data } = error.response;
+        throw new ApiError(data.code, data.message, data.errors);
+      }
+      throw error;
+    }
+  }
 }
 
 const api = new ApiClient();
