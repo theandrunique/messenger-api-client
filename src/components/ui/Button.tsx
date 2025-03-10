@@ -9,6 +9,7 @@ const buttonVariants = cva("", {
       secondary: "bg-[#2f2f35] hover:bg-[#35353b]",
       icon: "bg-transparent hover:bg-[#35353b]",
       destructive: "",
+      link: "hover:underline",
     },
   },
   defaultVariants: {
