@@ -17,7 +17,7 @@ interface TwoFactorAuthModalProps {
   onSubmit?: (totp: string) => Promise<void>;
 }
 
-const TwoFactorAuthModal = ({ onSubmit }: TwoFactorAuthModalProps) => {
+const TwoFactorAuthModal = ({}: TwoFactorAuthModalProps) => {
   const {
     register,
     handleSubmit,

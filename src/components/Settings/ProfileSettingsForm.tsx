@@ -35,7 +35,9 @@ const ProfileSettingsForm = () => {
     },
   });
 
-  const onSubmit: SubmitHandler<ProfileSettingsSchema> = async (data) => {};
+  const onSubmit: SubmitHandler<ProfileSettingsSchema> = async (data) => {
+    console.log(data);
+  };
 
   return (
     <SimpleCard className="text-[#efeff1] max-w-5xl">
