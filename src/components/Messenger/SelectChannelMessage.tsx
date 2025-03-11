@@ -4,21 +4,19 @@ const SelectChannelMessage = () => {
   return (
     <div
       className={`
-      text-white
+      text-[#efeff1]
       flex-1
       flex
       flex-col
       h-full
-      bg-[#18181b]
-      border-l
-      border-gray-700
+      bg-[#0e0e10]
       items-center
       justify-center
     `}
     >
       <div className="flex flex-col items-center">
         <MessageSquare className="w-16 h-16" />
-        <div className="">Select a channel to start chatting</div>
+        <div>Select a channel to start chatting</div>
       </div>
     </div>
   );

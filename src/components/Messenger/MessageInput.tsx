@@ -173,7 +173,7 @@ const MessageInput = ({ channelId }: MessageInputProps) => {
   };
 
   return (
-    <>
+    <div className="border-t border-[#35353b]">
       <FilesCard
         files={fileInfos}
         onRemove={(fileInfo) => {
@@ -211,7 +211,7 @@ const MessageInput = ({ channelId }: MessageInputProps) => {
           <SendHorizontal />
         </Button>
       </div>
-    </>
+    </div>
   );
 };
 

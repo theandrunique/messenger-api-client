@@ -60,9 +60,12 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center space-x-2 mx-2">
-          <button className="hover:bg-[#35353b] px-2 py-0.5 rounded-lg text-xl font-semibold">
-            <Link to="/settings">{currentUser.username}</Link>
-          </button>
+          <Link
+            to="/settings"
+            className="hover:text-purple-400 text-xl font-semibold"
+          >
+            {currentUser.username}
+          </Link>
 
           <Avatar
             userId={currentUser.id}

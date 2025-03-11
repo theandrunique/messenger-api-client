@@ -99,7 +99,7 @@ const ChannelContainerHeader = ({ channel }: { channel: ChannelSchema }) => {
 
   if (channel.type === ChannelType.PRIVATE) {
     return (
-      <div className="border-b border-gray-700 p-4">
+      <div className="border-b border-[#35353b] p-4">
         <h2 className="text-xl font-bold text-white">
           {getPrivateChannelName()}
         </h2>
@@ -107,7 +107,7 @@ const ChannelContainerHeader = ({ channel }: { channel: ChannelSchema }) => {
     );
   } else if (channel.type === ChannelType.GROUP) {
     return (
-      <div className="border-b border-gray-700 px-4 py-2 flex flex-col">
+      <div className="border-b border-[#35353b] px-4 py-2 flex flex-col">
         <h2 className="text-xl font-bold text-white">{channel.title}</h2>
         <h5 className="text-sm text-gray-400">
           {`${channel.members.length} members`}
@@ -193,11 +193,11 @@ const ChannelContainer = () => {
   if (isMessagesLoading) return <div>Loading messages...</div>;
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#18181b] border-l border-gray-700 overflow-hidden">
+    <div className="flex-1 flex flex-col h-full bg-[#18181b] overflow-hidden">
       <ChannelContainerHeader channel={selectedChannel} />
 
       <div
-        className="flex-1 overflow-y-auto p-4"
+        className="flex-1 overflow-y-auto p-4 bg-[#0e0e10]"
         ref={messagesContainerRef}
         onScroll={handleMessagesScroll}
       >
