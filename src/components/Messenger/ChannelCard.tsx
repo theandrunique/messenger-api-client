@@ -1,18 +1,21 @@
 import { ReactNode } from "react";
-import useAuthStore from "../store/useAuthStore";
+import useAuthStore from "../../store/useAuthStore";
 import {
   ChannelMemberSchema,
   ChannelSchema,
   ChannelType,
-} from "../schemas/channel.schema";
-import Avatar from "./Avatar";
+} from "../../schemas/channel.schema";
+import Avatar from "../Avatar";
 
 interface ChannelCardProps {
   channel: ChannelSchema;
   onClick: () => void;
 }
 
-const getChannelImage = (channel: ChannelSchema, member: ChannelMemberSchema | null) => {
+const getChannelImage = (
+  channel: ChannelSchema,
+  member: ChannelMemberSchema | null
+) => {
   if (channel.type === ChannelType.PRIVATE) {
     if (member === null) {
       return getFirstLetterImage("S");
@@ -25,13 +28,13 @@ const getChannelImage = (channel: ChannelSchema, member: ChannelMemberSchema | n
           avatar={member.avatar}
           username={member.username}
         />
-      )
+      );
     } else {
       return getFirstLetterImage(member.username);
     }
   } else {
     if (channel.image !== null) {
-      return getImageWithSrc(channel.image)
+      return getImageWithSrc(channel.image);
     } else {
       return getFirstLetterImage(channel?.title || "G");
     }

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import useChannelsStore from "../store/useChannelsStore";
-import FullScreenLoading from "./FullScreenLoading";
+import useChannelsStore from "../../store/useChannelsStore";
+import FullScreenLoading from "../FullScreenLoading";
 import ChannelCard from "./ChannelCard";
 
 const ChannelSidebar = () => {

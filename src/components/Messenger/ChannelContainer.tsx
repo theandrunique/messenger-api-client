@@ -1,15 +1,15 @@
 import { useEffect } from "react";
-import useChannelsStore from "../store/useChannelsStore";
-import useMessagesStore from "../store/useMessagesStore";
-import useScrollState from "../hooks/useScrollState";
+import useChannelsStore from "../../store/useChannelsStore";
+import useMessagesStore from "../../store/useMessagesStore";
+import useScrollState from "../../hooks/useScrollState";
 import MessageCard from "./MessageCard";
-import useAuthStore from "../store/useAuthStore";
+import useAuthStore from "../../store/useAuthStore";
 import MessageInput from "./MessageInput";
-import { ChannelSchema, ChannelType } from "../schemas/channel.schema";
+import { ChannelSchema, ChannelType } from "../../schemas/channel.schema";
 import SelectChannelMessage from "./SelectChannelMessage";
 import HorizontalDivider from "./HorizontalDivider";
 import React from "react";
-import { MessageSchema } from "../schemas/message.schema";
+import { MessageSchema } from "../../schemas/message.schema";
 
 const groupMessagesByAuthor = (
   messages: MessageSchema[]
@@ -108,9 +108,7 @@ const ChannelContainerHeader = ({ channel }: { channel: ChannelSchema }) => {
   } else if (channel.type === ChannelType.GROUP) {
     return (
       <div className="border-b border-gray-700 px-4 py-2 flex flex-col">
-        <h2 className="text-xl font-bold text-white">
-          {channel.title}
-        </h2>
+        <h2 className="text-xl font-bold text-white">{channel.title}</h2>
         <h5 className="text-sm text-gray-400">
           {`${channel.members.length} members`}
         </h5>

@@ -1,12 +1,12 @@
 import { useState } from "react";
-import api from "../api/api";
+import api from "../../api/api";
 import { SendHorizontal, Paperclip } from "lucide-react";
 import FileCard, { FileInfo } from "./FileCard";
-import Input from "./ui/Input";
-import Button from "./ui/Button";
-import { ApiError } from "../schemas/common.schema";
-import { CloudAttachmentResponseSchema } from "../schemas/message.schema";
-import notifications from "../utils/notifications";
+import Input from "../ui/Input";
+import Button from "../ui/Button";
+import { ApiError } from "../../schemas/common.schema";
+import { CloudAttachmentResponseSchema } from "../../schemas/message.schema";
+import notifications from "../../utils/notifications";
 
 interface MessageInputProps {
   channelId: string;
@@ -83,7 +83,9 @@ const MessageInput = ({ channelId }: MessageInputProps) => {
 
         failedFiles.forEach(([file, errors]) => {
           const errorMessage = errors.join("\n");
-          notifications.error(`File '${file.name}' was not uploaded. ${errorMessage}`);
+          notifications.error(
+            `File '${file.name}' was not uploaded. ${errorMessage}`
+          );
         });
 
         const validFiles = files.filter(
@@ -107,7 +109,9 @@ const MessageInput = ({ channelId }: MessageInputProps) => {
         try {
           await api.uploadFile(attachment.uploadUrl, file);
         } catch (err) {
-          notifications.error(`Error while uploading '${file.name}' file. ${err}`);
+          notifications.error(
+            `Error while uploading '${file.name}' file. ${err}`
+          );
         }
       })
     );

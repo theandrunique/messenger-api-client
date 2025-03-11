@@ -1,5 +1,5 @@
-import ChannelSidebar from "../components/ChannelSidebar";
-import ChannelContainer from "../components/ChannelContainer";
+import ChannelSidebar from "../components/Messenger/ChannelSidebar";
+import ChannelContainer from "../components/Messenger/ChannelContainer";
 import { useEffect } from "react";
 import useGateway from "../store/useGateway";
 import Navbar from "../components/Navbar";

@@ -1,5 +1,5 @@
 import { FileIcon, X } from "lucide-react";
-import { CloudAttachmentResponseSchema } from "../schemas/message.schema";
+import { CloudAttachmentResponseSchema } from "../../schemas/message.schema";
 
 export interface FileInfo {
   cloudAttachment: CloudAttachmentResponseSchema;
