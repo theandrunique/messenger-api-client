@@ -12,7 +12,7 @@ interface ChannelsStore {
   newMessage: (message: MessageSchema) => void;
 }
 
-const useChannelsStore = create<ChannelsStore>((set, get) => ({
+const useChannelsStore = create<ChannelsStore>((set) => ({
   channels: null,
   selectedChannel: null,
   isChannelsLoading: false,
@@ -35,7 +35,9 @@ const useChannelsStore = create<ChannelsStore>((set, get) => ({
 
   newMessage: (message: MessageSchema) => {
     set((state) => {
-      const channelIndex = state.channels?.findIndex((c) => c.id === message.channelId);
+      const channelIndex = state.channels?.findIndex(
+        (c) => c.id === message.channelId
+      );
 
       if (channelIndex === undefined || channelIndex === -1) {
         throw new Error("Channel was not found");
@@ -61,7 +63,7 @@ const useChannelsStore = create<ChannelsStore>((set, get) => ({
       });
 
       return { channels: updatedChannels };
-    })
+    });
   },
 }));
 

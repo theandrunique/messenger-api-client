@@ -1,4 +1,3 @@
-import { toast } from "react-toastify";
 import api from "../../api/api";
 import useAuthStore from "../../store/useAuthStore";
 import Avatar from "../Avatar";
@@ -7,6 +6,7 @@ import Button from "../ui/Button";
 import React, { useEffect, useRef, useState } from "react";
 import Modal from "../Modal";
 import Cropper, { Area } from "react-easy-crop";
+import notifications from "../../utils/notifications";
 
 interface CropImageModalProps {
   open: boolean;
@@ -63,7 +63,7 @@ const CropImageModal = ({
 
     canvas.toBlob(async (blob) => {
       if (!blob) {
-        toast.error("Failed to process image.");
+        notifications.error("Failed to process image.");
         return;
       }
 
@@ -76,7 +76,7 @@ const CropImageModal = ({
         onClose();
         onSubmit();
       } catch (err) {
-        toast.error("Failed to update profile picture.");
+        notifications.error("Failed to update profile picture.");
         console.error("Error updating avatar", err);
       }
     }, "image/jpeg");
@@ -171,7 +171,7 @@ const ProfileImageForm = () => {
       await api.removeAvatar();
       updateUser();
     } catch (err) {
-      toast.error("Failed to clear profile picture.");
+      notifications.error("Failed to clear profile picture.");
       console.error("Failed to clear profile picture", err);
     }
   };
@@ -183,12 +183,12 @@ const ProfileImageForm = () => {
 
     const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
     if (!allowedTypes.includes(file.type)) {
-      toast.error("Invalid file type");
+      notifications.error("Invalid file type");
       return;
     }
 
     if (file.size > 10 * 1024 * 1024) {
-      toast.error("File size exceeds 10MB");
+      notifications.error("File size exceeds 10MB");
       return;
     }
 

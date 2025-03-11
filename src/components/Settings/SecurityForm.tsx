@@ -3,11 +3,11 @@ import SimpleCard from "../SimpleCard";
 import Button from "../ui/Button";
 import Modal from "../Modal";
 import Input from "../ui/Input";
-import { Slide, toast } from "react-toastify";
 import api from "../../api/api";
 import useAuthStore from "../../store/useAuthStore";
 import { ApiError } from "../../schemas/common.schema";
 import { QRCodeSVG } from "qrcode.react";
+import notifications from "../../utils/notifications";
 
 interface EnableMfaModalFormProps {
   open: boolean;
@@ -44,30 +44,12 @@ const EnableMfaModalForm = ({
     } catch (err) {
       if (err instanceof ApiError) {
         if (err.code === "AUTH_INVALID_CREDENTIALS") {
-          toast.error("Invalid password", {
-            position: "top-center",
-            autoClose: 3000,
-            hideProgressBar: true,
-            theme: "dark",
-            transition: Slide,
-          });
+          notifications.error("Invalid password");
         } else if (err.code === "AUTH_EMAIL_CODE_REQUIRED") {
           setIsEmailCodeSend(true);
-          toast.info(`Code is sent to '${currentUser?.email}'.`, {
-            position: "top-center",
-            autoClose: 3000,
-            hideProgressBar: true,
-            theme: "dark",
-            transition: Slide,
-          });
+          notifications.info(`Code is sent to '${currentUser?.email}'.`);
         } else {
-          toast.error(err.message, {
-            position: "top-center",
-            autoClose: 3000,
-            hideProgressBar: true,
-            theme: "dark",
-            transition: Slide,
-          });
+          notifications.error(err.message);
         }
       }
       throw err;
@@ -85,13 +67,7 @@ const EnableMfaModalForm = ({
     } catch (err) {
       if (err instanceof ApiError) {
         if (err.code === "AUTH_INVALID_EMAIL_CODE") {
-          toast.error(err.message, {
-            position: "top-center",
-            autoClose: 3000,
-            hideProgressBar: true,
-            theme: "dark",
-            transition: Slide,
-          });
+          notifications.error(err.message);
         }
       }
       throw err;

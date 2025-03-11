@@ -4,9 +4,9 @@ import Modal from "../Modal";
 import SimpleCard from "../SimpleCard";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
-import { Slide, toast } from "react-toastify";
 import api from "../../api/api";
 import { ApiError } from "../../schemas/common.schema";
+import notifications from "../../utils/notifications";
 
 interface EmailVerificationModalProps {
   open: boolean;
@@ -24,13 +24,7 @@ const EmailVerificationModal = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const handleCodeResend = () => {
-    toast.info("Email is sent", {
-      position: "top-center",
-      autoClose: 3000,
-      hideProgressBar: true,
-      theme: "dark",
-      transition: Slide,
-    });
+    notifications.info("Email is sent");
     api.requestEmailVerificationCode();
   };
 
@@ -45,24 +39,13 @@ const EmailVerificationModal = ({
     setIsLoading(true);
     try {
       await api.verifyEmail(code);
-      toast.info("Email successfully verified", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: true,
-        theme: "dark",
-        transition: Slide,
-      });
+      notifications.success("Email successfully verified");
       onSubmit?.();
     } catch (err) {
       if (err instanceof ApiError) {
-        toast.error(err.message, {
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: true,
-          theme: "dark",
-          transition: Slide,
-        });
+        notifications.error(err.message);
       }
+      notifications.error("Something went wrong...");
       throw err;
     } finally {
       setIsLoading(false);

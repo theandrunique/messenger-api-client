@@ -4,19 +4,9 @@ import { SendHorizontal, Paperclip } from "lucide-react";
 import FileCard, { FileInfo } from "./FileCard";
 import Input from "./ui/Input";
 import Button from "./ui/Button";
-import { Slide, toast } from "react-toastify";
 import { ApiError } from "../schemas/common.schema";
-import { create } from "zustand";
 import { CloudAttachmentResponseSchema } from "../schemas/message.schema";
-
-const formatErrorMessage = (err: ApiError): string => {
-  if (err.errors) {
-    const errorMessages = Object.values(err.errors).flat();
-    return errorMessages.join(". ");
-  }
-
-  return err.message || "Unknown error has occurred while uploading file";
-};
+import notifications from "../utils/notifications";
 
 interface MessageInputProps {
   channelId: string;
@@ -38,19 +28,6 @@ const FilesCard = ({
       })}
     </div>
   );
-};
-
-const error = (message: string) => {
-  toast.error(message, {
-    position: "top-center",
-    closeButton: false,
-    autoClose: 3000,
-    theme: "dark",
-    transition: Slide,
-    style: {
-      fontSize: "14px",
-    },
-  });
 };
 
 const MessageInput = ({ channelId }: MessageInputProps) => {
@@ -106,7 +83,7 @@ const MessageInput = ({ channelId }: MessageInputProps) => {
 
         failedFiles.forEach(([file, errors]) => {
           const errorMessage = errors.join("\n");
-          error(`File '${file.name}' was not uploaded. ${errorMessage}`);
+          notifications.error(`File '${file.name}' was not uploaded. ${errorMessage}`);
         });
 
         const validFiles = files.filter(
@@ -130,7 +107,7 @@ const MessageInput = ({ channelId }: MessageInputProps) => {
         try {
           await api.uploadFile(attachment.uploadUrl, file);
         } catch (err) {
-          error(`Error while uploading '${file.name}' file. ${err}`);
+          notifications.error(`Error while uploading '${file.name}' file. ${err}`);
         }
       })
     );
