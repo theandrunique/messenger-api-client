@@ -5,7 +5,7 @@ import Modal from "../Modal";
 import Input from "../ui/Input";
 import api from "../../api/api";
 import useAuthStore from "../../store/useAuthStore";
-import { ApiError } from "../../schemas/common.schema";
+import { ApiError } from "../../schemas/common";
 import { QRCodeSVG } from "qrcode.react";
 import notifications from "../../utils/notifications";
 

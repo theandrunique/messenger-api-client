@@ -5,11 +5,11 @@ import useScrollState from "../../hooks/useScrollState";
 import MessageCard from "./MessageCard";
 import useAuthStore from "../../store/useAuthStore";
 import MessageInput from "./MessageInput";
-import { ChannelSchema, ChannelType } from "../../schemas/channel.schema";
+import { ChannelSchema, ChannelType } from "../../schemas/channel";
 import SelectChannelMessage from "./SelectChannelMessage";
 import HorizontalDivider from "./HorizontalDivider";
 import React from "react";
-import { MessageSchema } from "../../schemas/message.schema";
+import { MessageSchema } from "../../schemas/message";
 
 const groupMessagesByAuthor = (
   messages: MessageSchema[]

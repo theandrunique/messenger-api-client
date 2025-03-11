@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import api from "../api/api";
-import { ChannelSchema } from "../schemas/channel.schema";
-import { MessageSchema } from "../schemas/message.schema";
+import { ChannelSchema } from "../schemas/channel";
+import { MessageSchema } from "../schemas/message";
 
 interface ChannelsStore {
   channels: ChannelSchema[] | null;

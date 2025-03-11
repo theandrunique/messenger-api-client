@@ -5,7 +5,7 @@ import SimpleCard from "../SimpleCard";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
 import api from "../../api/api";
-import { ApiError } from "../../schemas/common.schema";
+import { ApiError } from "../../schemas/common";
 import notifications from "../../utils/notifications";
 
 interface EmailVerificationModalProps {

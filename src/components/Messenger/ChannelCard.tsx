@@ -4,7 +4,7 @@ import {
   ChannelMemberSchema,
   ChannelSchema,
   ChannelType,
-} from "../../schemas/channel.schema";
+} from "../../schemas/channel";
 import Avatar from "../Avatar";
 
 interface ChannelCardProps {

@@ -8,7 +8,7 @@ import Button from "../components/ui/Button";
 import LinkButton from "../components/ui/LinkButton";
 import FullScreenImage from "../components/FullScreenImage";
 import api from "../api/api";
-import { ApiError } from "../schemas/common.schema";
+import { ApiError } from "../schemas/common";
 import SimpleCard from "../components/SimpleCard";
 
 const schema = zod.object({

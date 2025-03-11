@@ -1,5 +1,3 @@
-import { ChannelType } from "./channel.schema";
-
 export interface AttachmentSchema {
   id: string;
   filename: string;

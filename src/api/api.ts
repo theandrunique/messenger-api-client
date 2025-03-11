@@ -1,17 +1,14 @@
 import axios, { AxiosInstance } from "axios";
-import {
-  MfaEnableResponseSchema,
-  TokenPairSchema,
-} from "../schemas/auth.schema";
-import { ApiError } from "../schemas/common.schema";
-import { UserSchema } from "../schemas/user.schema";
-import { ChannelSchema } from "../schemas/channel.schema";
+import { MfaEnableResponseSchema, TokenPairSchema } from "../schemas/auth";
+import { ApiError } from "../schemas/common";
+import { UserSchema } from "../schemas/user";
+import { ChannelSchema } from "../schemas/channel";
 import {
   CloudAttachmentCreateSchema as CloudAttachmentRequestSchema,
   CloudAttachmentResponseSchema,
   MessageAttachmentUploadSchema,
   MessageSchema,
-} from "../schemas/message.schema";
+} from "../schemas/message";
 
 const apiUrl = "http://localhost:8000";
 

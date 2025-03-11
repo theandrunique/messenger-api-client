@@ -1,5 +1,5 @@
-import { ChannelSchema, ChannelType } from "./channel.schema";
-import { MessageSchema } from "./message.schema";
+import { ChannelSchema, ChannelType } from "./channel";
+import { MessageSchema } from "./message";
 
 interface MessageGatewayEventExtra {
   channelType: ChannelType;

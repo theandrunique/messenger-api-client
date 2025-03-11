@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import useAuthStore from "../../store/useAuthStore";
-import { ChannelType } from "../../schemas/channel.schema";
-import { AttachmentSchema, MessageSchema } from "../../schemas/message.schema";
+import { ChannelType } from "../../schemas/channel";
+import { AttachmentSchema, MessageSchema } from "../../schemas/message";
 import Avatar from "../Avatar";
 
 const AttachmentPreview = ({

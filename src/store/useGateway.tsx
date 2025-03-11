@@ -4,7 +4,7 @@ import useAuthStore from "./useAuthStore";
 import {
   ChannelCreateEventSchema,
   MessageCreateEventSchema,
-} from "../schemas/gateway.schema";
+} from "../schemas/gateway";
 import useMessagesStore from "./useMessagesStore";
 import useChannelsStore from "./useChannelsStore";
 

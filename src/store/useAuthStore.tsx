@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import api from "../api/api";
-import { TokenPairSchema } from "../schemas/auth.schema";
-import { UserSchema } from "../schemas/user.schema";
+import { TokenPairSchema } from "../schemas/auth";
+import { UserSchema } from "../schemas/user";
 
 const refreshSession = async (): Promise<TokenPairSchema | null> => {
   const savedTokenPair = await api.getCurrentSavedTokenPair();

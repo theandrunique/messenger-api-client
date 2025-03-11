@@ -8,7 +8,7 @@ import LinkButton from "../components/ui/LinkButton";
 import { useNavigate } from "react-router-dom";
 import FullScreenImage from "../components/FullScreenImage";
 import useAuthStore from "../store/useAuthStore";
-import { ApiError } from "../schemas/common.schema";
+import { ApiError } from "../schemas/common";
 import SimpleCard from "../components/SimpleCard";
 
 const schema = zod.object({
@@ -53,7 +53,9 @@ function SignInPage() {
     <FullScreenImage>
       <div className="min-h-screen flex justify-center items-center p-4">
         <SimpleCard className="w-full max-w-md p-16">
-          <div className="text-[#efeff1] text-3xl font-bold text-center mb-5">Sign In</div>
+          <div className="text-[#efeff1] text-3xl font-bold text-center mb-5">
+            Sign In
+          </div>
           <form
             className="flex flex-col gap-2"
             onSubmit={handleSubmit(onSubmit)}
