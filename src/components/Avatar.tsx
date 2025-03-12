@@ -1,5 +1,6 @@
 import { HTMLAttributes } from "react";
 import cn from "../utils/cn";
+import env from "../env";
 
 const getFirstLetterImage = (source: string, className?: string) => {
   return (
@@ -26,7 +27,7 @@ interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const Avatar = ({ avatar, userId, username, className }: AvatarProps) => {
-  const url = `https://public-s3.theandru.ru/avatars/${userId}/${avatar}`;
+  const url = `${env.IMAGE_ENDPOINT}/avatars/${userId}/${avatar}`;
 
   if (avatar === null) {
     return getFirstLetterImage(username, className);

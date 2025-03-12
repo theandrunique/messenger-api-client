@@ -7,8 +7,7 @@ import {
 } from "../schemas/gateway";
 import useMessagesStore from "./useMessagesStore";
 import useChannelsStore from "./useChannelsStore";
-
-const BASE_URL = "localhost:3000";
+import env from "../env";
 
 interface GatewayStore {
   connect: () => void;
@@ -27,7 +26,7 @@ const useGateway = create<GatewayStore>((set, get) => ({
 
     const token = useAuthStore.getState().accessToken;
 
-    const socket = io(BASE_URL, {
+    const socket = io(env.GATEWAY_ENDPOINT, {
       query: {
         accessToken: token,
       },

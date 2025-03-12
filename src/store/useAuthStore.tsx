@@ -49,7 +49,7 @@ const useAuthStore = create<AuthStore>((set, get) => ({
 
       const currentUser = await api.getMe();
       set({ currentUser: currentUser });
-      setTimeout(() => get().checkAuth(), (tokenPair.expiresIn - 300) * 1000);
+      setTimeout(() => get().checkAuth(), tokenPair.expiresIn * 1000);
     } catch (err) {
       console.error("Error checking auth: ", err);
       set({ currentUser: null });

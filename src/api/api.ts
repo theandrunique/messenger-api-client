@@ -9,8 +9,7 @@ import {
   MessageAttachmentUploadSchema,
   MessageSchema,
 } from "../schemas/message";
-
-const apiUrl = "http://localhost:8000";
+import env from "../env";
 
 class ApiClient {
   axiosInstance: AxiosInstance;
@@ -18,7 +17,7 @@ class ApiClient {
 
   constructor() {
     this.axiosInstance = axios.create({
-      baseURL: apiUrl,
+      baseURL: env.API_ENDPOINT,
       withCredentials: true,
     });
     this.axiosInstance.interceptors.request.use(
