@@ -1,17 +1,14 @@
-import { useEffect } from "react";
 import useChannelsStore from "../../store/useChannelsStore";
 import FullScreenLoading from "../FullScreenLoading";
 import ChannelCard from "./ChannelCard";
+import useUserChannels from "../../api/hooks/useUserChannels";
 
 const ChannelSidebar = () => {
-  const { loadChannels, isChannelsLoading, channels, selectChannel } =
-    useChannelsStore();
+  const { isLoading, data: channels } = useUserChannels();
 
-  useEffect(() => {
-    loadChannels();
-  }, [loadChannels]);
+  const { selectChannel } = useChannelsStore();
 
-  if (isChannelsLoading) return <FullScreenLoading />;
+  if (isLoading) return <FullScreenLoading />;
 
   return (
     <div className="h-full w-64 bg-[#1f1f23] flex flex-col overflow-y-auto">
