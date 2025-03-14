@@ -1,5 +1,4 @@
 import { useState } from "react";
-import api from "../../api/api";
 import { SendHorizontal, Paperclip } from "lucide-react";
 import FileCard, { FileInfo } from "./FileCard";
 import Input from "../ui/Input";
@@ -7,6 +6,7 @@ import Button from "../ui/Button";
 import { ApiError } from "../../schemas/common";
 import { CloudAttachmentResponseSchema } from "../../schemas/message";
 import notifications from "../../utils/notifications";
+import { createAttachments, createMessage, uploadFile } from "../../api/api";
 
 interface MessageInputProps {
   channelId: string;
@@ -56,7 +56,7 @@ const MessageInput = ({ channelId }: MessageInputProps) => {
     return failedFiles;
   };
 
-  const createAttachments = async (
+  const handleCreateAttachments = async (
     files: File[]
   ): Promise<[CloudAttachmentResponseSchema, File][]> => {
     const attachmentsToUploadArray = files.map((file, index) => ({
@@ -66,7 +66,7 @@ const MessageInput = ({ channelId }: MessageInputProps) => {
     }));
 
     try {
-      const response = await api.createAttachments(
+      const response = await createAttachments(
         channelId,
         attachmentsToUploadArray
       );
@@ -93,7 +93,7 @@ const MessageInput = ({ channelId }: MessageInputProps) => {
         );
 
         if (validFiles.length > 0) {
-          return createAttachments(validFiles);
+          return handleCreateAttachments(validFiles);
         }
         return [];
       }
@@ -102,12 +102,12 @@ const MessageInput = ({ channelId }: MessageInputProps) => {
   };
 
   const uploadFiles = async (files: File[]): Promise<FileInfo[]> => {
-    const response = await createAttachments(files);
+    const response = await handleCreateAttachments(files);
 
     await Promise.all(
       response.map(async ([attachment, file]) => {
         try {
-          await api.uploadFile(attachment.uploadUrl, file);
+          await uploadFile(attachment.uploadUrl, file);
         } catch (err) {
           notifications.error(
             `Error while uploading '${file.name}' file. ${err}`
@@ -138,7 +138,7 @@ const MessageInput = ({ channelId }: MessageInputProps) => {
     if (!messageContent.trim() && fileInfos.length === 0) return;
 
     try {
-      await api.postMessage(
+      await createMessage(
         channelId,
         messageContent,
         fileInfos.map((f) => ({

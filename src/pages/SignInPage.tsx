@@ -7,9 +7,11 @@ import ErrorMessage from "../components/ui/ErrorMessage";
 import LinkButton from "../components/ui/LinkButton";
 import { useNavigate } from "react-router-dom";
 import FullScreenImage from "../components/FullScreenImage";
-import useAuthStore from "../store/useAuthStore";
 import { ApiError } from "../schemas/common";
 import SimpleCard from "../components/SimpleCard";
+import FullScreenLoading from "../components/FullScreenLoading";
+import { useEffect } from "react";
+import { useAuth } from "../components/AuthProvider";
 
 const schema = zod.object({
   login: zod.string().min(1, "Login is required"),
@@ -20,7 +22,7 @@ type SignInSchema = zod.infer<typeof schema>;
 
 function SignInPage() {
   const navigate = useNavigate();
-  const { signIn } = useAuthStore();
+  const { isLoading, isAuthenticated, handleSignIn } = useAuth();
 
   const {
     setError,
@@ -31,7 +33,7 @@ function SignInPage() {
 
   const onSubmit: SubmitHandler<SignInSchema> = async (data) => {
     try {
-      await signIn(data.login, data.password);
+      await handleSignIn(data.login, data.password);
       navigate("/", { replace: true });
     } catch (error) {
       if (error instanceof ApiError) {
@@ -48,6 +50,14 @@ function SignInPage() {
       }
     }
   };
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) navigate("/", { replace: true })
+  }, [isLoading, isAuthenticated]);
+
+  if (isLoading) {
+    return <FullScreenLoading />
+  }
 
   return (
     <FullScreenImage>

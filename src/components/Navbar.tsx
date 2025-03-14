@@ -1,8 +1,7 @@
 import { Link } from "react-router-dom";
 import Avatar from "./Avatar";
-import useAuthStore from "../store/useAuthStore";
 import Input from "./ui/Input";
-
+import useCurrentUser from "../api/hooks/useCurrentUser";
 
 const Icon = () => {
   return (
@@ -38,9 +37,9 @@ const SearchBar = () => {
 };
 
 const Navbar = () => {
-  const currentUser = useAuthStore((store) => store.currentUser);
+  const { currentUser } = useCurrentUser();
 
-  if (currentUser === null) throw new Error("User is not logged in");
+  if (!currentUser) return null;
 
   return (
     <div className="sticky top-0 left-0 w-full bg-[#18181b] border-b border-black">

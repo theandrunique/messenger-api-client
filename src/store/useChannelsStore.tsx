@@ -1,7 +1,7 @@
 import { create } from "zustand";
-import api from "../api/api";
 import { ChannelSchema } from "../schemas/channel";
 import { MessageSchema } from "../schemas/message";
+import { getChannels } from "../api/api";
 
 interface ChannelsStore {
   channels: ChannelSchema[] | null;
@@ -20,7 +20,7 @@ const useChannelsStore = create<ChannelsStore>((set) => ({
   loadChannels: async () => {
     set({ isChannelsLoading: true });
     try {
-      const channels = await api.getUserChannels();
+      const channels = await getChannels();
       set({ channels: channels });
     } catch (err) {
       console.error("Error fetching channels:", err);
@@ -68,3 +68,4 @@ const useChannelsStore = create<ChannelsStore>((set) => ({
 }));
 
 export default useChannelsStore;
+

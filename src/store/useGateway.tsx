@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { io, Socket } from "socket.io-client";
-import useAuthStore from "./useAuthStore";
 import {
   ChannelCreateEventSchema,
   MessageCreateEventSchema,
@@ -8,6 +7,7 @@ import {
 import useMessagesStore from "./useMessagesStore";
 import useChannelsStore from "./useChannelsStore";
 import env from "../env";
+import { getTokens } from "../api/api";
 
 interface GatewayStore {
   connect: () => void;
@@ -24,11 +24,11 @@ const useGateway = create<GatewayStore>((set, get) => ({
       currentSocket.disconnect();
     }
 
-    const token = useAuthStore.getState().accessToken;
+    const token = getTokens();
 
     const socket = io(env.GATEWAY_ENDPOINT, {
       query: {
-        accessToken: token,
+        accessToken: token?.accessToken,
       },
     });
 

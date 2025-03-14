@@ -1,11 +1,11 @@
 import { ReactNode } from "react";
-import useAuthStore from "../../store/useAuthStore";
 import {
   ChannelMemberSchema,
   ChannelSchema,
   ChannelType,
 } from "../../schemas/channel";
 import Avatar from "../Avatar";
+import useCurrentUser from "../../api/hooks/useCurrentUser";
 
 interface ChannelCardProps {
   channel: ChannelSchema;
@@ -73,7 +73,7 @@ const getChannelName = (
 };
 
 const ChannelCard = ({ channel, onClick }: ChannelCardProps): ReactNode => {
-  const currentUser = useAuthStore((store) => store.currentUser);
+  const { currentUser } = useCurrentUser();
 
   const isPrivateChannel = channel.type === ChannelType.PRIVATE;
 

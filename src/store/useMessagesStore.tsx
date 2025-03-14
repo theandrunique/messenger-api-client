@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import api from "../api/api";
 import { MessageSchema } from "../schemas/message";
+import { getMessages } from "../api/api";
 
 interface MessagesStore {
   currentMessages: MessageSchema[];
@@ -24,7 +24,7 @@ const useMessagesStore = create<MessagesStore>((set, get) => ({
   loadMessages: async (channelId: string) => {
     set({ isMessagesLoading: true, currentChannelId: channelId });
     try {
-      const messages = await api.getMessages(channelId, null, limit);
+      const messages = await getMessages(channelId, null, limit.toString());
       messages.reverse();
 
       set({ hasMore: !(messages.length < limit) });
@@ -50,10 +50,10 @@ const useMessagesStore = create<MessagesStore>((set, get) => ({
     const lastMessageId = currentMessages[0].id;
 
     try {
-      const moreMessages = await api.getMessages(
+      const moreMessages = await getMessages(
         currentChannelId,
         lastMessageId,
-        limit
+        limit.toString()
       );
       moreMessages.reverse();
 

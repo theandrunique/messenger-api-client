@@ -7,9 +7,9 @@ import ErrorMessage from "../components/ui/ErrorMessage";
 import Button from "../components/ui/Button";
 import LinkButton from "../components/ui/LinkButton";
 import FullScreenImage from "../components/FullScreenImage";
-import api from "../api/api";
 import { ApiError } from "../schemas/common";
 import SimpleCard from "../components/SimpleCard";
+import { singUp } from "../api/api";
 
 const schema = zod.object({
   username: zod.string(),
@@ -32,7 +32,7 @@ export default function SignUpPage() {
 
   const onSubmit: SubmitHandler<SignUpSchema> = async (data) => {
     try {
-      await api.singUp(
+      await singUp(
         data.username,
         data.email,
         data.globalName,

@@ -5,8 +5,8 @@ import ErrorMessage from "../ui/ErrorMessage";
 import Input from "../ui/Input";
 import Textarea from "../ui/Textarea";
 import zod from "zod";
-import useAuthStore from "../../store/useAuthStore";
 import { zodResolver } from "@hookform/resolvers/zod";
+import useCurrentUser from "../../api/hooks/useCurrentUser";
 
 const profileSettingsSchema = zod.object({
   username: zod.string(),
@@ -17,9 +17,9 @@ const profileSettingsSchema = zod.object({
 type ProfileSettingsSchema = zod.infer<typeof profileSettingsSchema>;
 
 const ProfileSettingsForm = () => {
-  const currentUser = useAuthStore((store) => store.currentUser);
+  const { currentUser } = useCurrentUser();
 
-  if (currentUser === null) throw new Error("User is not logged in");
+  if (!currentUser) return null;
 
   const {
     register,

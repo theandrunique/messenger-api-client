@@ -3,11 +3,11 @@ import SimpleCard from "../SimpleCard";
 import Button from "../ui/Button";
 import Modal from "../Modal";
 import Input from "../ui/Input";
-import api from "../../api/api";
-import useAuthStore from "../../store/useAuthStore";
 import { ApiError } from "../../schemas/common";
 import { QRCodeSVG } from "qrcode.react";
 import notifications from "../../utils/notifications";
+import { enableMfa } from "../../api/api";
+import useCurrentUser from "../../api/hooks/useCurrentUser";
 
 interface EnableMfaModalFormProps {
   open: boolean;
@@ -20,7 +20,7 @@ const EnableMfaModalForm = ({
   onClose,
   onSubmit,
 }: EnableMfaModalFormProps) => {
-  const currentUser = useAuthStore((store) => store.currentUser);
+  const { currentUser } = useCurrentUser();
 
   const [password, setPassword] = useState("");
   const [emailCode, setEmailCode] = useState("");
@@ -40,7 +40,7 @@ const EnableMfaModalForm = ({
   const onPasswordSubmit = async () => {
     setIsLoading(true);
     try {
-      await api.enableMfa(password, null);
+      await enableMfa(password, null);
     } catch (err) {
       if (err instanceof ApiError) {
         if (err.code === "AUTH_INVALID_CREDENTIALS") {
@@ -61,7 +61,7 @@ const EnableMfaModalForm = ({
   const onCodeSubmit = async () => {
     setIsLoading(true);
     try {
-      const response = await api.enableMfa(password, emailCode);
+      const response = await enableMfa(password, emailCode);
       setOtpAuthUrl(response.otpAuthUrl);
       onSubmit?.();
     } catch (err) {
@@ -180,8 +180,7 @@ const EnableMfaModalForm = ({
 };
 
 const SecurityForm = () => {
-  const currentUser = useAuthStore((store) => store.currentUser);
-  const updateUser = useAuthStore((store) => store.updateUser);
+  const { currentUser, refetch: updateUser } = useCurrentUser();
 
   const [mfaModalOpen, setMfaModalOpen] = useState(false);
 

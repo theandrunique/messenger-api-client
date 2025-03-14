@@ -1,5 +1,3 @@
-import api from "../../api/api";
-import useAuthStore from "../../store/useAuthStore";
 import Avatar from "../Avatar";
 import SimpleCard from "../SimpleCard";
 import Button from "../ui/Button";
@@ -7,6 +5,8 @@ import React, { useEffect, useRef, useState } from "react";
 import Modal from "../Modal";
 import Cropper, { Area } from "react-easy-crop";
 import notifications from "../../utils/notifications";
+import { removeAvatar, updateAvatar } from "../../api/api";
+import useCurrentUser from "../../api/hooks/useCurrentUser";
 
 interface CropImageModalProps {
   open: boolean;
@@ -72,7 +72,7 @@ const CropImageModal = ({
       });
 
       try {
-        await api.updateAvatar(croppedFile);
+        await updateAvatar(croppedFile);
         onClose();
         onSubmit();
       } catch (err) {
@@ -154,8 +154,7 @@ const ConfirmDeleteModal = ({
 };
 
 const ProfileImageForm = () => {
-  const currentUser = useAuthStore((store) => store.currentUser);
-  const updateUser = useAuthStore((store) => store.updateUser);
+  const { currentUser, refetch: updateUser } = useCurrentUser();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -168,7 +167,7 @@ const ProfileImageForm = () => {
   const onClearProfilePicture = async () => {
     try {
       setDeleteModalOpen(false);
-      await api.removeAvatar();
+      await removeAvatar();
       updateUser();
     } catch (err) {
       notifications.error("Failed to clear profile picture.");
@@ -195,6 +194,8 @@ const ProfileImageForm = () => {
     setSelectedFile(file);
     setCropModalOpen(true);
   };
+
+  if (!currentUser) return null;
 
   return (
     <>

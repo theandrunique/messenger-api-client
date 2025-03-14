@@ -1,8 +1,8 @@
 import { forwardRef } from "react";
-import useAuthStore from "../../store/useAuthStore";
 import { ChannelType } from "../../schemas/channel";
 import { AttachmentSchema, MessageSchema } from "../../schemas/message";
 import Avatar from "../Avatar";
+import useCurrentUser from "../../api/hooks/useCurrentUser";
 
 const AttachmentPreview = ({
   attachments,
@@ -35,7 +35,7 @@ interface MessageProps {
 
 export const MessageCard = forwardRef<HTMLDivElement, MessageProps>(
   ({ message, channelType, showAvatar, showUsername }, ref) => {
-    const { currentUser } = useAuthStore();
+    const { currentUser } = useCurrentUser();
     const isOwnMessage = message.author.id === currentUser!.id;
     const isGroup = channelType === ChannelType.GROUP;
 

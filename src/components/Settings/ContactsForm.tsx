@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import useAuthStore from "../../store/useAuthStore";
 import Modal from "../Modal";
 import SimpleCard from "../SimpleCard";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
-import api from "../../api/api";
 import { ApiError } from "../../schemas/common";
 import notifications from "../../utils/notifications";
+import { requestEmailVerificationCode, verifyEmail } from "../../api/api";
+import useCurrentUser from "../../api/hooks/useCurrentUser";
 
 interface EmailVerificationModalProps {
   open: boolean;
@@ -25,7 +25,7 @@ const EmailVerificationModal = ({
 
   const handleCodeResend = () => {
     notifications.info("Email is sent");
-    api.requestEmailVerificationCode();
+    requestEmailVerificationCode();
   };
 
   useEffect(() => {
@@ -38,7 +38,7 @@ const EmailVerificationModal = ({
   const submitHandler = async () => {
     setIsLoading(true);
     try {
-      await api.verifyEmail(code);
+      await verifyEmail(code);
       notifications.success("Email successfully verified");
       onSubmit?.();
     } catch (err) {
@@ -93,17 +93,15 @@ const EmailVerificationModal = ({
 };
 
 const ContactsForm = () => {
-  const currentUser = useAuthStore((store) => store.currentUser);
-  const updateUser = useAuthStore((store) => store.updateUser);
-
-  if (currentUser === null) throw new Error("User is not logged in");
-
+  const { currentUser, refetch: updateUser } = useCurrentUser();
   const [emailModalOpen, setEmailModalOpen] = useState(false);
 
   const onEmailVerificationSuccess = () => {
     updateUser();
     setEmailModalOpen(false);
   };
+
+  if (!currentUser) return null;
 
   return (
     <>

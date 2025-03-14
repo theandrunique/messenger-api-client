@@ -3,13 +3,13 @@ import useChannelsStore from "../../store/useChannelsStore";
 import useMessagesStore from "../../store/useMessagesStore";
 import useScrollState from "../../hooks/useScrollState";
 import MessageCard from "./MessageCard";
-import useAuthStore from "../../store/useAuthStore";
 import MessageInput from "./MessageInput";
 import { ChannelSchema, ChannelType } from "../../schemas/channel";
 import SelectChannelMessage from "./SelectChannelMessage";
 import HorizontalDivider from "./HorizontalDivider";
 import React from "react";
 import { MessageSchema } from "../../schemas/message";
+import useCurrentUser from "../../api/hooks/useCurrentUser";
 
 const groupMessagesByAuthor = (
   messages: MessageSchema[]
@@ -84,7 +84,7 @@ const MessagesList = ({
 };
 
 const ChannelContainerHeader = ({ channel }: { channel: ChannelSchema }) => {
-  const currentUser = useAuthStore((store) => store.currentUser);
+  const { currentUser } = useCurrentUser();
 
   const getPrivateChannelName = () => {
     const otherMember =
