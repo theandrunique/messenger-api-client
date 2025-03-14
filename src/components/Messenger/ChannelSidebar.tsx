@@ -1,4 +1,4 @@
-import useChannelsStore from "../../store/useChannelsStore";
+import useSelectedChannelStore from "../../store/useSelectedChannelStore";
 import FullScreenLoading from "../FullScreenLoading";
 import ChannelCard from "./ChannelCard";
 import useUserChannels from "../../api/hooks/useUserChannels";
@@ -6,7 +6,7 @@ import useUserChannels from "../../api/hooks/useUserChannels";
 const ChannelSidebar = () => {
   const { isLoading, data: channels } = useUserChannels();
 
-  const { selectChannel } = useChannelsStore();
+  const { selectChannel } = useSelectedChannelStore();
 
   if (isLoading) return <FullScreenLoading />;
 

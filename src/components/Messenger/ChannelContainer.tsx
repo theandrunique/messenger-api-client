@@ -1,6 +1,5 @@
 import { useEffect } from "react";
-import useChannelsStore from "../../store/useChannelsStore";
-import useMessagesStore from "../../store/useMessagesStore";
+import useSelectedChannelStore from "../../store/useSelectedChannelStore";
 import useScrollState from "../../hooks/useScrollState";
 import MessageCard from "./MessageCard";
 import MessageInput from "./MessageInput";
@@ -10,6 +9,7 @@ import HorizontalDivider from "./HorizontalDivider";
 import React from "react";
 import { MessageSchema } from "../../schemas/message";
 import useCurrentUser from "../../api/hooks/useCurrentUser";
+import useMessages from "../../api/hooks/useMessages";
 
 const groupMessagesByAuthor = (
   messages: MessageSchema[]
@@ -120,16 +120,17 @@ const ChannelContainerHeader = ({ channel }: { channel: ChannelSchema }) => {
 };
 
 const ChannelContainer = () => {
-  const selectedChannel = useChannelsStore((store) => store.selectedChannel);
+  const selectedChannel = useSelectedChannelStore(
+    (store) => store.selectedChannel
+  );
 
   const {
-    currentMessages,
-    isMessagesLoading,
-    loadMessages,
-    hasMore: hasMoreMessages,
-    loadOlderMessages,
-    isLoadingOlderMessages,
-  } = useMessagesStore();
+    messages,
+    isLoading: isMessagesLoading,
+    hasNextPage: hasMoreMessages,
+    fetchNextPage: loadOlderMessages,
+    isFetchingNextPage: isLoadingOlderMessages,
+  } = useMessages(selectedChannel?.id ?? null);
 
   const {
     saveScrollPosition,
@@ -140,20 +141,15 @@ const ChannelContainer = () => {
   } = useScrollState();
 
   useEffect(() => {
-    if (selectedChannel === null) return;
-
-    saveScrollPosition(selectedChannel.id);
-    loadMessages(selectedChannel.id);
+    if (selectedChannel) saveScrollPosition(selectedChannel.id);
   }, [selectedChannel]);
 
   useEffect(() => {
-    if (isScrolledToBottom()) {
-      scrollToEnd();
-    }
-  }, [currentMessages]);
+    if (isScrolledToBottom()) scrollToEnd();
+  }, [messages]);
 
   useEffect(() => {
-    if (!selectedChannel || isMessagesLoading || currentMessages.length === 0)
+    if (!selectedChannel || isMessagesLoading || messages.length === 0)
       return;
 
     scrollToLastSavedPositionOrEnd();
@@ -202,7 +198,7 @@ const ChannelContainer = () => {
         onScroll={handleMessagesScroll}
       >
         <MessagesList
-          messages={currentMessages}
+          messages={messages}
           channelType={selectedChannel.type}
         />
       </div>

@@ -35,15 +35,25 @@ const useScrollState = (): ScrollState => {
         ? lastSavedScroll
         : containerRef.current.scrollHeight;
 
-    containerRef.current.scrollTo({ top: scrollTo - 1 });
+    requestAnimationFrame(() => {
+      if (containerRef.current)
+        containerRef.current.scrollTo({
+          top: scrollTo - 1,
+          behavior: "instant",
+        });
+    });
   };
 
   const scrollToEnd = () => {
     if (containerRef.current === null) return;
 
-    containerRef.current.scrollTo({
-      top: containerRef.current.scrollHeight,
-      behavior: "smooth",
+    requestAnimationFrame(() => {
+      if (containerRef.current) {
+        containerRef.current.scrollTo({
+          top: containerRef.current.scrollHeight,
+          behavior: "smooth",
+        });
+      }
     });
   };
 
@@ -51,7 +61,7 @@ const useScrollState = (): ScrollState => {
     if (containerRef.current === null) return false;
 
     const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
-    return scrollHeight - (scrollTop + clientHeight) < 200;
+    return scrollHeight - (scrollTop + clientHeight) < 50;
   };
 
   return {

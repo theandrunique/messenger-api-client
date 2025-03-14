@@ -1,12 +1,12 @@
 import { create } from "zustand";
 import { ChannelSchema } from "../schemas/channel";
 
-interface ChannelsStore {
+interface SelectedChannelStore {
   selectedChannel: ChannelSchema | null;
   selectChannel: (channel: ChannelSchema) => void;
 }
 
-const useChannelsStore = create<ChannelsStore>((set) => ({
+const useSelectedChannelStore = create<SelectedChannelStore>((set) => ({
   selectedChannel: null,
 
   selectChannel: (channel: ChannelSchema) => {
@@ -14,4 +14,4 @@ const useChannelsStore = create<ChannelsStore>((set) => ({
   },
 }));
 
-export default useChannelsStore;
+export default useSelectedChannelStore;
