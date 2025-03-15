@@ -8,15 +8,14 @@ interface ProtectedRouteProps extends PropsWithChildren {}
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { isAuthenticated, isLoading, isNetworkError } = useAuth();
 
-  if (isLoading) return <FullScreenLoading />;
+  if (isLoading) return <FullScreenLoading message="Trying to restore your session" />;
 
   if (isNetworkError) {
     return (
-      <div>
-        <h1>Network error</h1>
-        <p>Check your internet connection and try again.</p>
-      </div>
-    )
+      <FullScreenLoading message="Network error">
+        <p>Please check your internet connection and try again</p>
+      </FullScreenLoading>
+    );
   }
 
   if (!isAuthenticated) return <Navigate to="/sign-in" replace />;

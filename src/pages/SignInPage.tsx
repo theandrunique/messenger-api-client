@@ -56,7 +56,7 @@ function SignInPage() {
   }, [isLoading, isAuthenticated]);
 
   if (isLoading) {
-    return <FullScreenLoading />
+    return <FullScreenLoading message="In case you are already signed in" />
   }
 
   return (

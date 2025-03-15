@@ -1,14 +1,14 @@
 import useSelectedChannelStore from "../../store/useSelectedChannelStore";
-import FullScreenLoading from "../FullScreenLoading";
 import ChannelCard from "./ChannelCard";
 import useUserChannels from "../../api/hooks/useUserChannels";
+import Loading from "../Loading";
 
 const ChannelSidebar = () => {
   const { isLoading, data: channels } = useUserChannels();
 
   const { selectChannel } = useSelectedChannelStore();
 
-  if (isLoading) return <FullScreenLoading />;
+  if (isLoading) return <Loading message="Loading your channels" className="w-64 bg-[#1f1f23]" />;
 
   return (
     <div className="h-full w-64 bg-[#1f1f23] flex flex-col overflow-y-auto">

@@ -9,6 +9,7 @@ import React from "react";
 import { MessageSchema } from "../../schemas/message";
 import useCurrentUser from "../../api/hooks/useCurrentUser";
 import useMessages from "../../api/hooks/useMessages";
+import Loading from "../Loading";
 
 const groupMessagesByAuthor = (
   messages: MessageSchema[]
@@ -133,7 +134,13 @@ const ChannelContainer = () => {
 
   useEffect(() => {
     const container = containerRef.current;
-    if (!container || !selectedChannel || isMessagesLoading || messages.length === 0) return;
+    if (
+      !container ||
+      !selectedChannel ||
+      isMessagesLoading ||
+      messages.length === 0
+    )
+      return;
 
     requestAnimationFrame(() => {
       container.scroll({
@@ -173,7 +180,7 @@ const ChannelContainer = () => {
     return <SelectChannelMessage />;
   }
 
-  if (isMessagesLoading) return <div>Loading messages...</div>;
+  if (isMessagesLoading) return <Loading message="Loading your messages" className="flex-1" />;
 
   return (
     <div className="flex-1 flex flex-col h-full bg-[#18181b] overflow-hidden">
