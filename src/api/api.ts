@@ -31,9 +31,13 @@ export const refreshSessionIfNeed = async () => {
     let currentTokens = getTokens();
 
     if (!currentTokens) {
-      currentTokens = await getCurrentSavedTokenPair();
-      if (currentTokens === null) {
-        throw new Error("no-session");
+      try {
+        currentTokens = await getCurrentSavedTokenPair();
+      } catch (err) {
+        if (err instanceof ApiError && err.code === "AUTH_NO_SESSION_INFO_FOUND") {
+          throw new Error("no-session");
+        }
+        throw err;
       }
     }
 
@@ -141,7 +145,7 @@ async function baseFetch<T>(
   }
 }
 
-export const getCurrentSavedTokenPair = (): Promise<TokenPairSchema | null> => {
+export const getCurrentSavedTokenPair = (): Promise<TokenPairSchema> => {
   return baseFetch(() => axiosWithCookie.get<TokenPairSchema>("/auth/token"));
 };
 
@@ -180,6 +184,12 @@ export const singUp = (
       globalName,
       password,
     })
+  );
+};
+
+export const signOut = (): Promise<void> => {
+  return baseFetch(() =>
+    axiosWithToken.post("/auth/sign-out", {}, { withCredentials: true })
   );
 };
 

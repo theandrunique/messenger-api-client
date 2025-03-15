@@ -2,14 +2,20 @@ import { createContext, useContext, PropsWithChildren, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import useSessionChecker from "../hooks/useSessionChecker";
-import { removeTokens, setTokens, setupInterceptors, signIn } from "../api/api";
+import {
+  removeTokens,
+  setTokens,
+  setupInterceptors,
+  signIn,
+  signOut,
+} from "../api/api";
 
 interface AuthContext {
   isLoading: boolean;
   isAuthenticated: boolean | undefined;
   isNetworkError: boolean | undefined;
   handleSignIn: (login: string, password: string) => Promise<void>;
-  handleLogout: () => Promise<void>;
+  handleSignOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContext | undefined>(undefined);
@@ -37,9 +43,10 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  const handleLogout = async () => {
-    // TODO: ask server to logout
+  const handleSignOut = async () => {
+    await signOut();
     removeTokens();
+    queryClient.invalidateQueries();
     navigate("/sign-in", { replace: true });
   };
 
@@ -50,7 +57,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         isAuthenticated: !isUnauthorized,
         isNetworkError,
         handleSignIn,
-        handleLogout,
+        handleSignOut,
       }}
     >
       {children}
