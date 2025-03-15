@@ -15,17 +15,17 @@ const useMessages = (channelId: string | null) => {
         pageParam as string | null,
         limit.toString()
       );
-      return messages.reverse();
+      return messages;
     },
     initialPageParam: null,
     getNextPageParam: (lastPage) =>
-      lastPage.length < limit ? null : lastPage[0].id,
+      lastPage.length < limit ? null : lastPage[lastPage.length - 1].id,
     enabled: !!channelId,
     staleTime: 10 * 60 * 1000,
   });
 
   return {
-    messages: context.data?.pages.slice().reverse().flat() || [],
+    messages: context.data?.pages.flatMap((page) => page) || [],
     ...context,
   };
 };

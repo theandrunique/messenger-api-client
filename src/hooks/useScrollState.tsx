@@ -2,10 +2,11 @@ import { useRef } from "react";
 
 interface ScrollState {
   ref: React.RefObject<HTMLDivElement>;
-  saveScrollPosition: (newKey: string) => void;
+  saveScrollPosition: (key: string) => void;
   scrollToLastSavedPositionOrEnd: () => void;
   scrollToEnd: () => void;
   isScrolledToBottom: () => boolean;
+  scrollToSavedPositionOrEnd: (key: string) => void;
 }
 
 const useScrollState = (): ScrollState => {
@@ -13,14 +14,30 @@ const useScrollState = (): ScrollState => {
   const lastKey = useRef<string | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const saveScrollPosition = (newKey: string) => {
+  const saveScrollPosition = (key: string) => {
     if (lastKey.current && containerRef.current) {
-      scrollsPositions.current[lastKey.current] =
-        containerRef.current.scrollTop;
+      scrollsPositions.current[key] = containerRef.current.scrollTop;
     }
-
-    lastKey.current = newKey;
   };
+
+  const scrollToSavedPositionOrEnd = (key: string) => {
+    if (containerRef.current === null) return;
+
+    const lastSavedScroll = scrollsPositions.current[key] ?? undefined;
+
+    const scrollTo =
+      lastSavedScroll !== undefined
+        ? lastSavedScroll
+        : containerRef.current.scrollHeight;
+
+    requestAnimationFrame(() => {
+      if (containerRef.current)
+        containerRef.current.scrollTo({
+          top: scrollTo - 1,
+          behavior: "instant",
+        });
+    });
+  }
 
   const scrollToLastSavedPositionOrEnd = () => {
     if (containerRef.current === null) return;
@@ -68,6 +85,7 @@ const useScrollState = (): ScrollState => {
     isScrolledToBottom,
     scrollToEnd,
     saveScrollPosition,
+    scrollToSavedPositionOrEnd,
     scrollToLastSavedPositionOrEnd,
     ref: containerRef,
   };

@@ -6,7 +6,7 @@ interface SelectedChannelStore {
   selectChannel: (channel: ChannelSchema) => void;
 }
 
-const useSelectedChannelStore = create<SelectedChannelStore>((set) => ({
+const useSelectedChannelStore = create<SelectedChannelStore>((set, get) => ({
   selectedChannel: null,
 
   selectChannel: (channel: ChannelSchema) => {

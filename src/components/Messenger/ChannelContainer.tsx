@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import useSelectedChannelStore from "../../store/useSelectedChannelStore";
 import useScrollState from "../../hooks/useScrollState";
 import MessageCard from "./MessageCard";
@@ -56,22 +56,22 @@ const MessagesList = ({
   const messageGroupsByDate = Object.entries(groupedMessagesByDate);
 
   return (
-    <>
+    <div className="flex flex-col-reverse">
       {messageGroupsByDate.map(([date, messages]) => {
         const authorGroups = groupMessagesByAuthor(messages);
 
         return (
-          <div key={date} className="relative">
+          <div key={date}>
             <HorizontalDivider date={messages[0].timestamp} />
-            <div>
+            <div className="flex flex-col-reverse">
               {authorGroups.map((group) =>
                 group.map((message, index) => (
                   <MessageCard
                     key={message.id}
                     message={message}
                     channelType={channelType}
-                    showAvatar={index === group.length - 1}
-                    showUsername={index === 0}
+                    showAvatar={index === 0}
+                    showUsername={index === group.length - 1}
                   />
                 ))
               )}
@@ -79,7 +79,7 @@ const MessagesList = ({
           </div>
         );
       })}
-    </>
+    </div>
   );
 };
 
@@ -120,9 +120,7 @@ const ChannelContainerHeader = ({ channel }: { channel: ChannelSchema }) => {
 };
 
 const ChannelContainer = () => {
-  const selectedChannel = useSelectedChannelStore(
-    (store) => store.selectedChannel
-  );
+  const { selectedChannel } = useSelectedChannelStore();
 
   const {
     messages,
@@ -132,28 +130,45 @@ const ChannelContainer = () => {
     isFetchingNextPage: isLoadingOlderMessages,
   } = useMessages(selectedChannel?.id ?? null);
 
-  const {
-    saveScrollPosition,
-    scrollToLastSavedPositionOrEnd,
-    ref: messagesContainerRef,
-    scrollToEnd,
-    isScrolledToBottom,
-  } = useScrollState();
+  const scrollState = useRef<Record<string, number>>({});
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (selectedChannel) saveScrollPosition(selectedChannel.id);
+    if (selectedChannel) {
+      console.log(`Current selected channel ${selectedChannel?.id}`);
+    }
+
+    return () => {
+      if (selectedChannel && containerRef.current) {
+        console.log("Selected channel has changed");
+        console.log(
+          `Saving scroll position for ${selectedChannel.id} ${containerRef.current.scrollTop}`
+        );
+
+        scrollState.current[selectedChannel.id] =
+          containerRef.current.scrollTop;
+      }
+    };
   }, [selectedChannel]);
 
   useEffect(() => {
-    if (isScrolledToBottom()) scrollToEnd();
-  }, [messages]);
+    const container = containerRef.current;
+    if (!container || !selectedChannel) return;
 
-  useEffect(() => {
-    if (!selectedChannel || isMessagesLoading || messages.length === 0)
-      return;
-
-    scrollToLastSavedPositionOrEnd();
-  }, [isMessagesLoading]);
+    if (scrollState.current[selectedChannel.id] !== undefined) {
+      console.log(`Scrolling to ${scrollState.current[selectedChannel.id]}`);
+      container.scroll({
+        top: scrollState.current[selectedChannel.id] - 1,
+        behavior: "instant",
+      });
+    } else {
+      console.log("Channel is opened for the first time, scrolling to bottom");
+      container.scrollTo({
+        top: container.scrollHeight - 1,
+        behavior: "instant",
+      });
+    }
+  }, [messages, selectedChannel]);
 
   const handleMessagesScroll = (e: React.UIEvent) => {
     const scrollTop = e.currentTarget.scrollTop;
@@ -163,19 +178,16 @@ const ChannelContainer = () => {
       scrollTop < scrollTrigger &&
       hasMoreMessages &&
       !isLoadingOlderMessages &&
-      messagesContainerRef.current
+      containerRef.current
     ) {
-      const prevHeight = messagesContainerRef.current.scrollHeight;
-      const prevScrollTop = messagesContainerRef.current.scrollTop;
+      const prevHeight = containerRef.current.scrollHeight;
+      const prevScrollTop = containerRef.current.scrollTop;
 
       loadOlderMessages().then(() => {
         setTimeout(() => {
-          if (!messagesContainerRef.current) return;
-          messagesContainerRef.current.scrollTo({
-            top:
-              messagesContainerRef.current.scrollHeight -
-              prevHeight +
-              prevScrollTop,
+          if (!containerRef.current) return;
+          containerRef.current.scrollTo({
+            top: containerRef.current.scrollHeight - prevHeight + prevScrollTop,
           });
         }, 0);
       });
@@ -194,13 +206,10 @@ const ChannelContainer = () => {
 
       <div
         className="flex-1 overflow-y-auto p-4 bg-[#0e0e10]"
-        ref={messagesContainerRef}
+        ref={containerRef}
         onScroll={handleMessagesScroll}
       >
-        <MessagesList
-          messages={messages}
-          channelType={selectedChannel.type}
-        />
+        <MessagesList messages={messages} channelType={selectedChannel.type} />
       </div>
       <MessageInput channelId={selectedChannel.id} />
     </div>
