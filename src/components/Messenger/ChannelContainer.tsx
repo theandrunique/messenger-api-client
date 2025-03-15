@@ -1,6 +1,5 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import useSelectedChannelStore from "../../store/useSelectedChannelStore";
-import useScrollState from "../../hooks/useScrollState";
 import MessageCard from "./MessageCard";
 import MessageInput from "./MessageInput";
 import { ChannelSchema, ChannelType } from "../../schemas/channel";
@@ -130,47 +129,23 @@ const ChannelContainer = () => {
     isFetchingNextPage: isLoadingOlderMessages,
   } = useMessages(selectedChannel?.id ?? null);
 
-  const scrollState = useRef<Record<string, number>>({});
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (selectedChannel) {
-      console.log(`Current selected channel ${selectedChannel?.id}`);
-    }
-
-    return () => {
-      if (selectedChannel && containerRef.current) {
-        console.log("Selected channel has changed");
-        console.log(
-          `Saving scroll position for ${selectedChannel.id} ${containerRef.current.scrollTop}`
-        );
-
-        scrollState.current[selectedChannel.id] =
-          containerRef.current.scrollTop;
-      }
-    };
-  }, [selectedChannel]);
-
-  useEffect(() => {
     const container = containerRef.current;
-    if (!container || !selectedChannel) return;
+    if (!container || !selectedChannel || isMessagesLoading || messages.length === 0) return;
 
-    if (scrollState.current[selectedChannel.id] !== undefined) {
-      console.log(`Scrolling to ${scrollState.current[selectedChannel.id]}`);
+    requestAnimationFrame(() => {
       container.scroll({
-        top: scrollState.current[selectedChannel.id] - 1,
+        top: container.scrollHeight,
         behavior: "instant",
       });
-    } else {
-      console.log("Channel is opened for the first time, scrolling to bottom");
-      container.scrollTo({
-        top: container.scrollHeight - 1,
-        behavior: "instant",
-      });
-    }
-  }, [messages, selectedChannel]);
+    });
+  }, [isMessagesLoading, selectedChannel]);
 
   const handleMessagesScroll = (e: React.UIEvent) => {
+    if (!selectedChannel) return;
+
     const scrollTop = e.currentTarget.scrollTop;
     const scrollTrigger = 100;
 
@@ -184,12 +159,12 @@ const ChannelContainer = () => {
       const prevScrollTop = containerRef.current.scrollTop;
 
       loadOlderMessages().then(() => {
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           if (!containerRef.current) return;
           containerRef.current.scrollTo({
             top: containerRef.current.scrollHeight - prevHeight + prevScrollTop,
           });
-        }, 0);
+        });
       });
     }
   };
