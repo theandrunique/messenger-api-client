@@ -1,16 +1,16 @@
 import ChannelSidebar from "../components/Messenger/ChannelSidebar";
 import ChannelContainer from "../components/Messenger/ChannelContainer";
 import { useEffect } from "react";
-import useGateway from "../store/useGateway";
 import Navbar from "../components/Navbar";
+import useGateway from "../hooks/useGateway";
 
 function Messenger() {
-  const gateway = useGateway();
+  const { connect, disconnect } = useGateway();
 
   useEffect(() => {
-    gateway.connect();
+    connect();
 
-    return () => gateway.disconnect();
+    return () => disconnect();
   }, []);
 
   return (

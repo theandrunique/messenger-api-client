@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import useSelectedChannelStore from "../../store/useSelectedChannelStore";
 import MessageCard from "./MessageCard";
 import MessageInput from "./MessageInput";
@@ -10,78 +10,7 @@ import { MessageSchema } from "../../schemas/message";
 import useCurrentUser from "../../api/hooks/useCurrentUser";
 import useMessages from "../../api/hooks/useMessages";
 import Loading from "../Loading";
-
-const groupMessagesByAuthor = (
-  messages: MessageSchema[]
-): MessageSchema[][] => {
-  if (messages.length === 0) return [];
-
-  const groups: MessageSchema[][] = [];
-  let currentGroup: MessageSchema[] = [messages[0]];
-  let currentAuthorId = messages[0].author.id;
-
-  for (let i = 1; i < messages.length; i++) {
-    const message = messages[i];
-    if (message.author.id === currentAuthorId) {
-      currentGroup.push(message);
-    } else {
-      groups.push(currentGroup);
-      currentGroup = [message];
-      currentAuthorId = message.author.id;
-    }
-  }
-
-  groups.push(currentGroup);
-  return groups;
-};
-
-const MessagesList = ({
-  messages,
-  channelType,
-}: {
-  messages: MessageSchema[];
-  channelType: ChannelType;
-}) => {
-  const groupedMessagesByDate = messages.reduce(
-    (acc, message) => {
-      const dateKey = new Date(message.timestamp).toDateString();
-      if (!acc[dateKey]) {
-        acc[dateKey] = [];
-      }
-      acc[dateKey].push(message);
-      return acc;
-    },
-    {} as Record<string, typeof messages>
-  );
-  const messageGroupsByDate = Object.entries(groupedMessagesByDate);
-
-  return (
-    <div className="flex flex-col-reverse">
-      {messageGroupsByDate.map(([date, messages]) => {
-        const authorGroups = groupMessagesByAuthor(messages);
-
-        return (
-          <div key={date}>
-            <HorizontalDivider date={messages[0].timestamp} />
-            <div className="flex flex-col-reverse">
-              {authorGroups.map((group) =>
-                group.map((message, index) => (
-                  <MessageCard
-                    key={message.id}
-                    message={message}
-                    channelType={channelType}
-                    showAvatar={index === 0}
-                    showUsername={index === group.length - 1}
-                  />
-                ))
-              )}
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-};
+import MessagesList from "./MessagesList";
 
 const ChannelContainerHeader = ({ channel }: { channel: ChannelSchema }) => {
   const { currentUser } = useCurrentUser();
@@ -120,17 +49,18 @@ const ChannelContainerHeader = ({ channel }: { channel: ChannelSchema }) => {
 };
 
 const ChannelContainer = () => {
-  const { selectedChannel } = useSelectedChannelStore();
+  const { selectedChannel, prevSelectedChannel } = useSelectedChannelStore();
 
   const {
     messages,
-    isLoading: isMessagesLoading,
+    isPending: isMessagesLoading,
     hasNextPage: hasMoreMessages,
     fetchNextPage: loadOlderMessages,
     isFetchingNextPage: isLoadingOlderMessages,
   } = useMessages(selectedChannel?.id ?? null);
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const scrollState = useRef<Record<string, number>>({});
 
   useEffect(() => {
     const container = containerRef.current;
@@ -143,12 +73,38 @@ const ChannelContainer = () => {
       return;
 
     requestAnimationFrame(() => {
-      container.scroll({
-        top: container.scrollHeight,
-        behavior: "instant",
-      });
+      if (scrollState.current[selectedChannel.id] !== undefined) {
+        console.log(
+          `Restoring scroll for ${selectedChannel.id} to ${scrollState.current[selectedChannel.id]}`
+        );
+        container.scroll({
+          top: scrollState.current[selectedChannel.id],
+          behavior: "instant",
+        });
+      } else {
+        console.log(`Scrolling to bottom for ${selectedChannel.id}`);
+        container.scroll({
+          top: container.scrollHeight,
+          behavior: "instant",
+        });
+      }
     });
   }, [isMessagesLoading, selectedChannel]);
+
+  useLayoutEffect(() => {
+    console.log(
+      "prevSelectedChannel has changed",
+      prevSelectedChannel,
+      containerRef.current
+    );
+    if (prevSelectedChannel && containerRef.current) {
+      console.log(
+        `Channel is changing saving prev channel (${prevSelectedChannel.id}) scroll ${containerRef.current.scrollTop}`
+      );
+      scrollState.current[prevSelectedChannel.id] =
+        containerRef.current.scrollTop;
+    }
+  }, [prevSelectedChannel]);
 
   const handleMessagesScroll = (e: React.UIEvent) => {
     if (!selectedChannel) return;
@@ -180,7 +136,8 @@ const ChannelContainer = () => {
     return <SelectChannelMessage />;
   }
 
-  if (isMessagesLoading) return <Loading message="Loading your messages" className="flex-1" />;
+  if (isMessagesLoading)
+    return <Loading message="Loading your messages" className="flex-1" />;
 
   return (
     <div className="flex-1 flex flex-col h-full bg-[#18181b] overflow-hidden">
