@@ -1,4 +1,3 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
@@ -11,7 +10,7 @@ import AuthProvider from "./components/AuthProvider.tsx";
 const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
+  <>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <AuthProvider>
@@ -21,5 +20,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <ReactQueryDevtools initialIsOpen={true} buttonPosition="bottom-left" />
     </QueryClientProvider>
     <ToastContainer />
-  </React.StrictMode>
+  </>
 );
