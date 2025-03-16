@@ -28,8 +28,14 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const navigate = useNavigate();
 
+  const onRefreshError = () => {
+    removeTokens();
+    queryClient.invalidateQueries();
+    navigate("/sign-in", { replace: true });
+  };
+
   useEffect(() => {
-    setupInterceptors(navigate);
+    setupInterceptors(onRefreshError);
   }, []);
 
   const handleSignIn = async (login: string, password: string) => {

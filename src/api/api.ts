@@ -10,7 +10,6 @@ import {
   MessageSchema,
 } from "../schemas/message";
 import env from "../env";
-import { NavigateFunction } from "react-router-dom";
 
 let _tokens: TokenPairSchema | null = null;
 
@@ -34,7 +33,10 @@ export const refreshSessionIfNeed = async () => {
       try {
         currentTokens = await getCurrentSavedTokenPair();
       } catch (err) {
-        if (err instanceof ApiError && err.code === "AUTH_NO_SESSION_INFO_FOUND") {
+        if (
+          err instanceof ApiError &&
+          err.code === "AUTH_NO_SESSION_INFO_FOUND"
+        ) {
           throw new Error("no-session");
         }
         throw err;
@@ -76,7 +78,7 @@ const axiosWithCookie = axios.create({
 
 let isInterceptorSetup = false;
 
-export const setupInterceptors = (navigate: NavigateFunction) => {
+export const setupInterceptors = (onRefreshError: () => void) => {
   if (isInterceptorSetup) return;
 
   let isRefreshing = false;
@@ -117,7 +119,7 @@ export const setupInterceptors = (navigate: NavigateFunction) => {
           return axiosWithToken(originalRequest);
         } catch (refreshError) {
           refreshSubscribers = [];
-          navigate("/sign-in", { replace: true });
+          onRefreshError();
           return Promise.reject(refreshError);
         } finally {
           isRefreshing = false;
