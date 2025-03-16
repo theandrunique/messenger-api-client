@@ -1,9 +1,9 @@
-import { useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import useMessages from "../../api/hooks/useMessages";
 import { ChannelSchema } from "../../schemas/channel";
 import Loading from "../Loading";
-import ScrollManager from "../ScrollManager";
 import MessagesList from "./MessagesList";
+import useSelectedChannelStore from "../../store/useSelectedChannelStore";
 
 const PendingMessages = () => {
   return <Loading message="Loading messages" />;
@@ -14,6 +14,8 @@ interface MessagesContainerProps {
 }
 
 const MessagesContainer = ({ selectedChannel }: MessagesContainerProps) => {
+  const { prevSelectedChannel } = useSelectedChannelStore();
+
   const {
     messages,
     isPending,
@@ -22,48 +24,77 @@ const MessagesContainer = ({ selectedChannel }: MessagesContainerProps) => {
     isFetchingNextPage,
   } = useMessages(selectedChannel.id);
 
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const handleMessagesScroll = (e: React.UIEvent) => {
-    const scrollTop = e.currentTarget.scrollTop;
-    const scrollTrigger = 100;
+  const scrollPositionsRef = useRef(new Map<string, number>());
 
+  const saveScrollPosition = useCallback(() => {
+    if (!prevSelectedChannel || !containerRef.current) return;
+
+    console.log(
+      `Saving scroll position for ${prevSelectedChannel.id}: ${containerRef.current.scrollTop}`
+    );
+    scrollPositionsRef.current.set(
+      prevSelectedChannel.id,
+      containerRef.current.scrollTop
+    );
+  }, [prevSelectedChannel]);
+
+  useLayoutEffect(() => {
+    saveScrollPosition();
+  }, [saveScrollPosition]);
+
+  useEffect(() => {
     if (
-      scrollTop < scrollTrigger &&
-      hasNextPage &&
-      !isFetchingNextPage &&
-      containerRef.current
+      selectedChannel &&
+      containerRef.current &&
+      !isPending &&
+      messages.length !== 0
     ) {
-      const prevHeight = containerRef.current.scrollHeight;
-      const prevScrollTop = containerRef.current.scrollTop;
+      const scrollPosition = scrollPositionsRef.current.get(selectedChannel.id);
 
-      fetchNextPage().then(() => {
-        requestAnimationFrame(() => {
-          if (!containerRef.current) return;
-          containerRef.current.scrollTo({
-            top: containerRef.current.scrollHeight - prevHeight + prevScrollTop,
+      requestAnimationFrame(() => {
+        if (scrollPosition !== undefined) {
+          containerRef.current?.scrollTo({
+            top: scrollPosition,
+            behavior: "instant",
           });
-        });
+        } else {
+          containerRef.current?.scrollTo({
+            top: containerRef.current.scrollHeight,
+            behavior: "instant",
+          });
+        }
       });
+    }
+  }, [selectedChannel.id, isPending]);
+
+  const handleAutoLoadOnScroll = (e: React.UIEvent) => {
+    const scrollTrigger = 1000;
+    if (
+      e.currentTarget.scrollTop < scrollTrigger &&
+      hasNextPage &&
+      !isFetchingNextPage
+    ) {
+      fetchNextPage()
     }
   };
 
   if (isPending)
     return (
-      <div className="flex-1">
+      <div className="flex-1 bg-[#0e0e10]">
         <PendingMessages />
       </div>
     );
 
   return (
-    <ScrollManager
+    <div
       ref={containerRef}
-      scrollKey={selectedChannel.id}
-      onScroll={handleMessagesScroll}
-      className="flex-1 p-4"
+      onScroll={handleAutoLoadOnScroll}
+      className="flex-1 p-4 overflow-y-auto bg-[#0e0e10]"
     >
       <MessagesList messages={messages} channelType={selectedChannel.type} />
-    </ScrollManager>
+    </div>
   );
 };
 
