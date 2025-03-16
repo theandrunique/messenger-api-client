@@ -66,13 +66,19 @@ const groupMessagesByDate = (messages: MessageSchema[]) => {
 interface MessagesListProps {
   messages: MessageSchema[];
   channelType: ChannelType;
+  bottomRef?: React.RefObject<HTMLDivElement>;
 }
 
-const MessagesList = ({ messages, channelType }: MessagesListProps) => {
+const MessagesList = ({
+  messages,
+  channelType,
+  bottomRef,
+}: MessagesListProps) => {
   const messageGroupsByDate = groupMessagesByDate(messages);
 
   return (
     <div className="flex flex-col-reverse">
+      <div ref={bottomRef}></div>
       {messageGroupsByDate.map(([date, messages]) => {
         const authorGroups = groupMessagesByAuthor(messages);
 

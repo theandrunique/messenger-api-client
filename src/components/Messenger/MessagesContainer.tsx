@@ -25,8 +25,21 @@ const MessagesContainer = ({ selectedChannel }: MessagesContainerProps) => {
   } = useMessages(selectedChannel.id);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
-
+  const bottomRef = useRef<HTMLDivElement | null>(null);
   const scrollPositionsRef = useRef(new Map<string, number>());
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || !bottomRef.current) return;
+
+    const scrollToBottomTrigger = 300;
+    const scrollLevel =
+      container.scrollHeight - container.scrollTop - container.clientHeight;
+
+    if (scrollLevel < scrollToBottomTrigger) {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   const saveScrollPosition = useCallback(() => {
     if (!prevSelectedChannel || !containerRef.current) return;
@@ -76,7 +89,7 @@ const MessagesContainer = ({ selectedChannel }: MessagesContainerProps) => {
       hasNextPage &&
       !isFetchingNextPage
     ) {
-      fetchNextPage()
+      fetchNextPage();
     }
   };
 
@@ -93,7 +106,11 @@ const MessagesContainer = ({ selectedChannel }: MessagesContainerProps) => {
       onScroll={handleAutoLoadOnScroll}
       className="flex-1 p-4 overflow-y-auto bg-[#0e0e10]"
     >
-      <MessagesList messages={messages} channelType={selectedChannel.type} />
+      <MessagesList
+        messages={messages}
+        channelType={selectedChannel.type}
+        bottomRef={bottomRef}
+      />
     </div>
   );
 };
