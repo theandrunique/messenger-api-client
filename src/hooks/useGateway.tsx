@@ -2,15 +2,18 @@ import { useRef } from "react";
 import { io, Socket } from "socket.io-client";
 import { getTokens } from "../api/api";
 import env from "../env";
-import { InfiniteData, useQueryClient } from "@tanstack/react-query";
-import { ChannelCreateEventSchema, MessageCreateEventSchema } from "../schemas/gateway";
-import { MessageSchema } from "../schemas/message";
-import { ChannelSchema } from "../schemas/channel";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  ChannelCreateEventSchema,
+  MessageCreateEventSchema,
+} from "../schemas/gateway";
+import { updateUseUserChannelsOnNewMessage, updateUseUserChannelsOnNewChannel } from '../api/hooks/useUserChannels';
+import { updateUseMessagesOnNewMessage } from "../api/hooks/useMessages";
 
 interface GatewayReturnType {
   connect: () => void;
   disconnect: () => void;
-};
+}
 
 const useGateway = (): GatewayReturnType => {
   const socket = useRef<Socket | null>(null);
@@ -28,7 +31,6 @@ const useGateway = (): GatewayReturnType => {
     setupEventListeners(socket.current);
   };
 
-
   const disconnect = () => {
     if (socket.current) socket.current.disconnect();
   };
@@ -43,48 +45,19 @@ const useGateway = (): GatewayReturnType => {
     });
 
     socket.on("message:new", (event: MessageCreateEventSchema) => {
-      queryClient.setQueryData(
-        ["/channels/{channelId}/messages", event.payload.channelId],
-        (oldData: InfiniteData<MessageSchema[]> | undefined) => {
-          if (!oldData) return;
-          return {
-            pageParams: oldData.pageParams,
-            pages: [
-              [event.payload, ...oldData.pages[0]],
-              ...oldData.pages.slice(1),
-            ]
-          }
-        }
-      );
-
-      queryClient.setQueryData(
-        ["/users/@me/channels"],
-        (oldChannels: ChannelSchema[] | undefined) => {
-          if (!oldChannels) return;
-          return oldChannels.map((channel) => {
-            channel.id === event.payload.channelId
-              ? { ...channel, lastMessage: event.payload, lastMessageTimestamp: event.payload.timestamp }
-              : channel
-          });
-        }
-      );
+      updateUseUserChannelsOnNewMessage(queryClient, event);
+      updateUseMessagesOnNewMessage(queryClient, event);
     });
 
     socket.on("channel:new", (event: ChannelCreateEventSchema) => {
-      queryClient.setQueryData(
-        ["/users/@me/channels"],
-        (oldChannels: ChannelSchema[] | undefined) => {
-          if (!oldChannels) return;
-          return [...oldChannels, event.payload];
-        }
-      )
+      updateUseUserChannelsOnNewChannel(queryClient, event);
     });
   };
 
   return {
     connect,
     disconnect,
-  }
+  };
 };
 
 export default useGateway;
