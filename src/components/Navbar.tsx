@@ -29,7 +29,7 @@ const SearchBar = () => {
     <div className="mx-4 my-1">
       <Input
         type="text"
-        placeholder="Search..."
+        placeholder="Search"
         className="w-full font-semibold rounded-lg p-1.5"
       />
     </div>
