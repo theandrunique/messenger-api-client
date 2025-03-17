@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import Modal from "../Modal";
-import SimpleCard from "../SimpleCard";
-import Button from "../ui/Button";
-import Input from "../ui/Input";
-import { ApiError } from "../../schemas/common";
-import notifications from "../../utils/notifications";
-import { requestEmailVerificationCode, verifyEmail } from "../../api/api";
-import useCurrentUser from "../../api/hooks/useCurrentUser";
+import Modal from "../../../components/Modal";
+import SimpleCard from "../../../components/SimpleCard";
+import Button from "../../../components/ui/Button";
+import Input from "../../../components/ui/Input";
+import { ApiError } from "../../../schemas/common";
+import notifications from "../../../utils/notifications";
+import { requestEmailVerificationCode, verifyEmail } from "../../../api/api";
+import useCurrentUser from "../../../api/hooks/useCurrentUser";
 
 interface EmailVerificationModalProps {
   open: boolean;

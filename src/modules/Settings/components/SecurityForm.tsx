@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
-import SimpleCard from "../SimpleCard";
-import Button from "../ui/Button";
-import Modal from "../Modal";
-import Input from "../ui/Input";
-import { ApiError } from "../../schemas/common";
+import SimpleCard from "../../../components/SimpleCard";
+import Button from "../../../components/ui/Button";
+import Modal from "../../../components/Modal";
+import Input from "../../../components/ui/Input";
+import { ApiError } from "../../../schemas/common";
 import { QRCodeSVG } from "qrcode.react";
-import notifications from "../../utils/notifications";
-import { enableMfa } from "../../api/api";
-import useCurrentUser from "../../api/hooks/useCurrentUser";
-import { useAuth } from "../AuthProvider";
+import notifications from "../../../utils/notifications";
+import { enableMfa } from "../../../api/api";
+import useCurrentUser from "../../../api/hooks/useCurrentUser";
+import { useAuth } from "../../../components/AuthProvider";
 
 interface EnableMfaModalFormProps {
   open: boolean;
@@ -229,7 +229,9 @@ const SecurityForm = () => {
         <div className="flex justify-between p-5">
           <div className="font-semibold">Sign Out</div>
           <div className="w-3/4">
-            <Button variant={"secondary"} onClick={handleSignOut}>Sign Out</Button>
+            <Button variant={"secondary"} onClick={handleSignOut}>
+              Sign Out
+            </Button>
           </div>
         </div>
       </SimpleCard>

@@ -1,8 +1,8 @@
 import Navbar from "../components/Navbar";
-import ProfileImageForm from "../components/Settings/ProfileImageForm";
-import ProfileSettingsForm from "../components/Settings/ProfileSettingsForm";
-import ContactsForm from "../components/Settings/ContactsForm";
-import SecurityForm from "../components/Settings/SecurityForm";
+import ProfileImageForm from "../modules/Settings/components/ProfileImageForm";
+import ProfileSettingsForm from "../modules/Settings/components/ProfileSettingsForm";
+import ContactsForm from "../modules/Settings/components/ContactsForm";
+import SecurityForm from "../modules/Settings/components/SecurityForm";
 
 const PageHeader = ({ title }: { title: string }) => {
   return (

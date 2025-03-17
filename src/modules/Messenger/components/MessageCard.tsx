@@ -1,8 +1,8 @@
 import { forwardRef } from "react";
-import { ChannelType } from "../../schemas/channel";
-import { AttachmentSchema, MessageSchema } from "../../schemas/message";
-import Avatar from "../Avatar";
-import useCurrentUser from "../../api/hooks/useCurrentUser";
+import { ChannelType } from "../../../schemas/channel";
+import { AttachmentSchema, MessageSchema } from "../../../schemas/message";
+import Avatar from "../../../components/Avatar";
+import useCurrentUser from "../../../api/hooks/useCurrentUser";
 
 const AttachmentPreview = ({
   attachments,

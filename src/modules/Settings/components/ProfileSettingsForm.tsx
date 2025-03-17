@@ -1,12 +1,12 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import SimpleCard from "../SimpleCard";
-import Button from "../ui/Button";
-import ErrorMessage from "../ui/ErrorMessage";
-import Input from "../ui/Input";
-import Textarea from "../ui/Textarea";
+import SimpleCard from "../../../components/SimpleCard";
+import Button from "../../../components/ui/Button";
+import ErrorMessage from "../../../components/ui/ErrorMessage";
+import Input from "../../../components/ui/Input";
+import Textarea from "../../../components/ui/Textarea";
 import zod from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import useCurrentUser from "../../api/hooks/useCurrentUser";
+import useCurrentUser from "../../../api/hooks/useCurrentUser";
 
 const profileSettingsSchema = zod.object({
   username: zod.string(),

@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { SendHorizontal, Paperclip } from "lucide-react";
 import FileCard, { FileInfo } from "./FileCard";
-import Input from "../ui/Input";
-import Button from "../ui/Button";
-import { ApiError } from "../../schemas/common";
-import { CloudAttachmentResponseSchema } from "../../schemas/message";
-import notifications from "../../utils/notifications";
-import { createAttachments, createMessage, uploadFile } from "../../api/api";
+import Input from "../../../components/ui/Input";
+import Button from "../../../components/ui/Button";
+import { ApiError } from "../../../schemas/common";
+import { CloudAttachmentResponseSchema } from "../../../schemas/message";
+import notifications from "../../../utils/notifications";
+import { createAttachments, createMessage, uploadFile } from "../../../api/api";
 
 interface MessageInputProps {
   channelId: string;

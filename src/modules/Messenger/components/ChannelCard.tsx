@@ -3,9 +3,9 @@ import {
   ChannelMemberSchema,
   ChannelSchema,
   ChannelType,
-} from "../../schemas/channel";
-import Avatar from "../Avatar";
-import useCurrentUser from "../../api/hooks/useCurrentUser";
+} from "../../../schemas/channel";
+import Avatar from "../../../components/Avatar";
+import useCurrentUser from "../../../api/hooks/useCurrentUser";
 
 interface ChannelCardProps {
   channel: ChannelSchema;

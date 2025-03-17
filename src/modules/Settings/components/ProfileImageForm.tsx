@@ -1,12 +1,12 @@
-import Avatar from "../Avatar";
-import SimpleCard from "../SimpleCard";
-import Button from "../ui/Button";
+import Avatar from "../../../components/Avatar";
+import SimpleCard from "../../../components/SimpleCard";
+import Button from "../../../components/ui/Button";
 import React, { useEffect, useRef, useState } from "react";
-import Modal from "../Modal";
+import Modal from "../../../components/Modal";
 import Cropper, { Area } from "react-easy-crop";
-import notifications from "../../utils/notifications";
-import { removeAvatar, updateAvatar } from "../../api/api";
-import useCurrentUser from "../../api/hooks/useCurrentUser";
+import notifications from "../../../utils/notifications";
+import { removeAvatar, updateAvatar } from "../../../api/api";
+import useCurrentUser from "../../../api/hooks/useCurrentUser";
 
 interface CropImageModalProps {
   open: boolean;

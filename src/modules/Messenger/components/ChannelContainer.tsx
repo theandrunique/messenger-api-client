@@ -1,9 +1,10 @@
-import useSelectedChannelStore from "../../store/useSelectedChannelStore";
 import MessageInput from "./MessageInput";
-import { ChannelSchema, ChannelType } from "../../schemas/channel";
+import { ChannelSchema, ChannelType } from "../../../schemas/channel";
 import SelectChannelMessage from "./SelectChannelMessage";
-import useCurrentUser from "../../api/hooks/useCurrentUser";
+import useCurrentUser from "../../../api/hooks/useCurrentUser";
 import MessagesContainer from "./MessagesContainer";
+import useSelectedChannelStore from "../stores/useSelectedChannelStore";
+import ChannelProvider from "../contexts/ChannelProvider";
 
 const ChannelContainerHeader = ({ channel }: { channel: ChannelSchema }) => {
   const { currentUser } = useCurrentUser();
@@ -50,9 +51,11 @@ const ChannelContainer = () => {
 
   return (
     <div className="flex-1 flex flex-col h-full bg-[#18181b] overflow-hidden">
-      <ChannelContainerHeader channel={selectedChannel} />
-      <MessagesContainer selectedChannel={selectedChannel} />
-      <MessageInput channelId={selectedChannel.id} />
+      <ChannelProvider>
+        <ChannelContainerHeader channel={selectedChannel} />
+        <MessagesContainer selectedChannel={selectedChannel} />
+        <MessageInput channelId={selectedChannel.id} />
+      </ChannelProvider>
     </div>
   );
 };
