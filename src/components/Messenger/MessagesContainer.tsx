@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import useMessages from "../../api/hooks/useMessages";
 import { ChannelSchema } from "../../schemas/channel";
 import Loading from "../Loading";
 import MessagesList from "./MessagesList";
-import useSelectedChannelStore from "../../store/useSelectedChannelStore";
 
 const PendingMessages = () => {
   return <Loading message="Loading messages" />;
@@ -14,8 +13,6 @@ interface MessagesContainerProps {
 }
 
 const MessagesContainer = ({ selectedChannel }: MessagesContainerProps) => {
-  const { prevSelectedChannel } = useSelectedChannelStore();
-
   const {
     messages,
     isPending,
@@ -28,6 +25,7 @@ const MessagesContainer = ({ selectedChannel }: MessagesContainerProps) => {
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const scrollPositionsRef = useRef(new Map<string, number>());
 
+  // scroll to bottom on new messages
   useEffect(() => {
     const container = containerRef.current;
     if (!container || !bottomRef.current) return;
@@ -41,22 +39,7 @@ const MessagesContainer = ({ selectedChannel }: MessagesContainerProps) => {
     }
   }, [messages]);
 
-  const saveScrollPosition = useCallback(() => {
-    if (!prevSelectedChannel || !containerRef.current) return;
-
-    console.log(
-      `Saving scroll position for ${prevSelectedChannel.id}: ${containerRef.current.scrollTop}`
-    );
-    scrollPositionsRef.current.set(
-      prevSelectedChannel.id,
-      containerRef.current.scrollTop
-    );
-  }, [prevSelectedChannel]);
-
-  useLayoutEffect(() => {
-    saveScrollPosition();
-  }, [saveScrollPosition]);
-
+  // Restore scroll position
   useEffect(() => {
     if (
       selectedChannel &&
@@ -83,6 +66,11 @@ const MessagesContainer = ({ selectedChannel }: MessagesContainerProps) => {
   }, [selectedChannel.id, isPending]);
 
   const handleAutoLoadOnScroll = (e: React.UIEvent) => {
+    scrollPositionsRef.current.set(
+      selectedChannel.id,
+      e.currentTarget.scrollTop
+    );
+
     const scrollTrigger = 1000;
     if (
       e.currentTarget.scrollTop < scrollTrigger &&
