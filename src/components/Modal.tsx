@@ -1,6 +1,6 @@
 import React, { HTMLAttributes, useEffect, useRef, MouseEvent } from "react";
 import Button from "./ui/Button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, X } from "lucide-react";
 import { createPortal } from "react-dom";
 
 const useFocusTrap = (ref: React.RefObject<HTMLElement>, open: boolean) => {
@@ -35,6 +35,7 @@ const useFocusTrap = (ref: React.RefObject<HTMLElement>, open: boolean) => {
 
 interface ModalProps extends HTMLAttributes<HTMLDivElement> {
   onClose: () => void;
+  onBack?: () => void;
   open: boolean;
   closeOnEsc?: boolean;
   closeOnOverlayClick?: boolean;
@@ -43,6 +44,7 @@ interface ModalProps extends HTMLAttributes<HTMLDivElement> {
 const Modal = ({
   open,
   onClose,
+  onBack,
   children,
   closeOnEsc = false,
   closeOnOverlayClick = false,
@@ -90,11 +92,14 @@ const Modal = ({
     >
       <div className="w-screen h-screen overflow-y-auto">
         <div className="flex min-h-full items-center justify-center p-4">
-          <div className="bg-[#18181b] rounded-lg">
-            <div className="flex justify-start px-3 pt-3">
-              <Button variant={"icon"} onClick={onClose}>
-                <ArrowLeft className="w-6 h-6" />
-              </Button>
+          <div className="bg-[#18181b] rounded-lg relative">
+            {onBack && (
+              <div className="absolute top-2.5 left-2.5">
+                <ModalBackButton onBack={onBack} />
+              </div>
+            )}
+            <div className="absolute top-2.5 right-2.5">
+              <ModalCloseButton onClose={onClose} />
             </div>
             <div>{children}</div>
           </div>
@@ -102,6 +107,29 @@ const Modal = ({
       </div>
     </div>,
     document.body
+  );
+};
+interface ModalCloseButtonProps {
+  onClose: () => void;
+}
+
+const ModalCloseButton = ({ onClose }: ModalCloseButtonProps) => {
+  return (
+    <Button className="p-1" variant={"icon"} onClick={onClose}>
+      <X className="w-5 h-5" />
+    </Button>
+  );
+};
+
+interface ModalBackButtonProps {
+  onBack: () => void;
+}
+
+const ModalBackButton = ({ onBack }: ModalBackButtonProps) => {
+  return (
+    <Button className="p-1" variant={"icon"} onClick={onBack}>
+      <ArrowLeft className="w-5 h-5" />
+    </Button>
   );
 };
 
