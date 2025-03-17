@@ -272,6 +272,10 @@ export const createAttachments = (
   );
 };
 
+export const deleteUnusedAttachment = (uploadedFilename: string) => {
+  return baseFetch(() => axiosWithToken.delete(`/attachments/${encodeURIComponent(uploadedFilename)}`));
+};
+
 export const createMessage = (
   channelId: string,
   content: string,

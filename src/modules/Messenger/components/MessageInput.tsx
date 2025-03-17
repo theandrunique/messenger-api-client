@@ -1,34 +1,17 @@
 import { useState } from "react";
 import { SendHorizontal, Paperclip } from "lucide-react";
-import FileCard, { FileInfo } from "./FileCard";
 import Input from "../../../components/ui/Input";
 import Button from "../../../components/ui/Button";
 import { ApiError } from "../../../schemas/common";
 import { CloudAttachmentResponseSchema } from "../../../schemas/message";
 import notifications from "../../../utils/notifications";
-import { createAttachments, createMessage, uploadFile } from "../../../api/api";
+import { createAttachments, createMessage, deleteUnusedAttachment, uploadFile } from "../../../api/api";
+import FileInfo from "../types/FileInfo";
+import AttachmentsContainer from "./AttachmentsContainer";
 
 interface MessageInputProps {
   channelId: string;
 }
-
-const FilesCard = ({
-  files,
-  onRemove,
-}: {
-  files: FileInfo[];
-  onRemove: (file: FileInfo) => void;
-}) => {
-  if (files.length === 0) return null;
-
-  return (
-    <div className="p-3 rounded-lg flex gap-3 flex-wrap">
-      {files.map((fileInfo) => {
-        return <FileCard fileInfo={fileInfo} onRemove={onRemove} />;
-      })}
-    </div>
-  );
-};
 
 const MessageInput = ({ channelId }: MessageInputProps) => {
   const [fileInfos, setFileInfos] = useState<FileInfo[]>([]);
@@ -116,14 +99,7 @@ const MessageInput = ({ channelId }: MessageInputProps) => {
       })
     );
 
-    return response.map(([attachment, file]) => ({
-      cloudAttachment: {
-        id: attachment.id,
-        uploadUrl: attachment.uploadUrl,
-        uploadFilename: attachment.uploadFilename,
-      },
-      file: file,
-    }));
+    return response.map(([cloudAttachment, file]) => ([file, cloudAttachment]))
   };
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -142,8 +118,8 @@ const MessageInput = ({ channelId }: MessageInputProps) => {
         channelId,
         messageContent,
         fileInfos.map((f) => ({
-          uploadedFilename: f.cloudAttachment.uploadFilename,
-          filename: f.file.name,
+          uploadedFilename: f[1].uploadFilename,
+          filename: f[0].name,
         }))
       );
 
@@ -172,13 +148,18 @@ const MessageInput = ({ channelId }: MessageInputProps) => {
     }
   };
 
+  const onAttachmentRemove = (fileInfo: FileInfo) => {
+    deleteUnusedAttachment(fileInfo[1].uploadFilename)
+      .catch((err) => console.log("Error deleting attachment: ", err));
+
+    setFileInfos((prev) => prev.filter((f) => f !== fileInfo));
+  }
+
   return (
     <div className="border-t border-[#35353b]">
-      <FilesCard
+      <AttachmentsContainer
         files={fileInfos}
-        onRemove={(fileInfo) => {
-          setFileInfos((prev) => prev.filter((f) => f !== fileInfo));
-        }}
+        onRemove={onAttachmentRemove}
       />
       <div
         onDrop={handleDrop}
