@@ -58,7 +58,7 @@ const CreateChannelModalForm = ({
   const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (data: { title: string; members: string[] }) => 
+    mutationFn: (data: { title: string; members: string[] }) =>
       createChannel(data.title, data.members),
     onSuccess: (createdChannel) => {
       updateUseUserChannelsOnNewChannel(queryClient, createdChannel);
@@ -104,7 +104,7 @@ const CreateChannelModalForm = ({
 
         <div className="flex flex-col px-16 gap-3 mb-4">
           <div className="w-full">
-            <div className="text-base font-semibold">Channel Name:</div>
+            <div className="text-base font-semibold mb-1">Channel Name:</div>
             <Input
               className="w-full"
               onChange={(e) => setChannelName(e.target.value)}
@@ -113,12 +113,14 @@ const CreateChannelModalForm = ({
           </div>
 
           <div className="w-full">
-            <div className="text-base font-semibold">Members:</div>
-            <div className="flex flex-wrap gap-1 mb-2 max-h-32 overflow-y-auto">
-              {selectedUsers.map((user) => (
-                <SelectedUser user={user} onRemove={() => removeUser(user)} />
-              ))}
-            </div>
+            <div className="text-base font-semibold mb-1">Members:</div>
+            {selectedUsers.length > 0 && (
+              <div className="flex flex-wrap gap-1 mb-2 max-h-32 overflow-y-auto">
+                {selectedUsers.map((user) => (
+                  <SelectedUser user={user} onRemove={() => removeUser(user)} />
+                ))}
+              </div>
+            )}
             <UsersSearchInput
               onSubmit={(user) => setSelectedUsers([...selectedUsers, user])}
               excludeIds={selectedUsers.map((user) => user.id)}
@@ -129,7 +131,11 @@ const CreateChannelModalForm = ({
             <Button variant={"secondary"} onClick={onClose}>
               Cancel
             </Button>
-            <Button disabled={isPending} variant={"primary"} onClick={handleSubmit}>
+            <Button
+              disabled={isPending}
+              variant={"primary"}
+              onClick={handleSubmit}
+            >
               {isPending ? "Creating..." : "Create"}
             </Button>
           </div>

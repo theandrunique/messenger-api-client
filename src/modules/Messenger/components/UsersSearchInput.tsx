@@ -13,7 +13,7 @@ interface SearchResultProps {
 
 const SearchResult = ({ result, isActive, onClick }: SearchResultProps) => {
   return (
-    <div className="w-full p-1 cursor-pointer" onClick={onClick}>
+    <div className="w-full cursor-pointer" onClick={onClick}>
       <div
         className={`flex items-center ${isActive && "bg-[#35353b]"} rounded-md px-1 py-2 gap-2 hover:bg-[#3d3d40]`}
       >
@@ -146,7 +146,7 @@ const UsersSearchInput = ({ onSubmit, excludeIds }: UsersSearchInputProps) => {
             <div className="p-3 font-semibold text-center">{getDisplayMessage()}</div>
           )}
           {!isShowMessage() && (
-            <div className="max-h-40 overflow-y-auto">
+            <div className="max-h-40 p-1 overflow-y-auto">
               {suggestions?.map((suggestion, index) => (
                 <SearchResult
                   key={suggestion.id}
