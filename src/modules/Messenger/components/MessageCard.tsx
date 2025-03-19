@@ -80,7 +80,7 @@ export const MessageCard = forwardRef<HTMLDivElement, MessageProps>(
           } max-w-[70%] min-w-[20%]`}
         >
           {!isOwnMessage && showUsername && isGroup && (
-            <div className="text-sm font-medium text-gray-300 mb-1">
+            <div className="text-sm font-medium text-[#efeff1] mb-1">
               {message.author.username}
             </div>
           )}
@@ -89,7 +89,7 @@ export const MessageCard = forwardRef<HTMLDivElement, MessageProps>(
             className={`relative p-3 rounded-2xl break-words ${
               isOwnMessage
                 ? "bg-[#9147ff] text-white rounded-br-sm"
-                : "bg-gray-700 text-white rounded-bl-sm"
+                : "bg-[#1f1f23] text-white rounded-bl-sm"
             }`}
           >
             <div className="flex flex-wrap gap-2">
