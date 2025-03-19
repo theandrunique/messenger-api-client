@@ -1,12 +1,17 @@
 import { useState } from "react";
 import { SendHorizontal, Paperclip } from "lucide-react";
-import Input from "../../../components/ui/Input";
-import Button from "../../../components/ui/Button";
-import { ApiError } from "../../../schemas/common";
-import { CloudAttachmentResponseSchema } from "../../../schemas/message";
-import notifications from "../../../utils/notifications";
-import { createAttachments, createMessage, deleteUnusedAttachment, uploadFile } from "../../../api/api";
-import FileInfo from "../types/FileInfo";
+import Input from "../../../../components/ui/Input";
+import Button from "../../../../components/ui/Button";
+import { ApiError } from "../../../../schemas/common";
+import { CloudAttachmentResponseSchema } from "../../../../schemas/message";
+import notifications from "../../../../utils/notifications";
+import {
+  createAttachments,
+  createMessage,
+  deleteUnusedAttachment,
+  uploadFile,
+} from "../../../../api/api";
+import FileInfo from "../../types/FileInfo";
 import AttachmentsContainer from "./AttachmentsContainer";
 
 interface MessageInputProps {
@@ -99,7 +104,7 @@ const MessageInput = ({ channelId }: MessageInputProps) => {
       })
     );
 
-    return response.map(([cloudAttachment, file]) => ([file, cloudAttachment]))
+    return response.map(([cloudAttachment, file]) => [file, cloudAttachment]);
   };
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -149,18 +154,16 @@ const MessageInput = ({ channelId }: MessageInputProps) => {
   };
 
   const onAttachmentRemove = (fileInfo: FileInfo) => {
-    deleteUnusedAttachment(fileInfo[1].uploadFilename)
-      .catch((err) => console.log("Error deleting attachment: ", err));
+    deleteUnusedAttachment(fileInfo[1].uploadFilename).catch((err) =>
+      console.log("Error deleting attachment: ", err)
+    );
 
     setFileInfos((prev) => prev.filter((f) => f !== fileInfo));
-  }
+  };
 
   return (
     <div className="border-t border-[#35353b]">
-      <AttachmentsContainer
-        files={fileInfos}
-        onRemove={onAttachmentRemove}
-      />
+      <AttachmentsContainer files={fileInfos} onRemove={onAttachmentRemove} />
       <div
         onDrop={handleDrop}
         className="p-2 rounded-lg flex items-center gap-2"

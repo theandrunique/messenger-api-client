@@ -1,4 +1,4 @@
-import FileInfo from "../types/FileInfo";
+import FileInfo from "../../types/FileInfo";
 import FileCard from "./FileCard";
 
 interface AttachmentsContainerProps {

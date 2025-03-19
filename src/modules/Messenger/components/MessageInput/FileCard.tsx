@@ -1,5 +1,5 @@
 import { FileIcon, X } from "lucide-react";
-import FileInfo from "../types/FileInfo";
+import FileInfo from "../../types/FileInfo";
 
 const formatFileSize = (size: number) => {
   if (size < 1024) return `${size} B`;
