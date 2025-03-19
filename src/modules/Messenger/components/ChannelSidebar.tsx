@@ -10,7 +10,8 @@ import { Plus } from "lucide-react";
 const ChannelSidebar = () => {
   const { isLoading, data: channels } = useUserChannels();
   const { selectChannel } = useSelectedChannelStore();
-  const [isCreateChannelModalOpen, setIsCreateChannelModalOpen] = useState(false);
+  const [isCreateChannelModalOpen, setIsCreateChannelModalOpen] =
+    useState(false);
 
   if (isLoading)
     return (
@@ -29,16 +30,21 @@ const ChannelSidebar = () => {
             />
           ))}
         </div>
-        <div>
+
+        <div className="sticky bottom-0 pb-3 pr-1 flex justify-end pointer-events-none">
           <Button
-            className="absolute right-5 bottom-5 rounded-full p-3"
+            className="pointer-events-auto rounded-full pr-2 pl-1 shadow-xl bg-opacity-90"
             variant={"secondary"}
             onClick={() => setIsCreateChannelModalOpen(true)}
           >
-            <Plus className="w-6 h-6" />
+            <div className="flex items-center gap-1">
+              <Plus className="w-6 h-6" />
+              Create
+            </div>
           </Button>
         </div>
       </div>
+
       <CreateChannelModalForm
         onSubmit={(channel) => selectChannel(channel)}
         open={isCreateChannelModalOpen}
