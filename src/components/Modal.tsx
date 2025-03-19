@@ -101,7 +101,7 @@ const Modal = ({
             <div className="absolute top-2.5 right-2.5">
               <ModalCloseButton onClose={onClose} />
             </div>
-            <div>{children}</div>
+            {children}
           </div>
         </div>
       </div>

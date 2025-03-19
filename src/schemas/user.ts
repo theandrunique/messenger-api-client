@@ -18,3 +18,10 @@ export interface UserSchema {
   email: string;
   isEmailVerified: boolean;
 }
+
+export interface UserSearchResultSchema {
+  id: string;
+  username: string;
+  globalName: string;
+  avatar: string | null;
+}

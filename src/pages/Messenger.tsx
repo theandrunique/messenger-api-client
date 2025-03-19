@@ -9,7 +9,6 @@ function Messenger() {
 
   useEffect(() => {
     connect();
-
     return () => disconnect();
   }, []);
 

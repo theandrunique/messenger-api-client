@@ -1,7 +1,6 @@
 import { QueryClient, useQuery } from "@tanstack/react-query";
 import { getChannels } from "../api";
 import {
-  ChannelCreateEventSchema,
   MessageCreateEventSchema,
 } from "../../schemas/gateway";
 import { ChannelSchema } from "../../schemas/channel";
@@ -53,14 +52,17 @@ export const updateUseUserChannelsOnNewMessage = (
 
 export const updateUseUserChannelsOnNewChannel = (
   queryClient: QueryClient,
-  event: ChannelCreateEventSchema
+  channel: ChannelSchema
 ) => {
   queryClient.setQueryData(
     ["/users/@me/channels"],
     (oldChannels: ChannelSchema[] | undefined) => {
       if (!oldChannels) return;
 
-      return [...oldChannels, event.payload];
+      const isAlreadyExists = oldChannels.some((oldChannel) => oldChannel.id === channel.id);
+      if (isAlreadyExists) return oldChannels;
+
+      return [...oldChannels, channel];
     }
   );
-};
+}

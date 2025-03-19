@@ -7,7 +7,10 @@ import {
   ChannelCreateEventSchema,
   MessageCreateEventSchema,
 } from "../schemas/gateway";
-import { updateUseUserChannelsOnNewMessage, updateUseUserChannelsOnNewChannel } from '../api/hooks/useUserChannels';
+import {
+  updateUseUserChannelsOnNewMessage,
+  updateUseUserChannelsOnNewChannel,
+} from "../api/hooks/useUserChannels";
 import { updateUseMessagesOnNewMessage } from "../api/hooks/useMessages";
 
 interface GatewayReturnType {
@@ -50,7 +53,7 @@ const useGateway = (): GatewayReturnType => {
     });
 
     socket.on("channel:new", (event: ChannelCreateEventSchema) => {
-      updateUseUserChannelsOnNewChannel(queryClient, event);
+      updateUseUserChannelsOnNewChannel(queryClient, event.payload);
     });
   };
 

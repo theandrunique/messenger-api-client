@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { MfaEnableResponseSchema, TokenPairSchema } from "../schemas/auth";
 import { ApiError } from "../schemas/common";
-import { UserSchema } from "../schemas/user";
+import { UserSchema, UserSearchResultSchema } from "../schemas/user";
 import { ChannelSchema } from "../schemas/channel";
 import {
   CloudAttachmentCreateSchema,
@@ -273,7 +273,11 @@ export const createAttachments = (
 };
 
 export const deleteUnusedAttachment = (uploadedFilename: string) => {
-  return baseFetch(() => axiosWithToken.delete(`/attachments/${encodeURIComponent(uploadedFilename)}`));
+  return baseFetch(() =>
+    axiosWithToken.delete(
+      `/attachments/${encodeURIComponent(uploadedFilename)}`
+    )
+  );
 };
 
 export const createMessage = (
@@ -299,4 +303,24 @@ export const uploadFile = async (
     },
     transformRequest: [(data) => data],
   });
+};
+
+export const searchUsers = (
+  query: string
+): Promise<UserSearchResultSchema[]> => {
+  return baseFetch(() =>
+    axiosWithToken.get<UserSearchResultSchema[]>(`/users/search?query=${query}`)
+  );
+};
+
+export const createChannel = (
+  title: string,
+  members: string[]
+): Promise<ChannelSchema> => {
+  return baseFetch(() =>
+    axiosWithToken.post<ChannelSchema>("/users/@me/channels", {
+      title,
+      members,
+    })
+  );
 };
