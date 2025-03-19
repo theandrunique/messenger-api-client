@@ -1,11 +1,7 @@
 import { ReactNode } from "react";
-import {
-  ChannelMemberSchema,
-  ChannelSchema,
-  ChannelType,
-} from "../../../schemas/channel";
-import Avatar from "../../../components/Avatar";
-import useCurrentUser from "../../../api/hooks/useCurrentUser";
+import { ChannelMemberSchema, ChannelSchema, ChannelType } from "../../../../schemas/channel";
+import Avatar from "../../../../components/Avatar";
+import useCurrentUser from "../../../../api/hooks/useCurrentUser";
 
 interface ChannelCardProps {
   channel: ChannelSchema;
