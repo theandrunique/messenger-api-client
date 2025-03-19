@@ -1,5 +1,5 @@
-import { ChannelType } from "../../../schemas/channel";
-import { MessageSchema } from "../../../schemas/message";
+import { ChannelType } from "../../../../schemas/channel";
+import { MessageSchema } from "../../../../schemas/message";
 import DateDivider from "./DateDivider";
 import MessageCard from "./MessageCard";
 

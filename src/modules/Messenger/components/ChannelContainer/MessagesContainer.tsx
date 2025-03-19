@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
-import useMessages from "../../../api/hooks/useMessages";
-import { ChannelSchema } from "../../../schemas/channel";
-import Loading from "../../../components/Loading";
-import MessagesList from "./MessagesList";
+import useMessages from "../../../../api/hooks/useMessages";
+import { ChannelSchema } from "../../../../schemas/channel";
+import Loading from "../../../../components/Loading";
+import MessagesList from "../MessagesList/MessagesList";
 
 const PendingMessages = () => {
   return <Loading message="Loading messages" />;

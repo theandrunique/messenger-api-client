@@ -1,10 +1,10 @@
-import MessageInput from "./MessageInput";
-import { ChannelSchema, ChannelType } from "../../../schemas/channel";
+import MessageInput from "../MessageInput";
+import { ChannelSchema, ChannelType } from "../../../../schemas/channel";
 import SelectChannelMessage from "./SelectChannelMessage";
-import useCurrentUser from "../../../api/hooks/useCurrentUser";
+import useCurrentUser from "../../../../api/hooks/useCurrentUser";
 import MessagesContainer from "./MessagesContainer";
-import useSelectedChannelStore from "../stores/useSelectedChannelStore";
-import ChannelProvider from "../contexts/ChannelProvider";
+import useSelectedChannelStore from "../../stores/useSelectedChannelStore";
+import ChannelProvider from "../../contexts/ChannelProvider";
 
 const ChannelContainerHeader = ({ channel }: { channel: ChannelSchema }) => {
   const { currentUser } = useCurrentUser();
