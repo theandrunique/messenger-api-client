@@ -23,10 +23,20 @@ export interface MessageSchema {
   attachments: AttachmentSchema[];
 }
 
-export interface CloudAttachmentResponseSchema {
+export interface CloudAttachmentsResponseSchema {
+  results: CloudAttachmentSchema[];
+  errors: CloudAttachmentErrorSchema[];
+}
+
+export interface CloudAttachmentSchema {
   id: string | null;
   uploadUrl: string;
   uploadFilename: string;
+}
+
+export interface CloudAttachmentErrorSchema {
+  id: string | null;
+  errors: string[];
 }
 
 export interface CloudAttachmentCreateSchema {

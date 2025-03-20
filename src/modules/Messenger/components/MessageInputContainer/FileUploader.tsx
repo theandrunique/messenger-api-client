@@ -12,7 +12,7 @@ import MessageAttachmentInfo, {
   MessageAttachmentStatus,
 } from "../../types/MessageAttachmentInfo";
 import notifications from "../../../../utils/notifications";
-import { CloudAttachmentResponseSchema } from "../../../../schemas/message";
+import { CloudAttachmentSchema } from '../../../../schemas/message';
 
 interface FileUploadContextProps {
   onFilesSelect: (files: File[]) => void;
@@ -41,7 +41,7 @@ const FileUploader = ({
   const updateFileStatus = (
     file: File,
     status: MessageAttachmentStatus,
-    cloudAttachment?: CloudAttachmentResponseSchema,
+    cloudAttachment?: CloudAttachmentSchema,
     progress?: number,
     errors?: string[]
   ) => {
@@ -70,10 +70,12 @@ const FileUploader = ({
     setAttachments((prev) => [...prev, ...newAttachments]);
 
     try {
-      const cloudAttachments = await handleCreateAttachments(channelId, files);
+      const response = await handleCreateAttachments(channelId, files);
+      response[1].map(([file, errors]) => updateFileStatus(file, "error", undefined, undefined, errors));
+      const cloudAttachments = response[0];
 
       await Promise.all(
-        cloudAttachments.map(async ([cloudAttachment, file]) => {
+        cloudAttachments.map(async ([file, cloudAttachment]) => {
           try {
             updateFileStatus(file, "uploading", cloudAttachment);
 
@@ -131,7 +133,7 @@ const FileUploader = ({
   };
 
   const clearAttachments = (attachments: MessageAttachmentInfo[]) => {
-    setAttachments(prev => prev.filter(f => !attachments.includes(f)));
+    setAttachments((prev) => prev.filter((f) => !attachments.includes(f)));
   };
 
   const value = {

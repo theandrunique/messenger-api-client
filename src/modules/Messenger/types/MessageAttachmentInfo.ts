@@ -1,4 +1,4 @@
-import { CloudAttachmentResponseSchema } from "../../../schemas/message";
+import { CloudAttachmentSchema } from "../../../schemas/message";
 
 export type MessageAttachmentStatus =
   | "pending"
@@ -8,7 +8,7 @@ export type MessageAttachmentStatus =
 
 type MessageAttachmentInfo = {
   file: File;
-  cloudAttachment: CloudAttachmentResponseSchema | null;
+  cloudAttachment: CloudAttachmentSchema | null;
   status: MessageAttachmentStatus;
   progress?: number;
   errors?: string[];

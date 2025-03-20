@@ -5,7 +5,7 @@ import { UserSchema, UserSearchResultSchema } from "../schemas/user";
 import { ChannelSchema } from "../schemas/channel";
 import {
   CloudAttachmentCreateSchema,
-  CloudAttachmentResponseSchema,
+  CloudAttachmentsResponseSchema,
   MessageAttachmentUploadSchema,
   MessageSchema,
 } from "../schemas/message";
@@ -263,9 +263,9 @@ export const getMessages = (
 export const createAttachments = (
   channelId: string,
   attachments: CloudAttachmentCreateSchema[]
-): Promise<CloudAttachmentResponseSchema[]> => {
+): Promise<CloudAttachmentsResponseSchema> => {
   return baseFetch(() =>
-    axiosWithToken.post<CloudAttachmentResponseSchema[]>(
+    axiosWithToken.post<CloudAttachmentsResponseSchema>(
       `/channels/${channelId}/attachments`,
       { files: attachments }
     )
@@ -316,9 +316,7 @@ export const uploadFile = async (
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(
-        error.response?.data?.message ||
-        error.message ||
-        "File upload failed"
+        error.response?.data?.message || error.message || "File upload failed"
       );
     }
     throw error;
