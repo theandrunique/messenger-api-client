@@ -38,7 +38,7 @@ const MessageInputContainer = ({ channelId }: MessageInputContainerProps) => {
     <div className="flex flex-col bg-[#0e0e10] px-3 pb-2">
       {attachments.length > 0 && (
         <div className="border-t border-x rounded-lg border-[#38383f] mb-[-10px] pb-[10px] bg-[#18181b]">
-          <div className="flex gap-x-2 gap-y-1 flex-wrap p-1 ">
+          <div className="flex gap-x-2 gap-y-1 flex-wrap p-2 px-3">
             {attachments.map((attachment) => (
               <FileCard attachment={attachment} onRemove={onAttachmentRemove} />
             ))}
