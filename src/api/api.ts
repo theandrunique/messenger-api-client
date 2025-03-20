@@ -295,14 +295,34 @@ export const createMessage = (
 
 export const uploadFile = async (
   uploadUrl: string,
-  file: File
+  file: File,
+  onProgress?: (progress: number) => void
 ): Promise<void> => {
-  return await axios.put(uploadUrl, file, {
-    headers: {
-      "Content-Type": file.type || "application/octet-stream",
-    },
-    transformRequest: [(data) => data],
-  });
+  try {
+    return await axios.put(uploadUrl, file, {
+      headers: {
+        "Content-Type": file.type || "application/octet-stream",
+      },
+      transformRequest: [(data) => data],
+      onUploadProgress(progressEvent) {
+        if (progressEvent.total && onProgress) {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          onProgress(percentCompleted);
+        }
+      },
+    });
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message ||
+        error.message ||
+        "File upload failed"
+      );
+    }
+    throw error;
+  }
 };
 
 export const searchUsers = (

@@ -1,29 +1,28 @@
-import { createAttachments, uploadFile } from "../../../../api/api";
+import { createAttachments } from "../../../../api/api";
 import { ApiError } from "../../../../schemas/common";
 import { CloudAttachmentResponseSchema } from "../../../../schemas/message";
 import notifications from "../../../../utils/notifications";
-import FileInfo from "../../types/FileInfo";
 
 export const getFailedFiles = (
-    files: File[],
-    errors: Record<string, string[]>
+  files: File[],
+  errors: Record<string, string[]>
 ): [File, string[]][] => {
-    const failedFiles: [File, string[]][] = [];
+  const failedFiles: [File, string[]][] = [];
 
-    Object.keys(errors).forEach((key) => {
-        const match = key.match(/files\[(\d+)\]/);
-        if (match) {
-        const index = parseInt(match[1], 10);
-        const errorMessages = errors[key];
-        const file = files[index];
+  Object.keys(errors).forEach((key) => {
+    const match = key.match(/files\[(\d+)\]/);
+    if (match) {
+      const index = parseInt(match[1], 10);
+      const errorMessages = errors[key];
+      const file = files[index];
 
-        if (file) {
-            failedFiles.push([file, errorMessages]);
-        }
-        }
-    });
+      if (file) {
+        failedFiles.push([file, errorMessages]);
+      }
+    }
+  });
 
-    return failedFiles;
+  return failedFiles;
 };
 
 export const handleCreateAttachments = async (
@@ -70,22 +69,4 @@ export const handleCreateAttachments = async (
     }
     throw err;
   }
-};
-
-export const uploadFiles = async (channelId: string, files: File[]): Promise<FileInfo[]> => {
-  const response = await handleCreateAttachments(channelId, files);
-
-  await Promise.all(
-    response.map(async ([attachment, file]) => {
-      try {
-        await uploadFile(attachment.uploadUrl, file);
-      } catch (err) {
-        notifications.error(
-          `Error while uploading '${file.name}' file. ${err}`
-        );
-      }
-    })
-  );
-
-  return response.map(([cloudAttachment, file]) => [file, cloudAttachment]);
 };

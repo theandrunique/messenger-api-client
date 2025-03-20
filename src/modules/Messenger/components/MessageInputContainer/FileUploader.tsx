@@ -5,16 +5,20 @@ import {
   useState,
   DragEvent,
 } from "react";
-import FileInfo from "../../types/FileInfo";
 import DropFilesHereMessage from "../ChannelContainer/DropFilesHereMessage";
-import { deleteUnusedAttachment } from "../../../../api/api";
-import { uploadFiles } from "./utils";
+import { deleteUnusedAttachment, uploadFile } from "../../../../api/api";
+import { handleCreateAttachments } from "./utils";
+import MessageAttachmentInfo, {
+  MessageAttachmentStatus,
+} from "../../types/MessageAttachmentInfo";
+import notifications from "../../../../utils/notifications";
+import { CloudAttachmentResponseSchema } from "../../../../schemas/message";
 
 interface FileUploadContextProps {
   onFilesSelect: (files: File[]) => void;
-  onFileRemove: (file: FileInfo) => void;
-  fileInfos: FileInfo[];
-  clearFileInfos: () => void;
+  onAttachmentRemove: (attachment: MessageAttachmentInfo) => void;
+  attachments: MessageAttachmentInfo[];
+  clearAttachments: (attachments: MessageAttachmentInfo[]) => void;
 }
 
 const FileUploaderContext = createContext<FileUploadContextProps | undefined>(
@@ -26,9 +30,69 @@ interface FileUploaderProps extends PropsWithChildren {
   channelId: string;
 }
 
-const FileUploader = ({ children, className, channelId }: FileUploaderProps) => {
-  const [fileInfos, setFileInfos] = useState<FileInfo[]>([]);
+const FileUploader = ({
+  children,
+  className,
+  channelId,
+}: FileUploaderProps) => {
+  const [attachments, setAttachments] = useState<MessageAttachmentInfo[]>([]);
   const [isDragging, setIsDragging] = useState(false);
+
+  const updateFileStatus = (
+    file: File,
+    status: MessageAttachmentStatus,
+    cloudAttachment?: CloudAttachmentResponseSchema,
+    progress?: number,
+    errors?: string[]
+  ) => {
+    setAttachments((prev) =>
+      prev.map((attachment) => {
+        if (attachment.file !== file) return attachment;
+
+        return {
+          ...attachment,
+          status,
+          cloudAttachment: cloudAttachment || attachment.cloudAttachment,
+          progress,
+          errors,
+        };
+      })
+    );
+  };
+
+  const uploadFiles = async (files: File[]) => {
+    const newAttachments: MessageAttachmentInfo[] = files.map((file) => ({
+      file,
+      cloudAttachment: null,
+      status: "pending",
+    }));
+
+    setAttachments((prev) => [...prev, ...newAttachments]);
+
+    try {
+      const cloudAttachments = await handleCreateAttachments(channelId, files);
+
+      await Promise.all(
+        cloudAttachments.map(async ([cloudAttachment, file]) => {
+          try {
+            updateFileStatus(file, "uploading", cloudAttachment);
+
+            await uploadFile(cloudAttachment.uploadUrl, file, (progress) => {
+              updateFileStatus(file, "uploading", cloudAttachment, progress);
+            });
+
+            updateFileStatus(file, "success", cloudAttachment, 100);
+          } catch (err: any) {
+            updateFileStatus(file, "error", cloudAttachment, undefined, [
+              err.message,
+            ]);
+          }
+        })
+      );
+    } catch (err) {
+      notifications.error("Error uploading files.");
+    }
+  };
 
   const handleDragEnter = (e: DragEvent) => {
     e.preventDefault();
@@ -50,31 +114,31 @@ const FileUploader = ({ children, className, channelId }: FileUploaderProps) => 
     setIsDragging(false);
     const files = Array.from(e.dataTransfer.files);
 
-    uploadFiles(channelId, files)
-      .then(newFileInfos => setFileInfos(prev => [...prev, ...newFileInfos]));
+    uploadFiles(files);
   };
 
   const onFilesSelect = (files: File[]) => {
-    uploadFiles(channelId, files)
-      .then(newFileInfos => setFileInfos(prev => [...prev, ...newFileInfos]));
+    uploadFiles(files);
   };
 
-  const onFileRemove = (fileInfo: FileInfo) => {
-    deleteUnusedAttachment(fileInfo[1].uploadFilename)
-      .catch(err => console.log(err));
+  const onAttachmentRemove = (attachment: MessageAttachmentInfo) => {
+    if (attachment.cloudAttachment) {
+      deleteUnusedAttachment(attachment.cloudAttachment?.uploadFilename).catch(
+        (err) => console.log(err)
+      );
+    }
+    setAttachments((prev) => prev.filter((f) => f !== attachment));
+  };
 
-    setFileInfos(prev => prev.filter(f => f !== fileInfo));
-  }
-
-  const clearFileInfos = () => {
-    setFileInfos([]);
-  }
+  const clearAttachments = (attachments: MessageAttachmentInfo[]) => {
+    setAttachments(prev => prev.filter(f => !attachments.includes(f)));
+  };
 
   const value = {
     onFilesSelect,
-    fileInfos,
-    onFileRemove,
-    clearFileInfos,
+    attachments,
+    onAttachmentRemove,
+    clearAttachments,
   };
 
   return (

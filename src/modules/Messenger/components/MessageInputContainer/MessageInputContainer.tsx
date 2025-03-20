@@ -8,21 +8,26 @@ interface MessageInputContainerProps {
 }
 
 const MessageInputContainer = ({ channelId }: MessageInputContainerProps) => {
-  const { fileInfos, onFileRemove, clearFileInfos } = useFileUploader();
+  const { attachments, onAttachmentRemove, clearAttachments } =
+    useFileUploader();
 
   const onSubmit = async (messageContent: string) => {
-    if (!messageContent.trim() && fileInfos.length === 0) return;
+    if (!messageContent.trim() && attachments.length === 0) return;
 
     try {
+      const readyAttachments = attachments.filter(
+        (f) => f.status === "success" && f.cloudAttachment !== null
+      );
+
       await createMessage(
         channelId,
         messageContent,
-        fileInfos.map((f) => ({
-          uploadedFilename: f[1].uploadFilename,
-          filename: f[0].name,
+        readyAttachments.map((f) => ({
+          uploadedFilename: f.cloudAttachment?.uploadFilename || "", // make TS happy
+          filename: f.file.name,
         }))
       );
-      clearFileInfos();
+      clearAttachments(readyAttachments);
     } catch (err) {
       console.log("Error sending message: ", err);
       throw err;
@@ -31,11 +36,11 @@ const MessageInputContainer = ({ channelId }: MessageInputContainerProps) => {
 
   return (
     <div className="flex flex-col bg-[#0e0e10] px-3 pb-2">
-      {fileInfos.length > 0 && (
+      {attachments.length > 0 && (
         <div className="border-t border-x rounded-lg border-[#38383f] mb-[-10px] pb-[10px] bg-[#18181b]">
           <div className="flex gap-x-2 gap-y-1 flex-wrap p-1 ">
-            {fileInfos.map((fileInfo) => (
-              <FileCard fileInfo={fileInfo} onRemove={onFileRemove} />
+            {attachments.map((attachment) => (
+              <FileCard attachment={attachment} onRemove={onAttachmentRemove} />
             ))}
           </div>
         </div>
