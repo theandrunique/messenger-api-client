@@ -44,7 +44,7 @@ const MessageInput = ({ onSubmit }: MessageInputProps) => {
           className="p-1"
           variant="icon"
         >
-          <PlusCircle className="w-6 h-6" />
+          <PlusCircle className="w-6 h-6 text-[#9d9d9e]" />
         </Button>
       </div>
 
@@ -66,7 +66,7 @@ const MessageInput = ({ onSubmit }: MessageInputProps) => {
 
       <div className="absolute right-2 inset-y-0 flex items-center">
         <Button className="p-1" variant="icon" onSubmit={handleSubmit}>
-          <SendHorizonal className="w-6 h-6" />
+          <SendHorizonal className="w-6 h-6 text-[#9d9d9e]" />
         </Button>
       </div>
     </div>
