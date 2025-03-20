@@ -1,5 +1,5 @@
 import { createMessage } from "../../../../api/api";
-import AttachmentsContainer from "./AttachmentsContainer";
+import FileCard from "./FileCard";
 import { useFileUploader } from "./FileUploader";
 import MessageInput from "./MessageInput";
 
@@ -30,8 +30,17 @@ const MessageInputContainer = ({ channelId }: MessageInputContainerProps) => {
   };
 
   return (
-    <div className="px-3 pb-2 bg-[#0e0e10] flex flex-col">
-      <AttachmentsContainer files={fileInfos} onRemove={onFileRemove} />
+    <div className="flex flex-col bg-[#0e0e10] px-3 pb-2">
+      {fileInfos.length > 0 && (
+        <div className="border-t border-x rounded-lg border-[#38383f] mb-[-10px] pb-[10px] bg-[#18181b]">
+          <div className="flex gap-x-2 gap-y-1 flex-wrap p-1 ">
+            {fileInfos.map((fileInfo) => (
+              <FileCard fileInfo={fileInfo} onRemove={onFileRemove} />
+            ))}
+          </div>
+        </div>
+      )}
+
       <MessageInput onSubmit={onSubmit} />
     </div>
   );
