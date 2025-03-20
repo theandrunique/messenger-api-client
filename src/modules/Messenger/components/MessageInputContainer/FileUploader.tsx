@@ -8,11 +8,8 @@ import {
 import DropFilesHereMessage from "../ChannelContainer/DropFilesHereMessage";
 import { deleteUnusedAttachment, uploadFile } from "../../../../api/api";
 import { handleCreateAttachments } from "./utils";
-import MessageAttachmentInfo, {
-  MessageAttachmentStatus,
-} from "../../types/MessageAttachmentInfo";
+import MessageAttachmentInfo from "../../types/MessageAttachmentInfo";
 import notifications from "../../../../utils/notifications";
-import { CloudAttachmentSchema } from '../../../../schemas/message';
 
 interface FileUploadContextProps {
   onFilesSelect: (files: File[]) => void;
@@ -40,23 +37,12 @@ const FileUploader = ({
 
   const updateFileStatus = (
     file: File,
-    status: MessageAttachmentStatus,
-    cloudAttachment?: CloudAttachmentSchema,
-    progress?: number,
-    errors?: string[]
+    updates: Partial<Omit<MessageAttachmentInfo, "file">>,
   ) => {
     setAttachments((prev) =>
-      prev.map((attachment) => {
-        if (attachment.file !== file) return attachment;
-
-        return {
-          ...attachment,
-          status,
-          cloudAttachment: cloudAttachment || attachment.cloudAttachment,
-          progress,
-          errors,
-        };
-      })
+      prev.map((attachment) =>
+        attachment.file === file ? { ...attachment, ...updates } : attachment
+      )
     );
   };
 
@@ -71,23 +57,21 @@ const FileUploader = ({
 
     try {
       const response = await handleCreateAttachments(channelId, files);
-      response[1].map(([file, errors]) => updateFileStatus(file, "error", undefined, undefined, errors));
+      response[1].map(([file, errors]) => updateFileStatus(file, { errors, status: "error"}));
       const cloudAttachments = response[0];
 
       await Promise.all(
         cloudAttachments.map(async ([file, cloudAttachment]) => {
           try {
-            updateFileStatus(file, "uploading", cloudAttachment);
+            updateFileStatus(file, { cloudAttachment, status: "uploading" });
 
             await uploadFile(cloudAttachment.uploadUrl, file, (progress) => {
-              updateFileStatus(file, "uploading", cloudAttachment, progress);
+              updateFileStatus(file, { progress });
             });
 
-            updateFileStatus(file, "success", cloudAttachment, 100);
+            updateFileStatus(file, { status: "success" });
           } catch (err: any) {
-            updateFileStatus(file, "error", cloudAttachment, undefined, [
-              err.message,
-            ]);
+            updateFileStatus(file, { status: "error", errors: [err.message] });
           }
         })
       );
