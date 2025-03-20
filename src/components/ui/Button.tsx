@@ -25,8 +25,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ variant, children, className, ...props }, ref) => {
     return (
       <button
-        className={cn(
-          `
+        className={cn(`
           px-2
           py-1
           text-sm

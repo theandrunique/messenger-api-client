@@ -20,7 +20,7 @@ const FileCard = ({
   return (
     <div
       key={file.name}
-      className="bg-gray-700 p-1 rounded-lg flex items-center gap-2 relative w-48"
+      className="bg-[#1f1f23] p-1 rounded-lg flex items-center gap-2 relative w-48"
     >
       {isImage ? (
         <img
