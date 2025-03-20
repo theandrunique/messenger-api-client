@@ -65,11 +65,14 @@ const FileUploader = ({
           try {
             updateFileStatus(file, { cloudAttachment, status: "uploading" });
 
+            const abortController = new AbortController();
+            updateFileStatus(file, { abortController });
+
             await uploadFile(cloudAttachment.uploadUrl, file, (progress) => {
               updateFileStatus(file, { progress });
-            });
+            }, abortController.signal);
 
-            updateFileStatus(file, { status: "success" });
+            updateFileStatus(file, { status: "success", abortController: undefined });
           } catch (err: any) {
             updateFileStatus(file, { status: "error", errors: [err.message] });
           }
@@ -108,6 +111,7 @@ const FileUploader = ({
   };
 
   const onAttachmentRemove = (attachment: MessageAttachmentInfo) => {
+    if (attachment.abortController) attachment.abortController.abort();
     if (attachment.cloudAttachment) {
       deleteUnusedAttachment(attachment.cloudAttachment?.uploadFilename).catch(
         (err) => console.log(err)

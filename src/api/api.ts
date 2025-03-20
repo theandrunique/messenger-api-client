@@ -296,7 +296,8 @@ export const createMessage = (
 export const uploadFile = async (
   uploadUrl: string,
   file: File,
-  onProgress?: (progress: number) => void
+  onProgress?: (progress: number) => void,
+  signal?: AbortSignal
 ): Promise<void> => {
   try {
     return await axios.put(uploadUrl, file, {
@@ -312,6 +313,7 @@ export const uploadFile = async (
           onProgress(percentCompleted);
         }
       },
+      signal: signal,
     });
   } catch (error) {
     if (axios.isAxiosError(error)) {
