@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { MfaEnableResponseSchema, TokenPairSchema } from "../schemas/auth";
 import { ApiError } from "../schemas/common";
-import { UserSchema, UserSearchResultSchema } from "../schemas/user";
+import { UserSchema, UserPublicSchema } from "../schemas/user";
 import { ChannelSchema } from "../schemas/channel";
 import {
   CloudAttachmentCreateSchema,
@@ -63,7 +63,7 @@ export const refreshSessionIfNeed = async () => {
 
     console.error("Error while refreshing session", err);
     removeTokens();
-    throw err;
+    throw new Error("session-error");
   }
 };
 
@@ -113,7 +113,7 @@ export const setupInterceptors = (onRefreshError: () => void) => {
         isRefreshing = true;
 
         try {
-          await refreshSessionIfNeed();
+           await refreshSessionIfNeed();
           refreshSubscribers.forEach((callback) => callback());
           refreshSubscribers = [];
           return axiosWithToken(originalRequest);
@@ -325,11 +325,9 @@ export const uploadFile = async (
   }
 };
 
-export const searchUsers = (
-  query: string
-): Promise<UserSearchResultSchema[]> => {
+export const searchUsers = (query: string): Promise<UserPublicSchema[]> => {
   return baseFetch(() =>
-    axiosWithToken.get<UserSearchResultSchema[]>(`/users/search?query=${query}`)
+    axiosWithToken.get<UserPublicSchema[]>(`/users/search?query=${query}`)
   );
 };
 

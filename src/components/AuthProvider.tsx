@@ -29,9 +29,10 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   const navigate = useNavigate();
 
   const onRefreshError = () => {
+    console.log("Refresh session error callback...");
     removeTokens();
-    queryClient.invalidateQueries();
     navigate("/sign-in", { replace: true });
+    queryClient.invalidateQueries();
   };
 
   useEffect(() => {

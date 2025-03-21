@@ -12,7 +12,8 @@ const useSessionChecker = () => {
   });
 
   const isNetworkError = context.error?.message === "network-error";
-  const isUnauthorized = context.error?.message === "no-session";
+  const isUnauthorized = context.error?.message === "no-session"
+    || context.error?.message === "session-error";
 
   return {
     recheckSession: context.refetch,
