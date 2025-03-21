@@ -37,7 +37,7 @@ const FileUploader = ({
 
   const updateFileStatus = (
     file: File,
-    updates: Partial<Omit<MessageAttachmentInfo, "file">>,
+    updates: Partial<Omit<MessageAttachmentInfo, "file">>
   ) => {
     setAttachments((prev) =>
       prev.map((attachment) =>
@@ -50,6 +50,7 @@ const FileUploader = ({
     const newAttachments: MessageAttachmentInfo[] = files.map((file) => ({
       file,
       cloudAttachment: null,
+      abortController: new AbortController(),
       status: "pending",
     }));
 
@@ -57,7 +58,9 @@ const FileUploader = ({
 
     try {
       const response = await handleCreateAttachments(channelId, files);
-      response[1].map(([file, errors]) => updateFileStatus(file, { errors, status: "error"}));
+      response[1].map(([file, errors]) =>
+        updateFileStatus(file, { errors, status: "error" })
+      );
       const cloudAttachments = response[0];
 
       await Promise.all(
@@ -65,14 +68,29 @@ const FileUploader = ({
           try {
             updateFileStatus(file, { cloudAttachment, status: "uploading" });
 
-            const abortController = new AbortController();
-            updateFileStatus(file, { abortController });
+            const abortController = newAttachments.find(
+              (f) => f.file === file
+            )?.abortController;
 
-            await uploadFile(cloudAttachment.uploadUrl, file, (progress) => {
-              updateFileStatus(file, { progress });
-            }, abortController.signal);
+            if (!abortController) {
+              throw new Error(
+                "Attachment not found or abort controller is undefined."
+              );
+            }
 
-            updateFileStatus(file, { status: "success", abortController: undefined });
+            await uploadFile(
+              cloudAttachment.uploadUrl,
+              file,
+              (progress) => {
+                updateFileStatus(file, { progress });
+              },
+              abortController.signal
+            );
+
+            updateFileStatus(file, {
+              status: "success",
+              abortController: undefined,
+            });
           } catch (err: any) {
             updateFileStatus(file, { status: "error", errors: [err.message] });
           }
