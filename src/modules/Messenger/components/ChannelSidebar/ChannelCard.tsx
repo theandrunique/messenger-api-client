@@ -1,7 +1,8 @@
 import { ReactNode } from "react";
-import { ChannelMemberSchema, ChannelSchema, ChannelType } from "../../../../schemas/channel";
+import { ChannelSchema, ChannelType } from "../../../../schemas/channel";
 import Avatar from "../../../../components/Avatar";
 import useCurrentUser from "../../../../api/hooks/useCurrentUser";
+import { UserPublicSchema } from "../../../../schemas/user";
 
 interface ChannelCardProps {
   channel: ChannelSchema;
@@ -10,7 +11,7 @@ interface ChannelCardProps {
 
 const getChannelImage = (
   channel: ChannelSchema,
-  member: ChannelMemberSchema | null
+  member: UserPublicSchema | null
 ) => {
   if (channel.type === ChannelType.PRIVATE) {
     if (member === null) {
@@ -20,7 +21,7 @@ const getChannelImage = (
     if (member.avatar !== null) {
       return (
         <Avatar
-          userId={member.userId}
+          userId={member.id}
           avatar={member.avatar}
           username={member.username}
         />
@@ -57,7 +58,7 @@ const hasUnreadMessages = (channel: ChannelSchema) => {
 
 const getChannelName = (
   channel: ChannelSchema,
-  otherMember: ChannelMemberSchema | null
+  otherMember: UserPublicSchema | null
 ) => {
   if (channel.type === ChannelType.PRIVATE) {
     return otherMember
@@ -86,8 +87,7 @@ const ChannelCard = ({ channel, onClick }: ChannelCardProps): ReactNode => {
     : "";
 
   const otherMember = isPrivateChannel
-    ? channel.members.find((member) => member.userId !== currentUser?.id) ||
-      null
+    ? channel.members.find((member) => member.id !== currentUser?.id) || null
     : null;
 
   return (

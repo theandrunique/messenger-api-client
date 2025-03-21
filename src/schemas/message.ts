@@ -1,25 +1,20 @@
+import { UserPublicSchema } from "./user";
+
 export interface AttachmentSchema {
   id: string;
   filename: string;
   contentType: string;
   size: number;
-  url: "string";
-}
-
-export interface MessageAuthorSchema {
-  id: string;
-  username: string;
-  globalName: string;
-  avatar: string | null;
+  url: string;
 }
 
 export interface MessageSchema {
   id: string;
   channelId: string;
   content: string;
-  timestamp: Date;
-  editedTimestamp: Date | null;
-  author: MessageAuthorSchema;
+  timestamp: string;
+  editedTimestamp: string | null;
+  author: UserPublicSchema;
   attachments: AttachmentSchema[];
 }
 

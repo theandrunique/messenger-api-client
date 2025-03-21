@@ -1,3 +1,5 @@
+import { UserPublicSchema } from "./user";
+
 export enum ChannelType {
   PRIVATE = "PRIVATE",
   GROUP = "GROUP",
@@ -14,13 +16,6 @@ export interface MessageInfoSchema {
   attachmentsCount: number;
 }
 
-export interface ChannelMemberSchema {
-  userId: string;
-  username: string;
-  globalName: string;
-  avatar: string | null;
-}
-
 export interface ChannelSchema {
   id: string;
   ownerId: string | null;
@@ -30,5 +25,5 @@ export interface ChannelSchema {
   readAt: string;
   lastMessageTimestamp: Date | null;
   lastMessage: MessageInfoSchema;
-  members: ChannelMemberSchema[];
+  members: UserPublicSchema[];
 }

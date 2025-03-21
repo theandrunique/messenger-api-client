@@ -11,30 +11,31 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ErrorMessage from "../../../components/ui/ErrorMessage";
-import SelectedUser from "../components/SelectedUser";
 import { UserPublicSchema } from "../../../schemas/user";
+import SelectedUser from "../components/SelectedUser";
 
-const createChannelSchema = z.object({
+const updateChannelInfoSchema = z.object({
   title: z.string().min(1, "Channel name is required").max(50),
   members: z.array(z.string()).min(0),
 });
 
-type CreateChannelFormData = z.infer<typeof createChannelSchema>;
+type UpdateChannelInfoFormData = z.infer<typeof updateChannelInfoSchema>;
 
-interface CreateChannelModalFormProps {
+interface UpdateChannelInfoModalFormProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (channel: ChannelSchema) => void;
+  channel: ChannelSchema,
 }
 
-const CreateChannelModalForm = ({
+const UpdateChannelInfoModalForm = ({
   open,
   onClose,
   onSubmit,
-}: CreateChannelModalFormProps) => {
-  const [selectedUsers, setSelectedUsers] = useState<UserPublicSchema[]>(
-    []
-  );
+  channel,
+}: UpdateChannelInfoModalFormProps) => {
+  const [selectedUsers, setSelectedUsers] = useState<UserPublicSchema[]>(channel.members);
+
   const {
     register,
     handleSubmit,
@@ -43,14 +44,14 @@ const CreateChannelModalForm = ({
     reset,
     setError,
     formState: { errors },
-  } = useForm<CreateChannelFormData>({
-    resolver: zodResolver(createChannelSchema),
-    defaultValues: { title: "", members: [] },
+  } = useForm<UpdateChannelInfoFormData>({
+    resolver: zodResolver(updateChannelInfoSchema),
+    defaultValues: { title: channel.title as string, members: channel.members.map(member => member.id) },
   });
 
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
-    mutationFn: (data: CreateChannelFormData) =>
+    mutationFn: (data: UpdateChannelInfoFormData) =>
       createChannel(data.title, data.members),
     onSuccess: (createdChannel) => {
       updateUseUserChannelsOnNewChannel(queryClient, createdChannel);
@@ -143,4 +144,4 @@ const CreateChannelModalForm = ({
   );
 };
 
-export default CreateChannelModalForm;
+export default UpdateChannelInfoModalForm;

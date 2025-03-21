@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import Avatar from "../../../components/Avatar";
 import Input from "../../../components/ui/Input";
-import { UserSearchResultSchema } from "../../../schemas/user";
 import { searchUsers } from "../../../api/api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { UserPublicSchema } from "../../../schemas/user";
 
 interface SearchResultProps {
-  result: UserSearchResultSchema;
+  result: UserPublicSchema;
   isActive: boolean;
   onClick: () => void;
 }
@@ -32,7 +32,7 @@ const SearchResult = ({ result, isActive, onClick }: SearchResultProps) => {
 };
 
 interface UsersSearchInputProps {
-  onSubmit: (result: UserSearchResultSchema) => void;
+  onSubmit: (result: UserPublicSchema) => void;
   excludeIds: string[];
 }
 
@@ -105,7 +105,7 @@ const UsersSearchInput = ({ onSubmit, excludeIds }: UsersSearchInputProps) => {
     }
   };
 
-  const handleSubmit = (result: UserSearchResultSchema) => {
+  const handleSubmit = (result: UserPublicSchema) => {
     onSubmit(result);
     setQuery("");
     queryClient.invalidateQueries({ queryKey: ["search-users"] });

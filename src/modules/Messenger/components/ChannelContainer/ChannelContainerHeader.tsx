@@ -6,7 +6,7 @@ const ChannelContainerHeader = ({ channel }: { channel: ChannelSchema }) => {
 
   const getPrivateChannelName = () => {
     const otherMember =
-      channel.members.find((member) => member.userId !== currentUser?.id) ||
+      channel.members.find((member) => member.id !== currentUser?.id) ||
       null;
     if (otherMember !== null) {
       return `${otherMember.username} (${otherMember.globalName})`;

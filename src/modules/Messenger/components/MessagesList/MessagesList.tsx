@@ -63,7 +63,7 @@ const MessagesList = ({
 
         return (
           <div key={date}>
-            <DateDivider date={messages[0].timestamp} />
+            <DateDivider timestamp={messages[0].timestamp} />
             <div className="flex flex-col-reverse">
               {authorGroups.map((group) =>
                 group.map((message, index) => (

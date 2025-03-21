@@ -19,9 +19,10 @@ export interface UserSchema {
   isEmailVerified: boolean;
 }
 
-export interface UserSearchResultSchema {
+export interface UserPublicSchema {
   id: string;
   username: string;
   globalName: string;
   avatar: string | null;
+  timestamp: string;
 }
