@@ -2,14 +2,14 @@ import { PlusCircle, SendHorizonal } from "lucide-react";
 import Button from "../../../../components/ui/Button";
 import Input from "../../../../components/ui/Input";
 import { ChangeEvent, useRef } from "react";
-import { useFileUploader } from "./FileUploader";
+import { useMessageAttachmentsUploader } from "../MessageAttachmentsUploader";
 
 interface MessageInputProps {
   onSubmit: (messageContent: string) => Promise<void>;
 }
 
 const MessageInput = ({ onSubmit }: MessageInputProps) => {
-  const { onFilesSelect } = useFileUploader();
+  const { onFilesSelect } = useMessageAttachmentsUploader();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {

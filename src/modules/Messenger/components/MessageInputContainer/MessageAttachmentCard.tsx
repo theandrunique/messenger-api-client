@@ -3,7 +3,7 @@ import MessageAttachmentInfo from "../../types/MessageAttachmentInfo";
 import cn from "../../../../utils/cn";
 import Button from "../../../../components/ui/Button";
 import Tooltip from "../../../../components/Tooltip";
-import Loader from "../../../../components/Loader";
+import Spinner from "../../../../components/Spinner";
 
 const formatFileSize = (size: number) => {
   if (size < 1024) return `${size} B`;
@@ -11,12 +11,12 @@ const formatFileSize = (size: number) => {
   return `${(size / (1024 * 1024)).toFixed(1)} MB`;
 };
 
-const FileCard = ({
+const MessageAttachmentCard = ({
   attachment,
   onRemove,
 }: {
   attachment: MessageAttachmentInfo;
-  onRemove: (file: MessageAttachmentInfo) => void;
+  onRemove: (messageAttachment: MessageAttachmentInfo) => void;
 }) => {
   const file = attachment.file;
   const status = attachment.status;
@@ -43,7 +43,7 @@ const FileCard = ({
 
         {attachment.status === "uploading" && (
           <div className="absolute inset-0 w-full h-full bg-black/50 flex flex-col items-center justify-center">
-            <Loader />
+            <Spinner />
             <div className="text-xs text-[#efeff1] font-semibold">
               {attachment.progress} %
             </div>
@@ -77,4 +77,4 @@ const FileCard = ({
   );
 };
 
-export default FileCard;
+export default MessageAttachmentCard;

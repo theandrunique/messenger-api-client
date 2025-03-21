@@ -5,48 +5,50 @@ import {
   useState,
   DragEvent,
 } from "react";
-import DropFilesHereMessage from "../ChannelContainer/DropFilesHereMessage";
-import { deleteUnusedAttachment, uploadFile } from "../../../../api/api";
-import { handleCreateAttachments } from "./utils";
-import MessageAttachmentInfo from "../../types/MessageAttachmentInfo";
-import notifications from "../../../../utils/notifications";
+import DropFilesHereMessage from "./ChannelContainer/DropFilesHereMessage";
+import { deleteUnusedAttachment, uploadFile } from "../../../api/api";
+import { handleCreateAttachments } from "./MessageInputContainer/utils";
+import MessageAttachmentInfo from "../types/MessageAttachmentInfo";
+import notifications from "../../../utils/notifications";
 
-interface FileUploadContextProps {
+interface MessageAttachmentsUploaderContextProps {
   onFilesSelect: (files: File[]) => void;
-  onAttachmentRemove: (attachment: MessageAttachmentInfo) => void;
-  attachments: MessageAttachmentInfo[];
-  clearAttachments: (attachments: MessageAttachmentInfo[]) => void;
+  onMessageAttachmentRemove: (
+    messageAttachments: MessageAttachmentInfo
+  ) => void;
+  messageAttachments: MessageAttachmentInfo[];
+  clearMessageAttachments: (exclude?: MessageAttachmentInfo[]) => void;
 }
 
-const FileUploaderContext = createContext<FileUploadContextProps | undefined>(
-  undefined
-);
+const FileUploaderContext = createContext<
+  MessageAttachmentsUploaderContextProps | undefined
+>(undefined);
 
-interface FileUploaderProps extends PropsWithChildren {
+interface MessageAttachmentsUploaderProps extends PropsWithChildren {
   className?: string;
   channelId: string;
 }
 
-const FileUploader = ({
+const MessageAttachmentsUploader = ({
   children,
   className,
   channelId,
-}: FileUploaderProps) => {
-  const [attachments, setAttachments] = useState<MessageAttachmentInfo[]>([]);
+}: MessageAttachmentsUploaderProps) => {
+  const [messageAttachments, setMessageAttachments] = useState<
+    MessageAttachmentInfo[]
+  >([]);
   const [isDragging, setIsDragging] = useState(false);
 
   const updateFileStatus = (
     file: File,
     updates: Partial<Omit<MessageAttachmentInfo, "file">>
   ) => {
-    setAttachments((prev) =>
-      prev.map((attachment) =>
-        attachment.file === file ? { ...attachment, ...updates } : attachment
-      )
+    setMessageAttachments((prev) =>
+      prev.map((item) => (item.file === file ? { ...item, ...updates } : item))
     );
   };
 
-  const uploadFiles = async (files: File[]) => {
+  const uploadAttachments = async (files: File[]) => {
     const newAttachments: MessageAttachmentInfo[] = files.map((file) => ({
       file,
       cloudAttachment: null,
@@ -54,7 +56,7 @@ const FileUploader = ({
       status: "pending",
     }));
 
-    setAttachments((prev) => [...prev, ...newAttachments]);
+    setMessageAttachments((prev) => [...prev, ...newAttachments]);
 
     try {
       const response = await handleCreateAttachments(channelId, files);
@@ -98,6 +100,7 @@ const FileUploader = ({
       );
     } catch (err) {
       notifications.error("Error uploading files.");
+      console.error("Error uploading files", err);
     }
   };
 
@@ -121,32 +124,32 @@ const FileUploader = ({
     setIsDragging(false);
     const files = Array.from(e.dataTransfer.files);
 
-    uploadFiles(files);
+    uploadAttachments(files);
   };
 
   const onFilesSelect = (files: File[]) => {
-    uploadFiles(files);
+    uploadAttachments(files);
   };
 
-  const onAttachmentRemove = (attachment: MessageAttachmentInfo) => {
+  const onMessageAttachmentRemove = (attachment: MessageAttachmentInfo) => {
     if (attachment.abortController) attachment.abortController.abort();
     if (attachment.cloudAttachment) {
       deleteUnusedAttachment(attachment.cloudAttachment?.uploadFilename).catch(
         (err) => console.log(err)
       );
     }
-    setAttachments((prev) => prev.filter((f) => f !== attachment));
+    setMessageAttachments((prev) => prev.filter((f) => f !== attachment));
   };
 
-  const clearAttachments = (attachments: MessageAttachmentInfo[]) => {
-    setAttachments((prev) => prev.filter((f) => !attachments.includes(f)));
+  const clearMessageAttachments = (exclude?: MessageAttachmentInfo[]) => {
+    setMessageAttachments((prev) => prev.filter((f) => exclude?.includes(f)));
   };
 
   const value = {
     onFilesSelect,
-    attachments,
-    onAttachmentRemove,
-    clearAttachments,
+    messageAttachments,
+    onMessageAttachmentRemove,
+    clearMessageAttachments,
   };
 
   return (
@@ -168,9 +171,9 @@ const FileUploader = ({
   );
 };
 
-export default FileUploader;
+export default MessageAttachmentsUploader;
 
-export const useFileUploader = () => {
+export const useMessageAttachmentsUploader = () => {
   const context = useContext(FileUploaderContext);
   if (context === undefined) {
     throw new Error("useFileUploader must be used within a FileUploader");

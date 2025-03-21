@@ -1,6 +1,6 @@
 import { createMessage } from "../../../../api/api";
-import FileCard from "./FileCard";
-import { useFileUploader } from "./FileUploader";
+import MessageAttachmentCard from "./MessageAttachmentCard";
+import { useMessageAttachmentsUploader } from "../MessageAttachmentsUploader";
 import MessageInput from "./MessageInput";
 
 interface MessageInputContainerProps {
@@ -8,14 +8,17 @@ interface MessageInputContainerProps {
 }
 
 const MessageInputContainer = ({ channelId }: MessageInputContainerProps) => {
-  const { attachments, onAttachmentRemove, clearAttachments } =
-    useFileUploader();
+  const {
+    messageAttachments,
+    onMessageAttachmentRemove,
+    clearMessageAttachments,
+  } = useMessageAttachmentsUploader();
 
   const onSubmit = async (messageContent: string) => {
-    if (!messageContent.trim() && attachments.length === 0) return;
+    if (!messageContent.trim() && messageAttachments.length === 0) return;
 
     try {
-      const readyAttachments = attachments.filter(
+      const readyAttachments = messageAttachments.filter(
         (f) => f.status === "success" && f.cloudAttachment !== null
       );
 
@@ -23,11 +26,11 @@ const MessageInputContainer = ({ channelId }: MessageInputContainerProps) => {
         channelId,
         messageContent,
         readyAttachments.map((f) => ({
-          uploadedFilename: f.cloudAttachment?.uploadFilename || "", // make TS happy
+          uploadedFilename: f.cloudAttachment?.uploadFilename as string, // make TS happy :)
           filename: f.file.name,
         }))
       );
-      clearAttachments(readyAttachments);
+      clearMessageAttachments();
     } catch (err) {
       console.log("Error sending message: ", err);
       throw err;
@@ -36,11 +39,14 @@ const MessageInputContainer = ({ channelId }: MessageInputContainerProps) => {
 
   return (
     <div className="flex flex-col bg-[#0e0e10] px-3 pb-2">
-      {attachments.length > 0 && (
+      {messageAttachments.length > 0 && (
         <div className="border-t border-x rounded-lg border-[#38383f] mb-[-10px] pb-[10px] bg-[#18181b]">
-          <div className="flex gap-x-2 gap-y-1 flex-wrap p-2 px-3">
-            {attachments.map((attachment) => (
-              <FileCard attachment={attachment} onRemove={onAttachmentRemove} />
+          <div className="flex gap-x-2 gap-y-1 overflow-x-auto p-2 px-3">
+            {messageAttachments.map((attachment) => (
+              <MessageAttachmentCard
+                attachment={attachment}
+                onRemove={onMessageAttachmentRemove}
+              />
             ))}
           </div>
         </div>
