@@ -3,6 +3,7 @@ import MessageAttachmentInfo from "../../types/MessageAttachmentInfo";
 import cn from "../../../../utils/cn";
 import Button from "../../../../components/ui/Button";
 import Tooltip from "../../../../components/Tooltip";
+import Loader from "../../../../components/Loader";
 
 const formatFileSize = (size: number) => {
   if (size < 1024) return `${size} B`;
@@ -41,11 +42,11 @@ const FileCard = ({
         )}
 
         {attachment.status === "uploading" && (
-          <div className="absolute inset-0 w-full h-full bg-black/50 flex items-center justify-center">
-            <Spinner
-              className="w-16 h-16 text-[#efeff1]"
-              progress={attachment.progress}
-            />
+          <div className="absolute inset-0 w-full h-full bg-black/50 flex flex-col items-center justify-center">
+            <Loader />
+            <div className="text-xs text-[#efeff1] font-semibold">
+              {attachment.progress} %
+            </div>
           </div>
         )}
       </div>
@@ -77,40 +78,3 @@ const FileCard = ({
 };
 
 export default FileCard;
-
-const Spinner = ({
-  className,
-  progress,
-}: {
-  className?: string;
-  progress?: number;
-}) => (
-  <div className="relative flex items-center justify-center">
-    <svg
-      className={cn("animate-spin", className)}
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-    >
-      <circle
-        className="opacity-25"
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        strokeWidth="3"
-      />
-      <path
-        className="opacity-75"
-        fill="currentColor"
-        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-      />
-    </svg>
-
-    {progress !== undefined && (
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-[#efeff1]">
-        {Math.round(progress)}%
-      </div>
-    )}
-  </div>
-);
