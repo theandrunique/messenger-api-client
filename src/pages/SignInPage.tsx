@@ -6,7 +6,6 @@ import Input from "../components/ui/Input";
 import ErrorMessage from "../components/ui/ErrorMessage";
 import LinkButton from "../components/ui/LinkButton";
 import { useNavigate } from "react-router-dom";
-import FullScreenImage from "../components/FullScreenImage";
 import { ApiError } from "../schemas/common";
 import SimpleCard from "../components/SimpleCard";
 import FullScreenLoading from "../components/FullScreenLoading";
@@ -47,21 +46,22 @@ function SignInPage() {
         }
       } else {
         setError("root", { message: "Error: something went wrong" });
+        console.error("Error while handling sign in", error);
       }
     }
   };
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated) navigate("/", { replace: true })
+    if (!isLoading && isAuthenticated) navigate("/", { replace: true });
   }, [isLoading, isAuthenticated]);
 
   if (isLoading) {
-    return <FullScreenLoading message="In case you are already signed in" />
+    return <FullScreenLoading message="In case you are already signed in" />;
   }
 
   return (
-    <FullScreenImage>
-      <div className="min-h-screen flex justify-center items-center p-4">
+    <div className="w-full h-screen bg-[#0e0e10]">
+      <div className="h-full flex justify-center items-center p-4">
         <SimpleCard className="w-full max-w-md p-16">
           <div className="text-[#efeff1] text-3xl font-bold text-center mb-5">
             Sign In
@@ -89,7 +89,7 @@ function SignInPage() {
           </div>
         </SimpleCard>
       </div>
-    </FullScreenImage>
+    </div>
   );
 }
 

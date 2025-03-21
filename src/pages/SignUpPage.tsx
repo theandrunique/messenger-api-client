@@ -6,7 +6,6 @@ import Input from "../components/ui/Input";
 import ErrorMessage from "../components/ui/ErrorMessage";
 import Button from "../components/ui/Button";
 import LinkButton from "../components/ui/LinkButton";
-import FullScreenImage from "../components/FullScreenImage";
 import { ApiError } from "../schemas/common";
 import SimpleCard from "../components/SimpleCard";
 import { singUp } from "../api/api";
@@ -56,9 +55,9 @@ export default function SignUpPage() {
   };
 
   return (
-    <FullScreenImage>
-      <div className="min-h-screen flex justify-center items-center">
-        <SimpleCard className="w-[30rem] p-16 pt-12">
+    <div className="w-full h-screen bg-[#0e0e10]">
+      <div className="h-full flex justify-center items-center p-4">
+        <SimpleCard className="w-full max-w-md p-16">
           <div className="text-[#efeff1] text-3xl font-bold text-center mb-5">
             Sign Up
           </div>
@@ -95,6 +94,6 @@ export default function SignUpPage() {
           </div>
         </SimpleCard>
       </div>
-    </FullScreenImage>
+    </div>
   );
 }
