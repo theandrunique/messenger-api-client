@@ -27,20 +27,18 @@ export const removeTokens = () => {
 
 export const refreshSessionIfNeed = async () => {
   try {
-    let currentTokens = getTokens();
+    let currentTokens: TokenPairSchema | null = null;
 
-    if (!currentTokens) {
-      try {
-        currentTokens = await getCurrentSavedTokenPair();
-      } catch (err) {
-        if (
-          err instanceof ApiError &&
-          err.code === "AUTH_NO_SESSION_INFO_FOUND"
-        ) {
-          throw new Error("no-session");
-        }
-        throw err;
+    try {
+      currentTokens = await getCurrentSavedTokenPair();
+    } catch (err) {
+      if (
+        err instanceof ApiError &&
+        err.code === "AUTH_NO_SESSION_INFO_FOUND"
+      ) {
+        throw new Error("no-session");
       }
+      throw err;
     }
 
     const expiresAt = new Date(currentTokens.issuedAt);
@@ -113,7 +111,7 @@ export const setupInterceptors = (onRefreshError: () => void) => {
         isRefreshing = true;
 
         try {
-           await refreshSessionIfNeed();
+          await refreshSessionIfNeed();
           refreshSubscribers.forEach((callback) => callback());
           refreshSubscribers = [];
           return axiosWithToken(originalRequest);
