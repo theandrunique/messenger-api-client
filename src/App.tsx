@@ -6,6 +6,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import MessengerLayout from "./modules/Messenger/components/MessengerLayout";
 import ChannelContainer from "./modules/Messenger/components/ChannelContainer";
 import ChannelInfoModal from "./modules/Messenger/modals/ChannelInfoModal";
+import AddChannelMembersModal from "./modules/Messenger/modals/AddChannelMembersModal";
 
 function App() {
   return (
@@ -31,7 +32,9 @@ function App() {
       >
         <Route index element={<ChannelContainer />} />
         <Route path=":channelId" element={<ChannelContainer />}>
-          <Route path="info" element={<ChannelInfoModal />} />
+          <Route path="info" element={<ChannelInfoModal />} >
+            <Route path="add-members" element={<AddChannelMembersModal />} />
+          </Route>
         </Route>
       </Route>
     </Routes>

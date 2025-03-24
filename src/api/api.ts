@@ -359,3 +359,11 @@ export const getChannel = (
     axiosWithToken.get<ChannelSchema>(`/channels/${channelId}`)
   );
 };
+
+export const addChannelMember = (channelId: string, userId: string): Promise<void> => {
+  return baseFetch(() => axiosWithToken.put(`/channels/${channelId}/members/${userId}`));
+}
+
+export const removeChannelMember = (channelId: string, userId: string): Promise<void> => {
+  return baseFetch(() => axiosWithToken.delete(`/channels/${channelId}/members/${userId}`));
+}
