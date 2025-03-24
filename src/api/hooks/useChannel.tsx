@@ -9,6 +9,7 @@ const useChannel = (channelId: string | null) => {
       return getChannel(channelId);
     },
     enabled: channelId !== null,
+    staleTime: 5 * 60 * 1000,
   });
 };
 

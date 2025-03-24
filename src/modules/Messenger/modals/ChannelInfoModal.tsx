@@ -4,19 +4,13 @@ import Modal from "../../../components/Modal";
 import Button from "../../../components/ui/Button";
 import SelectedUser from "../components/SelectedUser";
 import { UserPlusIcon, Users } from "lucide-react";
-import useUserChannels from "../../../api/hooks/useUserChannels";
 import Loading from "../../../components/Loading";
-import { UserPublicSchema } from "../../../schemas/user";
-import { removeChannelMember } from "../../../api/api";
-import notifications from "../../../utils/notifications";
-import { useQueryClient } from "@tanstack/react-query";
-import { ApiError } from "../../../schemas/common";
+import useChannel from "../../../api/hooks/useChannel";
 
 const ChannelInfoModal = () => {
   const { channelId } = useParams();
-  const { data, isPending } = useUserChannels();
+  const { data: channel, isPending, isError } = useChannel(channelId || null);
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const onClose = () => {
     navigate(-1);
@@ -26,35 +20,19 @@ const ChannelInfoModal = () => {
     navigate("add-members");
   };
 
-  const removeMember = async (member: UserPublicSchema) => {
-    try {
-      await removeChannelMember(channelId!, member.id);
-      notifications.success(`Member ${member.username} removed`);
-      queryClient.invalidateQueries({ queryKey: ["/users/@me/channels"] });
-    } catch (err) {
-      if (err instanceof ApiError && err.message) {
-        notifications.error(err.message);
-      } else {
-        console.error("Unexpected error while removing channel member", err);
-      }
-    }
-  };
-
   if (!channelId) {
     console.error("Channel ID not found");
     return;
   }
 
-  if (isPending || !data)
+  if (isPending || !channel)
     return (
       <Modal open={true} onClose={onClose} closeOnOverlayClick={true}>
         <Loading message="Loading" />
       </Modal>
     );
 
-  const channel = data.find((c) => c.id === channelId);
-
-  if (!channel) {
+  if (isError) {
     console.error("Channel not found");
     return;
   }
@@ -102,11 +80,7 @@ const ChannelInfoModal = () => {
 
             <div className="flex flex-col gap-1 mb-5">
               {channel.members.map((member) => (
-                <SelectedUser
-                  key={member.id}
-                  user={member}
-                  onRemove={() => removeMember(member)}
-                />
+                <SelectedUser key={member.id} user={member} />
               ))}
             </div>
           </div>
