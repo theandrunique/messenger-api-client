@@ -66,3 +66,21 @@ export const updateUseUserChannelsOnNewChannel = (
     }
   );
 }
+
+export const updateUseUserChannelOnChannelUpdate = (
+  queryClient: QueryClient,
+  channel: ChannelSchema,
+) => {
+  queryClient.setQueryData(
+    ["/users/@me/channels"],
+    (oldChannels: ChannelSchema[] | undefined) => {
+      if (!oldChannels) return;
+
+      return oldChannels.map(oldChannel =>
+        oldChannel.id === channel.id
+          ? channel
+          : oldChannel
+      )
+    }
+  );
+}

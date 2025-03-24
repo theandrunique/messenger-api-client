@@ -1,10 +1,10 @@
-import ChannelSidebar from "../modules/Messenger/components/ChannelSidebar";
-import ChannelContainer from "../modules/Messenger/components/ChannelContainer";
+import { Outlet } from "react-router-dom";
+import Navbar from "../../../components/Navbar";
+import ChannelSidebar from "./ChannelSidebar";
 import { useEffect } from "react";
-import Navbar from "../components/Navbar";
-import useGateway from "../hooks/useGateway";
+import useGateway from "../../../hooks/useGateway";
 
-function Messenger() {
+const MessengerLayout = () => {
   const { connect, disconnect } = useGateway();
 
   useEffect(() => {
@@ -18,10 +18,10 @@ function Messenger() {
 
       <div className="flex overflow-hidden h-full">
         <ChannelSidebar />
-        <ChannelContainer />
+        <Outlet />
       </div>
     </div>
   );
-}
+};
 
-export default Messenger;
+export default MessengerLayout;

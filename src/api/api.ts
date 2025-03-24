@@ -340,3 +340,22 @@ export const createChannel = (
     })
   );
 };
+
+export const updateChannel = (
+  channelId: string,
+  title: string
+): Promise<ChannelSchema> => {
+  return baseFetch(() => 
+    axiosWithToken.post<ChannelSchema>(`/channels/${channelId}`, {
+      title,
+    })
+  );
+}
+
+export const getChannel = (
+  channelId: string
+): Promise<ChannelSchema> => {
+  return baseFetch(() =>
+    axiosWithToken.get<ChannelSchema>(`/channels/${channelId}`)
+  );
+};

@@ -1,13 +1,20 @@
 import useCurrentUser from "../../../../api/hooks/useCurrentUser";
 import { ChannelSchema, ChannelType } from "../../../../schemas/channel";
 
-const ChannelContainerHeader = ({ channel }: { channel: ChannelSchema }) => {
+interface ChannelContainerHeaderProps {
+  channel: ChannelSchema;
+  onClick?: () => void;
+}
+
+const ChannelContainerHeader = ({
+  channel,
+  onClick,
+}: ChannelContainerHeaderProps) => {
   const { currentUser } = useCurrentUser();
 
   const getPrivateChannelName = () => {
     const otherMember =
-      channel.members.find((member) => member.id !== currentUser?.id) ||
-      null;
+      channel.members.find((member) => member.id !== currentUser?.id) || null;
     if (otherMember !== null) {
       return `${otherMember.username} (${otherMember.globalName})`;
     } else {
@@ -26,7 +33,12 @@ const ChannelContainerHeader = ({ channel }: { channel: ChannelSchema }) => {
   } else if (channel.type === ChannelType.GROUP) {
     return (
       <div className="border-b border-[#35353b] px-4 py-2 flex flex-col">
-        <h2 className="text-xl font-bold text-white">{channel.title}</h2>
+        <h2
+          className="text-xl font-bold text-white cursor-pointer"
+          onClick={onClick}
+        >
+          {channel.title}
+        </h2>
         <h5 className="text-sm text-gray-400">
           {`${channel.members.length} members`}
         </h5>

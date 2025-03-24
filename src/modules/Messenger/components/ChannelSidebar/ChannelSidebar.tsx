@@ -1,17 +1,21 @@
 import ChannelCard from "./ChannelCard";
 import useUserChannels from "../../../../api/hooks/useUserChannels";
 import Loading from "../../../../components/Loading";
-import useSelectedChannelStore from "../../stores/useSelectedChannelStore";
 import CreateChannelModalForm from "../../modals/CreateChannelModalForm";
 import { useState } from "react";
 import Button from "../../../../components/ui/Button";
 import { Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const ChannelSidebar = () => {
   const { isLoading, data: channels } = useUserChannels();
-  const { selectChannel } = useSelectedChannelStore();
   const [isCreateChannelModalOpen, setIsCreateChannelModalOpen] =
     useState(false);
+  const navigate = useNavigate();
+
+  const selectChannel = (channelId: string) => {
+    navigate(`/messenger/${channelId}`);
+  }
 
   if (isLoading)
     return (
@@ -26,7 +30,7 @@ const ChannelSidebar = () => {
             <ChannelCard
               channel={channel}
               key={channel.id}
-              onClick={() => selectChannel(channel)}
+              onClick={() => selectChannel(channel.id)}
             />
           ))}
         </div>
@@ -46,7 +50,7 @@ const ChannelSidebar = () => {
       </div>
 
       <CreateChannelModalForm
-        onSubmit={(channel) => selectChannel(channel)}
+        onSubmit={(channel) => selectChannel(channel.id)}
         open={isCreateChannelModalOpen}
         onClose={() => setIsCreateChannelModalOpen(false)}
       />

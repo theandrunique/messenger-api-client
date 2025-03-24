@@ -5,14 +5,15 @@ import Input from "../../../components/ui/Input";
 import UsersSearchInput from "../components/UsersSearchInput";
 import { ChannelSchema } from "../../../schemas/channel";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createChannel } from "../../../api/api";
-import { updateUseUserChannelsOnNewChannel } from "../../../api/hooks/useUserChannels";
+import { updateChannel } from "../../../api/api";
+import { updateUseUserChannelOnChannelUpdate } from "../../../api/hooks/useUserChannels";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ErrorMessage from "../../../components/ui/ErrorMessage";
 import { UserPublicSchema } from "../../../schemas/user";
 import SelectedUser from "../components/SelectedUser";
+import useSelectedChannelStore from "../stores/useSelectedChannelStore";
 
 const updateChannelInfoSchema = z.object({
   title: z.string().min(1, "Channel name is required").max(50),
@@ -24,17 +25,18 @@ type UpdateChannelInfoFormData = z.infer<typeof updateChannelInfoSchema>;
 interface UpdateChannelInfoModalFormProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (channel: ChannelSchema) => void;
-  channel: ChannelSchema,
+  channel: ChannelSchema;
 }
 
 const UpdateChannelInfoModalForm = ({
   open,
   onClose,
-  onSubmit,
   channel,
 }: UpdateChannelInfoModalFormProps) => {
-  const [selectedUsers, setSelectedUsers] = useState<UserPublicSchema[]>(channel.members);
+  const [selectedUsers, setSelectedUsers] = useState<UserPublicSchema[]>(
+    channel.members
+  );
+  const { selectChannel } = useSelectedChannelStore();
 
   const {
     register,
@@ -46,16 +48,19 @@ const UpdateChannelInfoModalForm = ({
     formState: { errors },
   } = useForm<UpdateChannelInfoFormData>({
     resolver: zodResolver(updateChannelInfoSchema),
-    defaultValues: { title: channel.title as string, members: channel.members.map(member => member.id) },
+    defaultValues: {
+      title: channel.title as string,
+      members: channel.members.map((member) => member.id),
+    },
   });
 
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationFn: (data: UpdateChannelInfoFormData) =>
-      createChannel(data.title, data.members),
-    onSuccess: (createdChannel) => {
-      updateUseUserChannelsOnNewChannel(queryClient, createdChannel);
-      onSubmit(createdChannel);
+      updateChannel(channel.id, data.title),
+    onSuccess: (updatedChannel) => {
+      updateUseUserChannelOnChannelUpdate(queryClient, updatedChannel);
+      selectChannel(updatedChannel);
       onClose();
     },
     onError: (err) => {
@@ -98,7 +103,9 @@ const UpdateChannelInfoModalForm = ({
           className="flex flex-col px-16 gap-3 mb-4"
         >
           <div className="w-full">
-            <div className="text-base font-semibold mb-1">Channel Title:</div>
+            <div className="text-base font-semibold mb-1">
+              Channel Title: {channel.title !== watch("title") && "*"}
+            </div>
             <Input
               className="w-full"
               {...register("title")}
@@ -135,7 +142,7 @@ const UpdateChannelInfoModalForm = ({
               Cancel
             </Button>
             <Button type="submit" disabled={isPending} variant={"primary"}>
-              {isPending ? "Creating..." : "Create"}
+              {isPending ? "Updating..." : "Update"}
             </Button>
           </div>
         </form>
