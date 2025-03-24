@@ -7,6 +7,9 @@ import MessengerLayout from "./modules/Messenger/components/MessengerLayout";
 import ChannelContainer from "./modules/Messenger/components/ChannelContainer";
 import ChannelInfoModal from "./modules/Messenger/modals/ChannelInfoModal";
 import AddChannelMembersModal from "./modules/Messenger/modals/AddChannelMembersModal";
+import ManageChannelModal from "./modules/Messenger/modals/ManageChannelModal";
+import MembersModal from "./modules/Messenger/modals/MembersModal";
+import LeaveChannelSubmitModal from "./modules/Messenger/modals/LeaveChannelSubmitModal";
 
 function App() {
   return (
@@ -31,10 +34,16 @@ function App() {
         }
       >
         <Route index element={<ChannelContainer />} />
+
         <Route path=":channelId" element={<ChannelContainer />}>
-          <Route path="info" element={<ChannelInfoModal />} >
+          <Route path="info" element={<ChannelInfoModal />}>
             <Route path="add-members" element={<AddChannelMembersModal />} />
           </Route>
+          <Route path="manage-channel" element={<ManageChannelModal />} />
+          <Route path="members" element={<MembersModal />}>
+            <Route path="add-members" element={<AddChannelMembersModal />} />
+          </Route>
+          <Route path="leave" element={<LeaveChannelSubmitModal />} />
         </Route>
       </Route>
     </Routes>

@@ -2,11 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import useCurrentUser from "../../../../api/hooks/useCurrentUser";
 import Button from "../../../../components/ui/Button";
 import { ChannelSchema, ChannelType } from "../../../../schemas/channel";
-import { MoreHorizontal, Settings2, LogOut } from "lucide-react";
+import { MoreHorizontal, Settings2, LogOut, Users } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const ChannelMenuButton = () => {
   const [show, setShow] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -34,14 +36,20 @@ const ChannelMenuButton = () => {
 
       {show && (
         <div className="absolute top-full right-[-10px] bg-[#18181b] rounded-md shadow-[0_8px_30px_rgb(0,0,0,0.8)] z-50">
-          <div className="flex flex-col p-1 gap-1 w-40">
-            <Button variant="icon" className="whitespace-nowrap">
+          <div className="flex flex-col p-1 gap-1 w-42">
+            <Button variant="icon" className="whitespace-nowrap" onClick={() => navigate("manage-channel")}>
               <div className="flex items-center gap-2">
                 <Settings2 className="w-5 h-5" />
                 <div>Manage channel</div>
               </div>
             </Button>
-            <Button variant="icon">
+            <Button variant="icon" className="whitespace-nowrap" onClick={() => navigate("members")}>
+              <div className="flex items-center gap-2">
+                <Users className="w-5 h-5" />
+                <div>Members</div>
+              </div>
+            </Button>
+            <Button variant="icon" className="whitespace-nowrap" onClick={() => navigate("leave")}>
               <div className="flex items-center gap-2">
                 <LogOut className="w-5 h-5" />
                 <div>Leave channel</div>

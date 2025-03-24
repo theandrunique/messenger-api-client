@@ -81,7 +81,6 @@ const AddChannelMembersModal = () => {
 
         <div className="px-5">
           <div className="w-full">
-            <div className="text-base font-semibold mb-1">Members:</div>
             {selectedUsers.length > 0 && (
               <div className="flex flex-wrap gap-1 mb-2 max-h-32 overflow-y-auto">
                 {selectedUsers.map((user) => (

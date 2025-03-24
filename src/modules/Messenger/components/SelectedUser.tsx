@@ -5,7 +5,7 @@ import { UserPublicSchema } from "../../../schemas/user";
 
 interface SelectedUserProps {
   user: UserPublicSchema;
-  onRemove: () => void;
+  onRemove?: () => void;
 }
 
 const SelectedUser = ({ user, onRemove }: SelectedUserProps) => {
@@ -26,14 +26,16 @@ const SelectedUser = ({ user, onRemove }: SelectedUserProps) => {
         </div>
       </div>
 
-      <Button
-        className="p-1 rounded-lg justify-self-end"
-        variant="icon"
-        type="button"
-        onClick={onRemove}
-      >
-        <X className="w-5 h-5" />
-      </Button>
+      {onRemove && (
+        <Button
+          className="p-1 rounded-lg justify-self-end"
+          variant="icon"
+          type="button"
+          onClick={onRemove}
+        >
+          <X className="w-5 h-5" />
+        </Button>
+      )}
     </div>
   );
 };

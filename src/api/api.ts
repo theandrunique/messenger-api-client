@@ -367,3 +367,7 @@ export const addChannelMember = (channelId: string, userId: string): Promise<voi
 export const removeChannelMember = (channelId: string, userId: string): Promise<void> => {
   return baseFetch(() => axiosWithToken.delete(`/channels/${channelId}/members/${userId}`));
 }
+
+export const leaveChannel = (channelId: string): Promise<void> => {
+  return baseFetch(() => axiosWithToken.delete(`/channels/${channelId}/members/@me`));
+}
