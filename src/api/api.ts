@@ -345,29 +345,33 @@ export const updateChannel = (
   channelId: string,
   title: string
 ): Promise<ChannelSchema> => {
-  return baseFetch(() => 
+  return baseFetch(() =>
     axiosWithToken.post<ChannelSchema>(`/channels/${channelId}`, {
       title,
     })
   );
-}
+};
 
-export const getChannel = (
-  channelId: string
-): Promise<ChannelSchema> => {
+export const getChannel = (channelId: string): Promise<ChannelSchema> => {
   return baseFetch(() =>
     axiosWithToken.get<ChannelSchema>(`/channels/${channelId}`)
   );
 };
 
-export const addChannelMember = (channelId: string, userId: string): Promise<void> => {
-  return baseFetch(() => axiosWithToken.put(`/channels/${channelId}/members/${userId}`));
-}
+export const addChannelMember = (
+  channelId: string,
+  userId: string
+): Promise<void> => {
+  return baseFetch(() =>
+    axiosWithToken.put(`/channels/${channelId}/members/${userId}`)
+  );
+};
 
-export const removeChannelMember = (channelId: string, userId: string): Promise<void> => {
-  return baseFetch(() => axiosWithToken.delete(`/channels/${channelId}/members/${userId}`));
-}
-
-export const leaveChannel = (channelId: string): Promise<void> => {
-  return baseFetch(() => axiosWithToken.delete(`/channels/${channelId}/members/@me`));
-}
+export const removeChannelMember = (
+  channelId: string,
+  userId: string
+): Promise<void> => {
+  return baseFetch(() =>
+    axiosWithToken.delete(`/channels/${channelId}/members/${userId}`)
+  );
+};

@@ -2,21 +2,23 @@ import { useNavigate, useParams } from "react-router-dom";
 import Modal from "../../../components/Modal";
 import Button from "../../../components/ui/Button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { leaveChannel } from "../../../api/api";
+import { removeChannelMember } from "../../../api/api";
 import useUserChannels from "../../../api/hooks/useUserChannels";
 import notifications from "../../../utils/notifications";
 import { ApiError } from "../../../schemas/common";
+import useCurrentUser from "../../../api/hooks/useCurrentUser";
 
 const LeaveChannelSubmitModal = () => {
   const { channelId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data } = useUserChannels();
+  const { currentUser } = useCurrentUser();
 
   const { isPending, mutate } = useMutation({
     mutationFn: async () => {
-      if (!channelId) return;
-      return leaveChannel(channelId);
+      if (!channelId || !currentUser) return;
+      return removeChannelMember(channelId, currentUser.id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/users/@me/channels"] });
