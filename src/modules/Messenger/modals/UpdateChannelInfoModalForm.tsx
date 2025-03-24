@@ -13,7 +13,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import ErrorMessage from "../../../components/ui/ErrorMessage";
 import { UserPublicSchema } from "../../../schemas/user";
 import SelectedUser from "../components/SelectedUser";
-import useSelectedChannelStore from "../stores/useSelectedChannelStore";
 
 const updateChannelInfoSchema = z.object({
   title: z.string().min(1, "Channel name is required").max(50),
@@ -36,7 +35,6 @@ const UpdateChannelInfoModalForm = ({
   const [selectedUsers, setSelectedUsers] = useState<UserPublicSchema[]>(
     channel.members
   );
-  const { selectChannel } = useSelectedChannelStore();
 
   const {
     register,
@@ -60,7 +58,6 @@ const UpdateChannelInfoModalForm = ({
       updateChannel(channel.id, data.title),
     onSuccess: (updatedChannel) => {
       updateUseUserChannelOnChannelUpdate(queryClient, updatedChannel);
-      selectChannel(updatedChannel);
       onClose();
     },
     onError: (err) => {
