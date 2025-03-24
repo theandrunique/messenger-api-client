@@ -47,7 +47,8 @@ const LeaveChannelSubmitModal = () => {
       <div className="p-4 text-[#efeff1]">
         <h2 className="text-xl font-bold mb-4 text-center">Leaving channel</h2>
         <p className="mb-6 text-center">
-          Are you sure you want to leave '{channel.title}' channel?
+          Are you sure you want to leave{" "}
+          <span className="font-semibold">{channel.title}</span> channel?
         </p>
         <div className="space-x-2 flex justify-end">
           <Button variant={"secondary"} onClick={onClose}>
