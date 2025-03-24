@@ -6,11 +6,17 @@ import SelectedUser from "../components/SelectedUser";
 import { UserPlusIcon, Users } from "lucide-react";
 import useUserChannels from "../../../api/hooks/useUserChannels";
 import Loading from "../../../components/Loading";
+import { UserPublicSchema } from "../../../schemas/user";
+import { removeChannelMember } from "../../../api/api";
+import notifications from "../../../utils/notifications";
+import { useQueryClient } from "@tanstack/react-query";
+import { ApiError } from "../../../schemas/common";
 
 const ChannelInfoModal = () => {
   const { channelId } = useParams();
   const { data, isPending } = useUserChannels();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const onClose = () => {
     navigate(-1);
@@ -18,7 +24,21 @@ const ChannelInfoModal = () => {
 
   const navigateToAddMembers = () => {
     navigate("add-members");
-  }
+  };
+
+  const removeMember = async (member: UserPublicSchema) => {
+    try {
+      await removeChannelMember(channelId!, member.id);
+      notifications.success(`Member ${member.username} removed`);
+      queryClient.invalidateQueries({ queryKey: ["/users/@me/channels"] });
+    } catch (err) {
+      if (err instanceof ApiError && err.message) {
+        notifications.error(err.message);
+      } else {
+        console.error("Unexpected error while removing channel member", err);
+      }
+    }
+  };
 
   if (!channelId) {
     console.error("Channel ID not found");
@@ -73,13 +93,20 @@ const ChannelInfoModal = () => {
               </div>
 
               <Button variant="icon" className="p-1">
-                <UserPlusIcon className="opacity-70" onClick={navigateToAddMembers} />
+                <UserPlusIcon
+                  className="opacity-70"
+                  onClick={navigateToAddMembers}
+                />
               </Button>
             </div>
 
             <div className="flex flex-col gap-1 mb-5">
               {channel.members.map((member) => (
-                <SelectedUser key={member.id} user={member} onRemove={() => {}} />
+                <SelectedUser
+                  key={member.id}
+                  user={member}
+                  onRemove={() => removeMember(member)}
+                />
               ))}
             </div>
           </div>
