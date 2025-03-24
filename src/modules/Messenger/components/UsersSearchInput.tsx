@@ -4,6 +4,7 @@ import Input from "../../../components/ui/Input";
 import { searchUsers } from "../../../api/api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { UserPublicSchema } from "../../../schemas/user";
+import { Search } from "lucide-react";
 
 interface SearchResultProps {
   result: UserPublicSchema;
@@ -129,21 +130,29 @@ const UsersSearchInput = ({ onSubmit, excludeIds }: UsersSearchInputProps) => {
 
   return (
     <div className="relative w-full" ref={wrapperRef}>
-      <Input
-        value={query}
-        onChange={(e) => {
-          setQuery(e.target.value);
-          setActiveSuggestion(-1);
-        }}
-        onKeyDown={handleKeyDown}
-        onFocus={() => setIsOpen(true)}
-        placeholder="Search users"
-        className="w-full"
-      />
+      <div className="relative">
+        <div className="absolute inset-y-0 left-0 flex items-center pl-2">
+          <Search className="w-5 h-5" />
+        </div>
+
+        <Input
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setActiveSuggestion(-1);
+          }}
+          onKeyDown={handleKeyDown}
+          onFocus={() => setIsOpen(true)}
+          placeholder="Search users"
+          className="w-full pl-8"
+        />
+      </div>
       {isOpen && (
         <div className="absolute top-full left-0 w-full mt-2 bg-[#18181b] rounded-md shadow-[0_8px_30px_rgb(0,0,0,0.8)] z-50">
           {isShowMessage() && getDisplayMessage() && (
-            <div className="p-3 font-semibold text-center">{getDisplayMessage()}</div>
+            <div className="p-3 font-semibold text-center">
+              {getDisplayMessage()}
+            </div>
           )}
           {!isShowMessage() && (
             <div className="max-h-40 p-1 overflow-y-auto">
