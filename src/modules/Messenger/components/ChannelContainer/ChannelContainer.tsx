@@ -25,7 +25,7 @@ const ChannelContainer = () => {
   if (!channel) return <Loading message={`Channel ${channelId} not found`} />;
 
   return (
-    <div className="flex-1 bg-[#18181b] overflow-hidden">
+    <div className="flex-1 h-full bg-[#18181b] overflow-hidden">
       <MessageAttachmentsUploader
         className="flex flex-col h-full"
         channelId={channelId}

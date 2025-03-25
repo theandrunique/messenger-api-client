@@ -15,16 +15,14 @@ const ChannelSidebar = () => {
 
   const selectChannel = (channelId: string) => {
     navigate(`/messenger/${channelId}`);
-  }
+  };
 
   if (isLoading)
-    return (
-      <Loading message="Loading your channels" className="w-64 bg-[#1f1f23]" />
-    );
+    return <Loading message="Loading your channels" className="bg-[#1f1f23]" />;
 
   return (
     <>
-      <div className="relative h-full w-64 bg-[#1f1f23] flex flex-col overflow-y-auto">
+      <div className="relative md:w-72 w-16 h-full bg-[#1f1f23] flex flex-col overflow-y-auto">
         <div className="flex-1">
           {channels?.map((channel) => (
             <ChannelCard
