@@ -20,7 +20,7 @@ const Base = ({ children, className }: BaseProps) => {
 const getFirstLetterImage = (source: string, className?: string) => {
   return (
     <Base className={className}>
-      <div className="w-full h-full bg-slate-800 text-[#efeff1] flex items-center justify-center font-semibold shrink-0">
+      <div className="w-full h-full bg-slate-700 text-[#efeff1] flex items-center justify-center font-semibold shrink-0">
         {source[0].toUpperCase()}
       </div>
     </Base>

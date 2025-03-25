@@ -33,16 +33,14 @@ const ChannelSidebar = () => {
           ))}
         </div>
 
-        <div className="sticky bottom-0 pb-3 pr-1 flex justify-end pointer-events-none">
+        <div className="sticky bottom-0 pb-3 flex justify-center md:justify-end pointer-events-none">
           <Button
-            className="pointer-events-auto rounded-full pr-2 pl-1 shadow-xl bg-opacity-90"
+            className="pointer-events-auto rounded-full p-2 shadow-xl bg-opacity-90 flex items-center gap-1 md:mr-3"
             variant={"secondary"}
             onClick={() => setIsCreateChannelModalOpen(true)}
           >
-            <div className="flex items-center gap-1">
-              <Plus className="w-6 h-6" />
-              Create
-            </div>
+            <Plus className="w-6 h-6" />
+            <span className="hidden md:block">Create</span>
           </Button>
         </div>
       </div>

@@ -4,59 +4,46 @@ import Avatar from "../../../../components/Avatar";
 import useCurrentUser from "../../../../api/hooks/useCurrentUser";
 import { UserPublicSchema } from "../../../../schemas/user";
 
+const FirstLetterImage = ({ letter }: { letter: string }) => (
+  <div className="w-full h-full rounded-full overflow-hidden font-semibold bg-slate-700 text-white flex items-center justify-center">
+    {letter[0].toUpperCase()}
+  </div>
+);
+
+interface ChannelImageProps {
+  channel: ChannelSchema;
+  member: UserPublicSchema | null;
+}
+
+const ChannelImage = ({ channel, member }: ChannelImageProps) => {
+  if (channel.type === ChannelType.PRIVATE) {
+    return member?.avatar ? (
+      <Avatar
+        userId={member.id}
+        avatar={member.avatar}
+        username={member.username}
+      />
+    ) : (
+      <FirstLetterImage letter={member?.username || "S"} />
+    );
+  }
+  return channel.image ? (
+    <img src={channel.image} className="w-full h-full object-cover" />
+  ) : (
+    <FirstLetterImage letter={channel?.title || "G"} />
+  );
+};
+
 interface ChannelCardProps {
   channel: ChannelSchema;
   onClick: () => void;
 }
 
-const getChannelImage = (
-  channel: ChannelSchema,
-  member: UserPublicSchema | null
-) => {
-  if (channel.type === ChannelType.PRIVATE) {
-    if (member === null) {
-      return getFirstLetterImage("S");
-    }
-
-    if (member.avatar !== null) {
-      return (
-        <Avatar
-          userId={member.id}
-          avatar={member.avatar}
-          username={member.username}
-        />
-      );
-    } else {
-      return getFirstLetterImage(member.username);
-    }
-  } else {
-    if (channel.image !== null) {
-      return getImageWithSrc(channel.image);
-    } else {
-      return getFirstLetterImage(channel?.title || "G");
-    }
-  }
-};
-
-const getImageWithSrc = (src: string) => {
-  return <img src={src} className="w-full h-full object-cover" />;
-};
-
-const getFirstLetterImage = (source: string) => {
-  return (
-    <div className="w-10 h-10 rounded-full overflow-hidden mr-4">
-      <div className="w-full h-full bg-gray-600 text-white flex items-center justify-center">
-        {source[0].toUpperCase()}
-      </div>
-    </div>
-  );
-};
-
 const hasUnreadMessages = (channel: ChannelSchema) => {
   return channel.lastMessage && channel.readAt < channel.lastMessage.id;
 };
 
-const getChannelName = (
+const renderChannelName = (
   channel: ChannelSchema,
   otherMember: UserPublicSchema | null
 ) => {
@@ -65,26 +52,48 @@ const getChannelName = (
       ? `${otherMember.username} (${otherMember.globalName})`
       : "Saved Messages";
   } else {
-    return channel.title || "Unnamed";
+    return channel.title || channel.members.map((m) => m.username).join(", ");
   }
 };
 
-const ChannelCard = ({ channel, onClick }: ChannelCardProps): ReactNode => {
-  const { currentUser } = useCurrentUser();
-
-  const isPrivateChannel = channel.type === ChannelType.PRIVATE;
-
-  const lastMessageText = isPrivateChannel
+const renderLastMessageText = (channel: ChannelSchema) => {
+  return channel.type === ChannelType.PRIVATE
     ? channel.lastMessage
       ? channel.lastMessage.content
       : ""
     : channel.lastMessage
       ? `${channel.lastMessage.authorUsername}: ${channel.lastMessage.content}`
       : "";
+};
 
-  const lastMessageTime = channel.lastMessage
-    ? new Date(channel.lastMessage.timestamp).toLocaleTimeString()
-    : "";
+const renderLastMessageTime = (channel: ChannelSchema) => {
+  if (!channel.lastMessage) return "";
+
+  const messageDate = new Date(channel.lastMessage.timestamp);
+  const now = new Date();
+
+  const isToday =
+    messageDate.getDate() === now.getDate() &&
+    messageDate.getMonth() === now.getMonth() &&
+    messageDate.getFullYear() === now.getFullYear();
+
+  const startOfWeek = new Date(now);
+  startOfWeek.setDate(now.getDate() - now.getDay());
+  startOfWeek.setHours(0, 0, 0, 0);
+
+  const isThisWeek = messageDate >= startOfWeek;
+
+  return isToday
+    ? messageDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    : isThisWeek
+      ? messageDate.toLocaleDateString([], { weekday: "long" })
+      : messageDate.toLocaleDateString();
+};
+
+const ChannelCard = ({ channel, onClick }: ChannelCardProps): ReactNode => {
+  const { currentUser } = useCurrentUser();
+
+  const isPrivateChannel = channel.type === ChannelType.PRIVATE;
 
   const otherMember = isPrivateChannel
     ? channel.members.find((member) => member.id !== currentUser?.id) || null
@@ -93,30 +102,33 @@ const ChannelCard = ({ channel, onClick }: ChannelCardProps): ReactNode => {
   return (
     <div
       onClick={onClick}
-      className="flex items-center p-1 rounded-md cursor-pointer hover:bg-[#37373a] transition-colors"
+      className="flex items-center p-2 cursor-pointer hover:bg-[#37373a] text-[#efeff1] gap-3"
     >
-      <div className="w-10 h-10 rounded-full overflow-hidden mr-4">
-        {getChannelImage(channel, otherMember)}
+      <div className="w-12 h-12 rounded-full overflow-hidden">
+        <ChannelImage channel={channel} member={otherMember} />
       </div>
 
-      <div className="flex-1 min-w-0">
-        <div className="font-semibold text-white truncate">
-          {getChannelName(channel, otherMember)}
-        </div>
-
-        <div className="flex items-center">
-          <div className="text-sm text-gray-400 max-w-44 truncate">
-            {lastMessageText}
+      <div className="hidden md:flex flex-col flex-1 min-w-0 mr-1">
+        <div className="flex items-center justify-between">
+          <div className="font-semibold truncate">
+            {renderChannelName(channel, otherMember)}
           </div>
-          {hasUnreadMessages(channel) && (
-            <span className="ml-2 text-xs text-blue-500">●</span>
-          )}
-          <div></div>
-        </div>
-      </div>
 
-      <div className="text-xs text-gray-500 ml-4 shrink-0">
-        {lastMessageTime}
+          <div className="text-xs opacity-50 ml-4">
+            {renderLastMessageTime(channel)}
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="text-sm opacity-60 truncate">
+            {renderLastMessageText(channel)}
+          </div>
+          <div>
+            {hasUnreadMessages(channel) && (
+              <div className="rounded-full bg-[#9147ff] w-1.5 h-1.5"></div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

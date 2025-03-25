@@ -17,7 +17,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <App />
         </AuthProvider>
       </BrowserRouter>
-      <ReactQueryDevtools initialIsOpen={true} buttonPosition="bottom-left" />
+      <ReactQueryDevtools initialIsOpen={true} buttonPosition="bottom-right" />
     </QueryClientProvider>
     <ToastContainer />
   </>
