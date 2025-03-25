@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import Avatar from "./Avatar";
 import Input from "./ui/Input";
 import useCurrentUser from "../api/hooks/useCurrentUser";
+import Avatar from "./Avatar";
 
 const Icon = () => {
   return (
@@ -67,8 +67,8 @@ const Navbar = () => {
           </Link>
 
           <Avatar
-            userId={currentUser.id}
             avatar={currentUser.avatar}
+            userId={currentUser.id}
             username={currentUser.username}
             className="w-8 h-8 rounded-full"
           />

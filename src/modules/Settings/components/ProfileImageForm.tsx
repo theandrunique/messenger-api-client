@@ -18,8 +18,6 @@ const ProfileImageForm = () => {
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
-  if (currentUser === null) throw new Error("User is not logged in");
-
   const onClearProfilePicture = async () => {
     try {
       setDeleteModalOpen(false);

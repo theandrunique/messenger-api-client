@@ -7,11 +7,12 @@ import Textarea from "../../../components/ui/Textarea";
 import zod from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useCurrentUser from "../../../api/hooks/useCurrentUser";
+import { useLayoutEffect } from "react";
 
 const profileSettingsSchema = zod.object({
   username: zod.string(),
   globalName: zod.string().min(1),
-  bio: zod.string(),
+  bio: zod.string().nullable(),
 });
 
 type ProfileSettingsSchema = zod.infer<typeof profileSettingsSchema>;
@@ -19,25 +20,32 @@ type ProfileSettingsSchema = zod.infer<typeof profileSettingsSchema>;
 const ProfileSettingsForm = () => {
   const { currentUser } = useCurrentUser();
 
-  if (!currentUser) return null;
-
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting, isValid },
   } = useForm<ProfileSettingsSchema>({
     resolver: zodResolver(profileSettingsSchema),
-    mode: "onChange",
-    defaultValues: {
+    mode: "onChange"
+  });
+
+  useLayoutEffect(() => {
+    if (!currentUser) return;
+
+    reset({
       username: currentUser.username,
       globalName: currentUser.globalName,
       bio: currentUser.bio || undefined,
-    },
-  });
+     });
+
+  }, [currentUser]);
 
   const onSubmit: SubmitHandler<ProfileSettingsSchema> = async (data) => {
     console.log(data);
   };
+
+  if (!currentUser) return null;
 
   return (
     <SimpleCard className="text-[#efeff1] max-w-5xl">
