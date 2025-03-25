@@ -1,5 +1,17 @@
 import { UserPublicSchema } from "./user";
 
+export enum MessageType {
+  DEFAULT = "DEFAULT",
+  REPLY = "REPLY",
+  MEMBER_ADD = "MEMBER_ADD",
+  MEMBER_REMOVE = "MEMBER_REMOVE",
+  MEMBER_LEAVE = "MEMBER_LEAVE",
+  CHANNEL_TITLE_CHANGE = "CHANNEL_TITLE_CHANGE",
+  CHANNEL_IMAGE_CHANGE = "CHANNEL_IMAGE_CHANGE",
+  CHANNEL_PINNED_MESSAGE = "CHANNEL_PINNED_MESSAGE",
+  CHANNEL_UNPIN_MESSAGE = "CHANNEL_UNPIN_MESSAGE",
+}
+
 export interface AttachmentSchema {
   id: string;
   filename: string;
@@ -9,13 +21,16 @@ export interface AttachmentSchema {
 }
 
 export interface MessageSchema {
+  type: MessageType;
   id: string;
   channelId: string;
   content: string;
   timestamp: string;
   editedTimestamp: string | null;
   author: UserPublicSchema;
+  targetUser: UserPublicSchema | null;
   attachments: AttachmentSchema[];
+  metadata: Record<string, string>;
 }
 
 export interface CloudAttachmentsResponseSchema {
