@@ -1,7 +1,7 @@
 import { ChannelType } from "../../../../schemas/channel";
 import { MessageSchema } from "../../../../schemas/message";
+import MessageCard from "../MessageCard";
 import DateDivider from "./DateDivider";
-import MessageCard from "./MessageCard";
 
 const groupMessagesByAuthor = (
   messages: MessageSchema[]
