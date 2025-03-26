@@ -69,12 +69,14 @@ const MessageAttachments = ({
 
 const MessageStatus = ({ message }: { message: MessageSchema }) => {
   return (
-    <span className="float-right ml-[0.4375rem] px-[0.25rem] mt-2 text-[#efeff1] opacity-70 text-xs">
+    <span className="relative right-0 top-1.5 flex items-center float-right ml-[0.4375rem] mr-[-0.4375rem] px-[0.25rem] text-[#efeff1] opacity-70 h-5 text-[12px] font-normal">
       {message.editedTimestamp && <span>edited</span>}
-      {new Date(message.timestamp).toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      })}
+      <span>
+        {new Date(message.timestamp).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      </span>
     </span>
   );
 };
@@ -159,7 +161,7 @@ const MessageCard = forwardRef<HTMLDivElement, MessageProps>(
             )}
 
             {message.content && (
-              <div className="inline-block relative w-full break-words">
+              <div className="relative w-full break-words">
                 {message.content}
                 <MessageStatus message={message} />
               </div>
