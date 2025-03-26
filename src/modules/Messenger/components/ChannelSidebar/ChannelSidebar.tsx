@@ -4,7 +4,7 @@ import Loading from "../../../../components/Loading";
 import CreateChannelModalForm from "../../modals/CreateChannelModalForm";
 import { useState } from "react";
 import Button from "../../../../components/ui/Button";
-import { Plus } from "lucide-react";
+import { MessageCirclePlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const ChannelSidebar = () => {
@@ -39,7 +39,7 @@ const ChannelSidebar = () => {
             variant={"secondary"}
             onClick={() => setIsCreateChannelModalOpen(true)}
           >
-            <Plus className="w-6 h-6" />
+            <MessageCirclePlus className="w-6 h-6" />
             <span className="hidden md:block">Create</span>
           </Button>
         </div>
