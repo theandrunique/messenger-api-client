@@ -5,9 +5,10 @@ import CreateChannelModalForm from "../../modals/CreateChannelModalForm";
 import { useState } from "react";
 import Button from "../../../../components/ui/Button";
 import { MessageCirclePlus } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const ChannelSidebar = () => {
+  const { channelId } = useParams();
   const { isLoading, data: channels } = useUserChannels();
   const [isCreateChannelModalOpen, setIsCreateChannelModalOpen] =
     useState(false);
@@ -26,6 +27,7 @@ const ChannelSidebar = () => {
         <div className="flex-1">
           {channels?.map((channel) => (
             <ChannelCard
+              isActive={channel.id === channelId}
               channel={channel}
               key={channel.id}
               onClick={() => selectChannel(channel.id)}

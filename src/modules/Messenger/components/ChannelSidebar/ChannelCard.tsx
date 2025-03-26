@@ -36,6 +36,7 @@ const ChannelImage = ({ channel, member }: ChannelImageProps) => {
 
 interface ChannelCardProps {
   channel: ChannelSchema;
+  isActive: boolean;
   onClick: () => void;
 }
 
@@ -90,7 +91,7 @@ const renderLastMessageTime = (channel: ChannelSchema) => {
       : messageDate.toLocaleDateString();
 };
 
-const ChannelCard = ({ channel, onClick }: ChannelCardProps): ReactNode => {
+const ChannelCard = ({ channel, onClick, isActive }: ChannelCardProps): ReactNode => {
   const { currentUser } = useCurrentUser();
 
   const isPrivateChannel = channel.type === ChannelType.PRIVATE;
@@ -102,7 +103,7 @@ const ChannelCard = ({ channel, onClick }: ChannelCardProps): ReactNode => {
   return (
     <div
       onClick={onClick}
-      className="flex items-center p-2 cursor-pointer hover:bg-[#37373a] text-[#efeff1] gap-3"
+      className={`flex items-center p-2 cursor-pointer ${isActive && "bg-[#35353b]"} hover:bg-[#37373a] text-[#efeff1] gap-3`}
     >
       <div className="w-12 h-12 rounded-full overflow-hidden">
         <ChannelImage channel={channel} member={otherMember} />
