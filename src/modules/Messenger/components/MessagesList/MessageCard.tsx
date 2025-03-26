@@ -1,28 +1,81 @@
 import { forwardRef } from "react";
-import { AttachmentSchema, MessageSchema } from "../../../../schemas/message";
+import {
+  AttachmentSchema,
+  MessageSchema,
+  MessageType,
+} from "../../../../schemas/message";
 import { ChannelType } from "../../../../schemas/channel";
 import useCurrentUser from "../../../../api/hooks/useCurrentUser";
 import Avatar from "../../../../components/Avatar";
 
-const AttachmentPreview = ({
+const MessageAttachments = ({
   attachments,
 }: {
   attachments: AttachmentSchema[];
 }) => {
+  const images = attachments.filter((a) => a.contentType.startsWith("image/"));
+  const videos = attachments.filter((a) => a.contentType.startsWith("video/"));
+  const audios = attachments.filter((a) => a.contentType.startsWith("audio/"));
+  const others = attachments.filter(
+    (a) =>
+      !a.contentType.startsWith("image/") &&
+      !a.contentType.startsWith("video/") &&
+      !a.contentType.startsWith("audio/")
+  );
+
   return (
-    <div className="mt-2 space-y-1">
-      {attachments.map((attachment) => (
+    <div className="mb-2 space-y-2">
+      {images.length > 0 && (
+        <div
+          className={`grid ${images.length === 1 ? "grid-cols-1" : "grid-cols-2 gap-1"}`}
+        >
+          {images.map((img) => (
+            <img
+              key={img.id}
+              src={img.url}
+              alt={img.filename}
+              className="rounded-lg w-full"
+            />
+          ))}
+        </div>
+      )}
+
+      {videos.map((video) => (
+        <video key={video.id} controls className="w-full rounded-lg">
+          <source src={video.url} type={video.contentType} />
+        </video>
+      ))}
+
+      {audios.map((audio) => (
+        <audio key={audio.id} controls className="w-full">
+          <source src={audio.url} type={audio.contentType} />
+        </audio>
+      ))}
+
+      {others.map((file) => (
         <a
-          key={attachment.id}
-          href={attachment.url}
+          key={file.id}
+          href={file.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="block text-xs text-blue-400 underline truncate"
+          className="flex items-center space-x-2 text-blue-400 underline"
         >
-          {attachment.filename} ({(attachment.size / 1024).toFixed(1)} KB)
+          📄 {file.filename} ({(file.size / 1024).toFixed(1)} KB)
         </a>
       ))}
     </div>
+  );
+};
+
+const MessageStatus = ({ message }: { message: MessageSchema }) => {
+  return (
+    <span className="float-right ml-[0.4375rem] px-[0.25rem] mt-2 text-[#efeff1] opacity-70 text-xs">
+      {message.editedTimestamp && <span>edited</span>}
+      {new Date(message.timestamp).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      })}
+    </span>
   );
 };
 
@@ -33,24 +86,35 @@ interface MessageProps {
   showUsername: boolean;
 }
 
-export const MessageCard = forwardRef<HTMLDivElement, MessageProps>(
+const MessageCard = forwardRef<HTMLDivElement, MessageProps>(
   ({ message, channelType, showAvatar, showUsername }, ref) => {
     const { currentUser } = useCurrentUser();
     const isOwnMessage = message.author.id === currentUser!.id;
     const isGroup = channelType === ChannelType.GROUP;
 
-    const renderTime = () => (
-      <div
-        className={`flex items-center gap-1 ${isOwnMessage ? "order-2" : "order-1"}`}
-      >
-        <span className="text-xs text-gray-300 shrink-0">
-          {new Date(message.timestamp).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-        </span>
-      </div>
-    );
+    if (
+      message.type !== MessageType.DEFAULT &&
+      message.type !== MessageType.REPLY
+    ) {
+      return (
+        <div className="text-center text-sm text-[#efeff1] opacity-50 my-2">
+          {message.type === MessageType.MEMBER_ADD &&
+            `${message.author.username} added ${message.targetUser?.username}`}
+          {message.type === MessageType.MEMBER_REMOVE &&
+            `${message.author.username} removed ${message.targetUser?.username}`}
+          {message.type === MessageType.MEMBER_LEAVE &&
+            `${message.author.username} left the chat`}
+          {message.type === MessageType.CHANNEL_TITLE_CHANGE &&
+            `Channel name changed to "${message.metadata.newTitle}" by ${message.author.username}`}
+          {message.type === MessageType.CHANNEL_IMAGE_CHANGE &&
+            `Channel image updated`}
+          {message.type === MessageType.CHANNEL_PINNED_MESSAGE &&
+            `A message was pinned`}
+          {message.type === MessageType.CHANNEL_UNPIN_MESSAGE &&
+            `A message was unpinned`}
+        </div>
+      );
+    }
 
     return (
       <div
@@ -75,38 +139,31 @@ export const MessageCard = forwardRef<HTMLDivElement, MessageProps>(
         )}
 
         <div
-          className={`flex flex-col ${
-            isOwnMessage ? "items-end" : "items-start"
-          } max-w-[70%] min-w-[20%]`}
+          className={`flex flex-col ${isOwnMessage ? "items-end" : "items-start"} max-w-md`}
         >
           {!isOwnMessage && showUsername && isGroup && (
             <div className="text-sm font-medium text-[#efeff1] mb-1">
-              {message.author.username}
+              {message.author.globalName} ({message.author.username})
             </div>
           )}
 
           <div
-            className={`relative p-3 rounded-2xl break-words ${
+            className={`relative px-3 py-1 text-[#efeff1] rounded-2xl w-fit max-w-full ${
               isOwnMessage
-                ? "bg-[#9147ff] text-white rounded-br-sm"
-                : "bg-[#1f1f23] text-white rounded-bl-sm"
+                ? "bg-[#9147ff] rounded-br-sm"
+                : "bg-[#1f1f23] rounded-bl-sm"
             }`}
           >
-            <div className="flex flex-wrap gap-2">
-              {message.content && (
-                <span className="max-w-full break-words">
-                  {message.content}
-                </span>
-              )}
+            {message.attachments.length > 0 && (
+              <MessageAttachments attachments={message.attachments} />
+            )}
 
-              {message.attachments.length > 0 && (
-                <AttachmentPreview attachments={message.attachments} />
-              )}
-
-              <div className="flex items-center gap-1 mt-1 ml-auto">
-                {renderTime()}
+            {message.content && (
+              <div className="inline-block relative w-full break-words">
+                {message.content}
+                <MessageStatus message={message} />
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
