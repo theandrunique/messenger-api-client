@@ -5,7 +5,7 @@ import {
 } from "@tanstack/react-query";
 import { getMessages } from "../api";
 import { MessageSchema } from "../../schemas/message";
-import { MessageCreateEventSchema } from "../../schemas/gateway";
+import { MessageCreateEventSchema, MessageUpdateEventSchema } from "../../schemas/gateway";
 
 const limit = 50;
 
@@ -37,7 +37,7 @@ const useMessages = (channelId: string | null) => {
 
 export default useMessages;
 
-export const updateUseMessagesOnNewMessage = (
+export const updateUseMessagesOnMessageCreate = (
   queryClient: QueryClient,
   event: MessageCreateEventSchema
 ) => {
@@ -46,7 +46,7 @@ export const updateUseMessagesOnNewMessage = (
     (oldData: InfiniteData<MessageSchema[]> | undefined) => {
       if (!oldData) return;
 
-      const isAlreadyExists = oldData.pages.some((page) => 
+      const isAlreadyExists = oldData.pages.some((page) =>
         page.some((message) => message.id === event.payload.id)
       );
 
@@ -59,6 +59,33 @@ export const updateUseMessagesOnNewMessage = (
           ...oldData.pages.slice(1),
         ],
       };
+    }
+  );
+};
+
+export const updateUseMessagesOnMessageUpdate = (
+  queryClient: QueryClient,
+  event: MessageUpdateEventSchema
+) => {
+  queryClient.setQueryData(
+    ["/channels/{channelId}/messages", event.payload.channelId],
+    (oldData: InfiniteData<MessageSchema[]> | undefined) => {
+      if (!oldData) return;
+
+      const message = oldData.pages.find((page) =>
+        page.some((message) => message.id === event.payload.id)
+      );
+      // message was updated but it's not fetched yet
+      if (!message) return;
+
+      return {
+        ...oldData,
+        pages: oldData.pages.map((page) => 
+          page.map((message) =>
+            message.id === event.payload.id ? event.payload : message
+          )
+        )
+      }
     }
   );
 };

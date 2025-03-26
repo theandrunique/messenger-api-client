@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { QueryClient, useQuery } from "@tanstack/react-query";
 import { getChannel } from "../api";
 
 const useChannel = (channelId: string | null) => {
@@ -14,3 +14,7 @@ const useChannel = (channelId: string | null) => {
 };
 
 export default useChannel;
+
+export const invalidateUseChannel = (queryClient: QueryClient, channelId: string) => {
+  queryClient.invalidateQueries({ queryKey: ["/channels/{channelId}", channelId]});
+}

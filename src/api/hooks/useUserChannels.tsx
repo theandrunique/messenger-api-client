@@ -1,6 +1,9 @@
 import { QueryClient, useQuery } from "@tanstack/react-query";
 import { getChannels } from "../api";
 import {
+  ChannelMemberAddEventSchema,
+  ChannelMemberRemoveEventSchema,
+  ChannelUpdateEventSchema,
   MessageCreateEventSchema,
 } from "../../schemas/gateway";
 import { ChannelSchema } from "../../schemas/channel";
@@ -28,7 +31,7 @@ export const updateUseUserChannelsOnNewMessage = (
 
       const message = event.payload;
 
-      return oldChannels.map((channel) => 
+      return oldChannels.map((channel) =>
         channel.id === event.payload.channelId
           ? {
               ...channel,
@@ -59,28 +62,83 @@ export const updateUseUserChannelsOnNewChannel = (
     (oldChannels: ChannelSchema[] | undefined) => {
       if (!oldChannels) return;
 
-      const isAlreadyExists = oldChannels.some((oldChannel) => oldChannel.id === channel.id);
+      const isAlreadyExists = oldChannels.some(
+        (oldChannel) => oldChannel.id === channel.id
+      );
       if (isAlreadyExists) return oldChannels;
 
       return [...oldChannels, channel];
     }
   );
-}
+};
 
 export const updateUseUserChannelOnChannelUpdate = (
   queryClient: QueryClient,
-  channel: ChannelSchema,
+  event: ChannelUpdateEventSchema,
 ) => {
   queryClient.setQueryData(
     ["/users/@me/channels"],
     (oldChannels: ChannelSchema[] | undefined) => {
       if (!oldChannels) return;
 
-      return oldChannels.map(oldChannel =>
-        oldChannel.id === channel.id
-          ? channel
-          : oldChannel
-      )
+      return oldChannels.map((oldChannel) =>
+        oldChannel.id === event.payload.id ? event.payload : oldChannel
+      );
     }
   );
-}
+};
+
+export const updateUseUserChannelOnMemberRemove = (
+  queryClient: QueryClient,
+  event: ChannelMemberRemoveEventSchema,
+  currentUserId: string
+) => {
+  queryClient.setQueryData(
+    ["/users/@me/channels"],
+    (oldChannels: ChannelSchema[] | undefined) => {
+      if (!oldChannels) return;
+
+      if (event.user.id === currentUserId) {
+        return oldChannels.filter((channel) => channel.id !== event.channelId);
+      }
+
+      return oldChannels.map((channel) =>
+        channel.id === event.channelId
+          ? {
+              ...channel,
+              members: channel.members.filter(
+                (member) => member.id !== event.user.id
+              ),
+            }
+          : channel
+      );
+    }
+  );
+};
+
+export const updateUseUserChannelOnMemberAdd = (
+  queryClient: QueryClient,
+  event: ChannelMemberAddEventSchema,
+  currentUserId: string
+) => {
+  if (event.user.id === currentUserId) {
+    queryClient.invalidateQueries({ queryKey: ["/users/@me/channels"] });
+    return;
+  }
+
+  queryClient.setQueryData(
+    ["/users/@me/channels"],
+    (oldChannels: ChannelSchema[] | undefined) => {
+      if (!oldChannels) return;
+
+      return oldChannels.map((channel) =>
+        channel.id === event.channelId
+          ? {
+              ...channel,
+              members: channel.members.some(member => member.id === event.user.id) ? channel.members : [...channel.members, event.user],
+            }
+          : channel
+      );
+    }
+  );
+};
