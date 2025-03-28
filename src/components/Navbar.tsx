@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import Input from "./ui/Input";
 import useCurrentUser from "../api/hooks/useCurrentUser";
 import Avatar from "./Avatar";
 
@@ -24,18 +23,6 @@ const Icon = () => {
   );
 };
 
-const SearchBar = () => {
-  return (
-    <div className="mx-4 my-1">
-      <Input
-        type="text"
-        placeholder="Search"
-        className="w-full font-semibold rounded-lg p-1.5"
-      />
-    </div>
-  );
-};
-
 const Navbar = () => {
   const { currentUser } = useCurrentUser();
 
@@ -52,10 +39,6 @@ const Navbar = () => {
           >
             Messenger
           </Link>
-        </div>
-
-        <div className="w-4/12 space-x-6 m-1">
-          <SearchBar />
         </div>
 
         <div className="flex items-center space-x-2 mx-2">
