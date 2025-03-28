@@ -387,3 +387,9 @@ export const getUser = (userId: string): Promise<UserPublicSchema> => {
     axiosWithToken.get<UserPublicSchema>(`/users/${userId}`)
   );
 };
+
+export const postMessageAck = (channelId: string, messageId: string): Promise<void> => {
+  return baseFetch(() =>
+    axiosWithToken.post(`/channels/${channelId}/messages/${messageId}/acks`)
+  );
+}

@@ -4,10 +4,11 @@ import { useMessageCardContext } from "./MessageCardContext";
 interface MessageContainerProps extends HTMLAttributes<HTMLDivElement> {}
 
 const MessageContainer = forwardRef<HTMLDivElement, MessageContainerProps>(({ children, ...props }, ref) => {
-  const { showAvatar, isOwnMessage } = useMessageCardContext();
+  const { showAvatar, isOwnMessage, message } = useMessageCardContext();
 
   return (
     <div
+      data-message-id={message.id}
       ref={ref}
       className={`flex items-end ${
         isOwnMessage ? "justify-end" : "justify-start"
