@@ -37,7 +37,7 @@ const ChannelSidebar = () => {
   return (
     <>
       <div className="relative md:w-72 w-16 h-full bg-[#1f1f23] flex flex-col overflow-y-auto">
-        <div className="px-2 pt-2 sticky top-0 z-50 pb-2">
+        <div className="hidden md:block px-2 pt-2 sticky top-0 z-50 pb-2">
           <UsersSearchInput
             onSubmit={(user) => handleUserSelect(user)}
             clearOnSubmit={false}
