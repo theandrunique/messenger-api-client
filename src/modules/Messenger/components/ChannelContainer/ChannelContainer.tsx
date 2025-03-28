@@ -4,12 +4,12 @@ import ChannelContainerHeader from "./ChannelContainerHeader";
 import MessageAttachmentsUploader from "../MessageAttachmentsUploader";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import Loading from "../../../../components/Loading";
-import useUserChannels from "../../../../api/hooks/useUserChannels";
 import SelectChannelMessage from "./SelectChannelMessage";
+import useChannel from "../../../../api/hooks/useChannel";
 
 const ChannelContainer = () => {
   const { channelId } = useParams();
-  const { data, isPending } = useUserChannels();
+  const { data, isPending, isError, error } = useChannel(channelId || null);
   const navigate = useNavigate();
 
   const openChannelInfoModal = () => {
@@ -20,9 +20,7 @@ const ChannelContainer = () => {
 
   if (!data || isPending) return <Loading message="Loading channels" />;
 
-  const channel = data.find((c) => c.id === channelId);
-
-  if (!channel) return <Loading message={`Channel ${channelId} not found`} />;
+  if (isError) return <Loading message={`Error while loading a channel: ${error}`} />;
 
   return (
     <div className="flex-1 h-full bg-[#18181b] overflow-hidden">
@@ -31,10 +29,10 @@ const ChannelContainer = () => {
         channelId={channelId}
       >
         <ChannelContainerHeader
-          channel={channel}
+          channel={data}
           onClick={openChannelInfoModal}
         />
-        <MessagesContainer selectedChannel={channel} />
+        <MessagesContainer selectedChannel={data} />
         <MessageInputContainer channelId={channelId} />
       </MessageAttachmentsUploader>
 

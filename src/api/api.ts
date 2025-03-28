@@ -375,3 +375,9 @@ export const removeChannelMember = (
     axiosWithToken.delete(`/channels/${channelId}/members/${userId}`)
   );
 };
+
+export const getDMChannel = (userId: string): Promise<ChannelSchema> => {
+  return baseFetch(() =>
+    axiosWithToken.get<ChannelSchema>(`/users/@me/private-channel/${userId}`)
+  )
+}

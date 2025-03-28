@@ -6,6 +6,9 @@ import { useState } from "react";
 import Button from "../../../../components/ui/Button";
 import { MessageCirclePlus } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import UsersSearchInput from "../UsersSearchInput";
+import { UserPublicSchema } from "../../../../schemas/user";
+import { getDMChannel } from "../../../../api/api";
 
 const ChannelSidebar = () => {
   const { channelId } = useParams();
@@ -19,11 +22,28 @@ const ChannelSidebar = () => {
   };
 
   if (isLoading)
-    return <Loading message="Loading your channels" className="md:w-72 w-16 bg-[#1f1f23]" />;
+    return (
+      <Loading
+        message="Loading your channels"
+        className="md:w-72 w-16 bg-[#1f1f23]"
+      />
+    );
+
+  const handleUserSelect = async (user: UserPublicSchema) => {
+    const channel = await getDMChannel(user.id);
+    selectChannel(channel.id);
+  };
 
   return (
     <>
       <div className="relative md:w-72 w-16 h-full bg-[#1f1f23] flex flex-col overflow-y-auto">
+        <div className="px-2 pt-2 sticky top-0 z-50 pb-2">
+          <UsersSearchInput
+            onSubmit={(user) => handleUserSelect(user)}
+            clearOnSubmit={false}
+          />
+        </div>
+
         <div className="flex-1">
           {channels?.map((channel) => (
             <ChannelCard

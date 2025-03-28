@@ -85,9 +85,9 @@ const renderLastMessageTime = (channel: ChannelSchema) => {
   const isThisWeek = messageDate >= startOfWeek;
 
   return isToday
-    ? messageDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    ? messageDate.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
     : isThisWeek
-      ? messageDate.toLocaleDateString([], { weekday: "long" })
+      ? messageDate.toLocaleDateString("en-US", { weekday: "short" })
       : messageDate.toLocaleDateString();
 };
 

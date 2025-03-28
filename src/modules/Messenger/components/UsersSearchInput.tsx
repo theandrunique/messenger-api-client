@@ -34,10 +34,11 @@ const SearchResult = ({ result, isActive, onClick }: SearchResultProps) => {
 
 interface UsersSearchInputProps {
   onSubmit: (result: UserPublicSchema) => void;
-  excludeIds: string[];
+  excludeIds?: string[];
+  clearOnSubmit?: boolean;
 }
 
-const UsersSearchInput = ({ onSubmit, excludeIds }: UsersSearchInputProps) => {
+const UsersSearchInput = ({ onSubmit, excludeIds = [], clearOnSubmit = true }: UsersSearchInputProps) => {
   const [query, setQuery] = useState("");
   const [activeSuggestion, setActiveSuggestion] = useState(-1);
   const [isOpen, setIsOpen] = useState(false);
@@ -108,7 +109,9 @@ const UsersSearchInput = ({ onSubmit, excludeIds }: UsersSearchInputProps) => {
 
   const handleSubmit = (result: UserPublicSchema) => {
     onSubmit(result);
-    setQuery("");
+    if (clearOnSubmit) {
+      setQuery("");
+    }
     queryClient.invalidateQueries({ queryKey: ["search-users"] });
   };
 
@@ -129,7 +132,7 @@ const UsersSearchInput = ({ onSubmit, excludeIds }: UsersSearchInputProps) => {
   };
 
   return (
-    <div className="relative w-full" ref={wrapperRef}>
+    <div className="relative w-full text-[#efeff1]" ref={wrapperRef}>
       <div className="relative">
         <div className="absolute inset-y-0 left-0 flex items-center pl-2">
           <Search className="w-5 h-5" />
