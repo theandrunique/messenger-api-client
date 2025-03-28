@@ -87,14 +87,14 @@ const CreateChannelModalForm = ({
 
   return (
     <Modal open={open} onClose={onClose}>
-      <div className="w-[500px] text-[#efeff1]">
-        <h2 className="text-center text-2xl font-semibold p-5">
+      <div className="w-[400px] text-[#efeff1]">
+        <h2 className="text-center text-2xl font-semibold py-5 px-3">
           Create New Channel
         </h2>
 
         <form
           onSubmit={handleSubmit((data) => mutate(data))}
-          className="flex flex-col px-16 gap-3 mb-4"
+          className="flex flex-col px-8 gap-3 mb-4"
         >
           <div className="w-full">
             <div className="text-base font-semibold mb-1">Channel Title:</div>
