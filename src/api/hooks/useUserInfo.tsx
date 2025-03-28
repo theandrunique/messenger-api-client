@@ -10,6 +10,7 @@ const useUserInfo = (userId: string | null) => {
       return getUser(userId);
     },
     enabled: userId !== null,
+    staleTime: 5 * 60 * 1000,
   })
 };
 

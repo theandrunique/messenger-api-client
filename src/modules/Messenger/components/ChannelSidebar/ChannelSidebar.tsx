@@ -21,6 +21,11 @@ const ChannelSidebar = () => {
     navigate(`/messenger/${channelId}`);
   };
 
+  const handleUserSelect = async (user: UserPublicSchema) => {
+    const channel = await getDMChannel(user.id);
+    selectChannel(channel.id);
+  };
+
   if (isLoading)
     return (
       <Loading
@@ -28,11 +33,6 @@ const ChannelSidebar = () => {
         className="md:w-72 w-16 bg-[#1f1f23]"
       />
     );
-
-  const handleUserSelect = async (user: UserPublicSchema) => {
-    const channel = await getDMChannel(user.id);
-    selectChannel(channel.id);
-  };
 
   return (
     <>
