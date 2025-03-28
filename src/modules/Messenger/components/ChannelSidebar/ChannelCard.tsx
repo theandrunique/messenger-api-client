@@ -146,7 +146,7 @@ const ChannelCard = ({
             {renderChannelName(channel, otherMember)}
           </div>
 
-          <div className="flex items-center gap-1 ml-4">
+          <div className="flex items-center gap-1 ml-4 shrink-0">
             <ReadStatus channel={channel} currentUserId={currentUser?.id} />
             <div className="text-xs opacity-50">
               {renderLastMessageTime(channel)}
