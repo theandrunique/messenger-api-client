@@ -379,5 +379,11 @@ export const removeChannelMember = (
 export const getDMChannel = (userId: string): Promise<ChannelSchema> => {
   return baseFetch(() =>
     axiosWithToken.get<ChannelSchema>(`/users/@me/private-channel/${userId}`)
-  )
-}
+  );
+};
+
+export const getUser = (userId: string): Promise<UserPublicSchema> => {
+  return baseFetch(() =>
+    axiosWithToken.get<UserPublicSchema>(`/users/${userId}`)
+  );
+};

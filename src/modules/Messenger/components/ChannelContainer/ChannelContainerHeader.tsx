@@ -4,6 +4,7 @@ import Button from "../../../../components/ui/Button";
 import { ChannelSchema, ChannelType } from "../../../../schemas/channel";
 import { MoreHorizontal, Settings2, LogOut, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import UserInfoModal from "../../modals/UserInfoModal";
 
 const ChannelMenuButton = () => {
   const [show, setShow] = useState(false);
@@ -37,19 +38,31 @@ const ChannelMenuButton = () => {
       {show && (
         <div className="absolute top-full right-[-10px] bg-[#18181b] rounded-md shadow-[0_8px_30px_rgb(0,0,0,0.8)] z-50">
           <div className="flex flex-col p-1 gap-1 w-42">
-            <Button variant="icon" className="whitespace-nowrap" onClick={() => navigate("manage-channel")}>
+            <Button
+              variant="icon"
+              className="whitespace-nowrap"
+              onClick={() => navigate("manage-channel")}
+            >
               <div className="flex items-center gap-2">
                 <Settings2 className="w-5 h-5" />
                 <div>Manage channel</div>
               </div>
             </Button>
-            <Button variant="icon" className="whitespace-nowrap" onClick={() => navigate("members")}>
+            <Button
+              variant="icon"
+              className="whitespace-nowrap"
+              onClick={() => navigate("members")}
+            >
               <div className="flex items-center gap-2">
                 <Users className="w-5 h-5" />
                 <div>Members</div>
               </div>
             </Button>
-            <Button variant="icon" className="whitespace-nowrap" onClick={() => navigate("leave")}>
+            <Button
+              variant="icon"
+              className="whitespace-nowrap"
+              onClick={() => navigate("leave")}
+            >
               <div className="flex items-center gap-2">
                 <LogOut className="w-5 h-5" />
                 <div>Leave channel</div>
@@ -72,6 +85,7 @@ const ChannelContainerHeader = ({
   onClick,
 }: ChannelContainerHeaderProps) => {
   const { currentUser } = useCurrentUser();
+  const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false);
 
   const getPrivateChannelName = () => {
     const otherMember =
@@ -85,11 +99,20 @@ const ChannelContainerHeader = ({
 
   if (channel.type === ChannelType.PRIVATE) {
     return (
-      <div className="border-b border-[#35353b] p-4">
-        <h2 className="text-xl font-bold text-white">
-          {getPrivateChannelName()}
-        </h2>
-      </div>
+      <>
+        <div className="border-b border-[#35353b] p-4">
+          <h2
+            className="text-xl font-bold text-white cursor-pointer"
+            onClick={() => setIsUserInfoModalOpen(true)}
+          >
+            {getPrivateChannelName()}
+          </h2>
+        </div>
+        <UserInfoModal
+          open={isUserInfoModalOpen}
+          onClose={() => setIsUserInfoModalOpen(false)}
+        />
+      </>
     );
   } else if (channel.type === ChannelType.GROUP) {
     return (

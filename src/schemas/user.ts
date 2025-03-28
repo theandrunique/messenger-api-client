@@ -24,5 +24,6 @@ export interface UserPublicSchema {
   username: string;
   globalName: string;
   avatar: string | null;
-  timestamp: string;
+  bio: string | null;
+  timestamp: string | null;
 }
