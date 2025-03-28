@@ -19,7 +19,7 @@ const ChannelSidebar = () => {
   };
 
   if (isLoading)
-    return <Loading message="Loading your channels" className="bg-[#1f1f23]" />;
+    return <Loading message="Loading your channels" className="md:w-72 w-16 bg-[#1f1f23]" />;
 
   return (
     <>
