@@ -4,6 +4,7 @@ import {
   ChannelMemberAddEventSchema,
   ChannelMemberRemoveEventSchema,
   ChannelUpdateEventSchema,
+  MessageAckEventSchema,
   MessageCreateEventSchema,
 } from "../../schemas/gateway";
 import { ChannelSchema } from "../../schemas/channel";
@@ -142,3 +143,39 @@ export const updateUseUserChannelOnMemberAdd = (
     }
   );
 };
+
+const compareIds = (a: string, b: string) => BigInt(a) > BigInt(b) ? a : b;
+
+export const updateUseUserChannelOnMessageAck = (
+  queryClient: QueryClient,
+  event: MessageAckEventSchema,
+  currentUserId: string,
+) => {
+  queryClient.setQueryData(
+    ["/users/@me/channels"],
+    (oldChannels: ChannelSchema[] | undefined) => {
+      if (!oldChannels) return;
+
+      if (currentUserId === event.memberId) {
+        return oldChannels.map((channel) =>
+          channel.id === event.channelId
+            ? {
+                ...channel,
+                readAt: compareIds(channel.readAt, event.messageId),
+              }
+            : channel
+        );
+      } else {
+        return oldChannels.map((channel) =>
+          channel.id === event.channelId
+            ? {
+                ...channel,
+                maxReadAt: compareIds(channel.maxReadAt as string, event.messageId),
+              }
+            : channel
+        );
+      }
+    }
+  );
+};
+

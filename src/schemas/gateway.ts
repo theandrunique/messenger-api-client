@@ -33,3 +33,9 @@ export interface ChannelMemberRemoveEventSchema {
   channelId: string;
   user: UserPublicSchema;
 }
+
+export interface MessageAckEventSchema {
+  messageId: string;
+  channelId: string;
+  memberId: string;
+}

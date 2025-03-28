@@ -8,6 +8,7 @@ import {
   ChannelMemberAddEventSchema,
   ChannelMemberRemoveEventSchema,
   ChannelUpdateEventSchema,
+  MessageAckEventSchema,
   MessageCreateEventSchema,
   MessageUpdateEventSchema,
 } from "../schemas/gateway";
@@ -26,6 +27,7 @@ import { invalidateUseChannel } from "../api/hooks/useChannel";
 import useCurrentUser from "../api/hooks/useCurrentUser";
 import { useNavigate, useParams } from "react-router-dom";
 import notifications from "../utils/notifications";
+import { updateUseUserChannelOnMessageAck } from '../api/hooks/useUserChannels';
 
 const useGateway = () => {
   const socket = useRef<Socket | null>(null);
@@ -94,6 +96,10 @@ const useGateway = () => {
     socket.on("channel:update", (event: ChannelUpdateEventSchema) => {
       updateUseUserChannelOnChannelUpdate(queryClient, event);
       invalidateUseChannel(queryClient, event.payload.id);
+    });
+
+    socket.on("message:ack", (event: MessageAckEventSchema) => {
+      updateUseUserChannelOnMessageAck(queryClient, event, currentUser!.id);
     });
   };
 

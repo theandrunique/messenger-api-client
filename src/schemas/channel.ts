@@ -23,6 +23,7 @@ export interface ChannelSchema {
   image: string | null;
   type: ChannelType;
   readAt: string;
+  maxReadAt: string | null;
   lastMessageTimestamp: Date | null;
   lastMessage: MessageInfoSchema;
   members: UserPublicSchema[];

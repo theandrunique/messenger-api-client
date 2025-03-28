@@ -3,6 +3,27 @@ import { ChannelSchema, ChannelType } from "../../../../schemas/channel";
 import Avatar from "../../../../components/Avatar";
 import useCurrentUser from "../../../../api/hooks/useCurrentUser";
 import { UserPublicSchema } from "../../../../schemas/user";
+import { Check, CheckCheck } from "lucide-react";
+
+const ReadStatus = ({
+  channel,
+  currentUserId,
+}: {
+  channel: ChannelSchema;
+  currentUserId?: string;
+}) => {
+  if (channel.lastMessage?.authorId !== currentUserId) return null;
+
+  return (
+    <div className="text-pink-400">
+      {channel.maxReadAt === channel.lastMessage.id ? (
+        <CheckCheck className="w-4 h-4" />
+      ) : (
+        <Check className="w-4 h-4" />
+      )}
+    </div>
+  );
+};
 
 const FirstLetterImage = ({ letter }: { letter: string }) => (
   <div className="w-full h-full rounded-full overflow-hidden font-semibold bg-slate-700 text-white flex items-center justify-center">
@@ -22,6 +43,7 @@ const ChannelImage = ({ channel, member }: ChannelImageProps) => {
         userId={member.id}
         avatar={member.avatar}
         username={member.username}
+        className="w-full h-full"
       />
     ) : (
       <FirstLetterImage letter={member?.username || "S"} />
@@ -40,7 +62,9 @@ interface ChannelCardProps {
   onClick: () => void;
 }
 
-const hasUnreadMessages = (channel: ChannelSchema) => {
+const hasUnreadMessages = (channel: ChannelSchema, currentUserId?: string) => {
+  if (channel.lastMessage?.authorId === currentUserId) return false;
+
   return channel.lastMessage && channel.readAt < channel.lastMessage.id;
 };
 
@@ -85,13 +109,20 @@ const renderLastMessageTime = (channel: ChannelSchema) => {
   const isThisWeek = messageDate >= startOfWeek;
 
   return isToday
-    ? messageDate.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
+    ? messageDate.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
     : isThisWeek
       ? messageDate.toLocaleDateString("en-US", { weekday: "short" })
       : messageDate.toLocaleDateString();
 };
 
-const ChannelCard = ({ channel, onClick, isActive }: ChannelCardProps): ReactNode => {
+const ChannelCard = ({
+  channel,
+  onClick,
+  isActive,
+}: ChannelCardProps): ReactNode => {
   const { currentUser } = useCurrentUser();
 
   const isPrivateChannel = channel.type === ChannelType.PRIVATE;
@@ -115,8 +146,11 @@ const ChannelCard = ({ channel, onClick, isActive }: ChannelCardProps): ReactNod
             {renderChannelName(channel, otherMember)}
           </div>
 
-          <div className="text-xs opacity-50 ml-4">
-            {renderLastMessageTime(channel)}
+          <div className="flex items-center gap-1 ml-4">
+            <ReadStatus channel={channel} currentUserId={currentUser?.id} />
+            <div className="text-xs opacity-50">
+              {renderLastMessageTime(channel)}
+            </div>
           </div>
         </div>
 
@@ -125,7 +159,7 @@ const ChannelCard = ({ channel, onClick, isActive }: ChannelCardProps): ReactNod
             {renderLastMessageText(channel)}
           </div>
           <div>
-            {hasUnreadMessages(channel) && (
+            {hasUnreadMessages(channel, currentUser?.id) && (
               <div className="rounded-full bg-[#9147ff] w-1.5 h-1.5"></div>
             )}
           </div>
