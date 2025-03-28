@@ -18,9 +18,13 @@ const ChannelContainer = () => {
 
   if (channelId === undefined) return <SelectChannelMessage />;
 
-  if (!data || isPending) return <Loading message="Loading channels" />;
+  if (!data || isPending) return (
+    <Loading message="Loading channels" className="flex-1 h-full" />
+  );
 
-  if (isError) return <Loading message={`Error while loading a channel: ${error}`} />;
+  if (isError) return (
+    <Loading message={`Error while loading a channel: ${error}`} className="flex-1 h-full" />
+  );
 
   return (
     <div className="flex-1 h-full bg-[#18181b] overflow-hidden">
