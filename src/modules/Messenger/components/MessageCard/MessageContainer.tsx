@@ -9,6 +9,7 @@ const MessageContainer = forwardRef<HTMLDivElement, MessageContainerProps>(({ ch
   return (
     <div
       data-message-id={message.id}
+      data-message-author-id={message.author.id}
       ref={ref}
       className={`flex items-end ${
         isOwnMessage ? "justify-end" : "justify-start"
