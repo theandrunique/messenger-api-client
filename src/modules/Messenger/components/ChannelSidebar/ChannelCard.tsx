@@ -17,9 +17,9 @@ const ReadStatus = ({
   return (
     <div className="text-pink-400">
       {channel.maxReadAt === channel.lastMessage.id ? (
-        <CheckCheck className="w-4 h-4" />
+        <CheckCheck className="w-4 h-4 text-[#9147ff]" />
       ) : (
-        <Check className="w-4 h-4" />
+        <Check className="w-4 h-4 text-[#9147ff]" />
       )}
     </div>
   );
