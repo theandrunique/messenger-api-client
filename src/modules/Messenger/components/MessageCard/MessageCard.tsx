@@ -1,3 +1,4 @@
+import { Check, CheckCheck } from "lucide-react";
 import useCurrentUser from "../../../../api/hooks/useCurrentUser";
 import { ChannelType } from "../../../../schemas/channel";
 import { MessageSchema } from "../../../../schemas/message";
@@ -9,7 +10,15 @@ import MetaMessage from "./MetaMessage";
 import { isMeteMessage } from "./utils";
 import { forwardRef } from "react";
 
-const MessageStatus = ({ message }: { message: MessageSchema }) => {
+const MessageStatus = ({
+  message,
+  isOwnMessage,
+  maxReadAt,
+}: {
+  message: MessageSchema;
+  isOwnMessage: boolean;
+  maxReadAt: string;
+}) => {
   return (
     <div className="flex items-center justify-end gap-1 ml-auto text-[#efeff1] opacity-70 h-5 text-[12px] font-normal">
       {message.editedTimestamp && <span>edited</span>}
@@ -19,6 +28,15 @@ const MessageStatus = ({ message }: { message: MessageSchema }) => {
           minute: "2-digit",
         })}
       </span>
+      {isOwnMessage && (
+        <span>
+          {maxReadAt >= message.id ? (
+            <CheckCheck className="w-4 h-4 text-fuchsia-100" />
+          ) : (
+            <Check className="w-4 h-4 text-fuchsia-100" />
+          )}
+        </span>
+      )}
     </div>
   );
 };
@@ -26,12 +44,13 @@ const MessageStatus = ({ message }: { message: MessageSchema }) => {
 interface MessageCardProps {
   message: MessageSchema;
   channelType: ChannelType;
+  lastReadAt: string;
   showAvatar: boolean;
   showUsername: boolean;
 }
 
 const MessageCard = forwardRef<HTMLDivElement, MessageCardProps>(
-  ({ message, channelType, showAvatar, showUsername }, ref) => {
+  ({ message, channelType, lastReadAt, showAvatar, showUsername }, ref) => {
     const { currentUser } = useCurrentUser();
     const isOwnMessage = message.author.id === currentUser!.id;
     const isGroup = channelType === ChannelType.GROUP;
@@ -77,7 +96,11 @@ const MessageCard = forwardRef<HTMLDivElement, MessageCardProps>(
                   {message.content}
                 </div>
               )}
-              <MessageStatus message={message} />
+              <MessageStatus
+                message={message}
+                isOwnMessage={isOwnMessage}
+                maxReadAt={lastReadAt}
+              />
             </div>
           </div>
         </MessageContainer>

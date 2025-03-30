@@ -95,7 +95,7 @@ const MessagesContainer = ({ selectedChannel }: MessagesContainerProps) => {
       ) : (
         <MessagesList
           messages={messages}
-          channelType={selectedChannel.type}
+          channel={selectedChannel}
           bottomRef={bottomRef}
         />
       )}

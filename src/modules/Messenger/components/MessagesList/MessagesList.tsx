@@ -1,4 +1,4 @@
-import { ChannelType } from "../../../../schemas/channel";
+import { ChannelSchema } from "../../../../schemas/channel";
 import { MessageSchema } from "../../../../schemas/message";
 import MessageCard from "../MessageCard";
 import DateDivider from "./DateDivider";
@@ -44,15 +44,11 @@ const groupMessagesByDate = (messages: MessageSchema[]) => {
 
 interface MessagesListProps {
   messages: MessageSchema[];
-  channelType: ChannelType;
+  channel: ChannelSchema;
   bottomRef?: React.RefObject<HTMLDivElement>;
 }
 
-const MessagesList = ({
-  messages,
-  channelType,
-  bottomRef,
-}: MessagesListProps) => {
+const MessagesList = ({ messages, channel, bottomRef }: MessagesListProps) => {
   const messageGroupsByDate = groupMessagesByDate(messages);
 
   return (
@@ -70,7 +66,8 @@ const MessagesList = ({
                   <MessageCard
                     key={message.id}
                     message={message}
-                    channelType={channelType}
+                    channelType={channel.type}
+                    lastReadAt={channel.maxReadAt as string}
                     showAvatar={index === 0}
                     showUsername={index === group.length - 1}
                   />
