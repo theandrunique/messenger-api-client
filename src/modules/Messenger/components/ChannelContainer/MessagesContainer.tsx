@@ -39,20 +39,13 @@ const MessagesContainer = ({ selectedChannel }: MessagesContainerProps) => {
       const scrollLevel = container.scrollTop + container.clientHeight;
       if (scrollLevel < scrollToBottomTrigger) return;
 
-      console.log("Scroll on new message");
-
       bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     },
   });
 
   // Restore scroll position
   useEffect(() => {
-    if (
-      selectedChannel &&
-      containerRef.current &&
-      !isPending &&
-      messages.length !== 0
-    ) {
+    if (selectedChannel && containerRef.current && !isPending) {
       const scrollPosition = scrollPositionsRef.current.get(selectedChannel.id);
 
       requestAnimationFrame(() => {
@@ -90,7 +83,7 @@ const MessagesContainer = ({ selectedChannel }: MessagesContainerProps) => {
   return (
     <div
       ref={containerRef}
-      onScroll={handleAutoLoadOnScroll}
+      onScroll={!isPending ? handleAutoLoadOnScroll : undefined}
       className="messages-container flex-1 p-4 overflow-y-auto bg-[#0e0e10]"
     >
       {isPending ? (
