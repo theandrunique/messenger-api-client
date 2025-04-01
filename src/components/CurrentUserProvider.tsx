@@ -1,4 +1,4 @@
-import { createContext, useEffect } from "react";
+import { createContext, useContext } from "react";
 import { UserSchema } from "../schemas/user";
 import useCurrentUser from "../api/hooks/useCurrentUser";
 import FullScreenLoading from "./FullScreenLoading";
@@ -14,10 +14,6 @@ const CurrentUserContext = createContext<CurrentUserContextType | undefined>(
 const CurrentUserProvider = ({ children }: { children: React.ReactNode }) => {
   const { currentUser, isLoading } = useCurrentUser();
 
-  useEffect(() => {
-    if (currentUser) localStorage.setItem("userId", currentUser.id);
-  }, [currentUser]);
-
   if (!currentUser || isLoading) {
     return <FullScreenLoading message="Fetching info about you" />;
   }
@@ -31,12 +27,24 @@ const CurrentUserProvider = ({ children }: { children: React.ReactNode }) => {
 
 export default CurrentUserProvider;
 
-export const useCurrentUserId = () => {
-  const v =  localStorage.getItem("userId");
+export const useLoadedCurrentUser = () => {
+  const context = useContext(CurrentUserContext);
 
-  if (!v) {
-    throw new Error("useCurrentUserId must be used with in CurrentUserProvider");
+  if (!context) {
+    throw new Error(
+      "useLoadedCurrentUser must be used within CurrentUserProvider"
+    );
   }
 
-  return v;
+  return context.currentUser;
+};
+
+export const useCurrentUserId = () => {
+  const context = useContext(CurrentUserContext);
+
+  if (!context) {
+    throw new Error("useCurrentUserId must be used within CurrentUserProvider");
+  }
+
+  return context.currentUser.id;
 };
