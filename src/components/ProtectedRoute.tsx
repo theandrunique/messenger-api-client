@@ -3,6 +3,7 @@ import { useAuth } from "./AuthProvider";
 import { Navigate } from "react-router-dom";
 import FullScreenLoading from "./FullScreenLoading";
 import { GatewayProvider } from "./GatewayProvider";
+import CurrentUserProvider from "./CurrentUserProvider";
 
 interface ProtectedRouteProps extends PropsWithChildren {}
 
@@ -22,9 +23,11 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   if (!isAuthenticated) return <Navigate to="/sign-in" replace />;
 
   return (
-    <GatewayProvider>
-      {children}
-    </GatewayProvider>
+    <CurrentUserProvider>
+      <GatewayProvider>
+        {children}
+      </GatewayProvider>
+    </CurrentUserProvider>
   )
 };
 
