@@ -132,7 +132,7 @@ const UsersSearchInput = ({ onSubmit, excludeIds = [], clearOnSubmit = true }: U
   };
 
   return (
-    <div className="relative w-full text-[#efeff1]" ref={wrapperRef}>
+    <div className="relative w-full text-[#efeff1] pointer-events-auto" ref={wrapperRef}>
       <div className="relative">
         <div className="absolute inset-y-0 left-0 flex items-center pl-2">
           <Search className="w-5 h-5" />

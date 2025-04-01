@@ -7,10 +7,6 @@ import useMessageAck from "./hooks/useMessageAck";
 import useGatewayEvents from "../../../../gateway/useGatewayEvents";
 import { GatewayEventType } from "../../../../schemas/gateway";
 
-const PendingMessages = () => {
-  return <Loading message="Loading messages" />;
-};
-
 interface MessagesContainerProps {
   selectedChannel: ChannelSchema;
 }
@@ -87,7 +83,7 @@ const MessagesContainer = ({ selectedChannel }: MessagesContainerProps) => {
       className="messages-container flex-1 p-4 overflow-y-auto bg-[#0e0e10]"
     >
       {isPending ? (
-        <PendingMessages />
+        <Loading message="Loading messages" />
       ) : (
         <MessagesList
           messages={messages}

@@ -2,13 +2,13 @@ import { useEffect, useRef } from "react";
 import { MessageSchema } from "../../../../../schemas/message";
 import { postMessageAck } from "../../../../../api/api";
 import { ChannelSchema } from "../../../../../schemas/channel";
-import useCurrentUser from "../../../../../api/hooks/useCurrentUser";
+import { useCurrentUserId } from "../../../../../components/CurrentUserProvider";
 
 const useMessageAck = (messages: MessageSchema[], channel: ChannelSchema) => {
   const ackTimeout = useRef<NodeJS.Timeout | null>(null);
   const visibleMessagesRef = useRef<Set<string>>(new Set());
   const observerRef = useRef<IntersectionObserver | null>(null);
-  const { currentUser } = useCurrentUser();
+  const currentUserId = useCurrentUserId();
 
   useEffect(() => {
     const container = document.querySelector(".messages-container");
@@ -24,7 +24,6 @@ const useMessageAck = (messages: MessageSchema[], channel: ChannelSchema) => {
     };
 
     const handleIntersection = (entries: IntersectionObserverEntry[]) => {
-
       entries.forEach((entry) => {
         const messageId = entry.target.getAttribute("data-message-id");
         if (!messageId) return;
@@ -60,10 +59,12 @@ const useMessageAck = (messages: MessageSchema[], channel: ChannelSchema) => {
     });
 
     messages.forEach((message) => {
-      if (message.author.id === currentUser?.id) return;
+      if (message.author.id === currentUserId) return;
       if (BigInt(message.id) <= BigInt(channel.readAt)) return;
 
-      const newElement = document.querySelector(`[data-message-id="${message.id}"]`);
+      const newElement = document.querySelector(
+        `[data-message-id="${message.id}"]`
+      );
 
       if (newElement) {
         observerRef.current?.observe(newElement);
