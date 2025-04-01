@@ -5,7 +5,10 @@ import {
 } from "@tanstack/react-query";
 import { getMessages } from "../api";
 import { MessageSchema } from "../../schemas/message";
-import { MessageCreateEventSchema, MessageUpdateEventSchema } from "../../schemas/gateway";
+import {
+  MessageCreateEventSchema,
+  MessageUpdateEventSchema,
+} from "../../schemas/gateway";
 
 const limit = 50;
 
@@ -42,12 +45,12 @@ export const updateUseMessagesOnMessageCreate = (
   event: MessageCreateEventSchema
 ) => {
   queryClient.setQueryData(
-    ["/channels/{channelId}/messages", event.payload.channelId],
+    ["/channels/{channelId}/messages", event.message.channelId],
     (oldData: InfiniteData<MessageSchema[]> | undefined) => {
       if (!oldData) return;
 
       const isAlreadyExists = oldData.pages.some((page) =>
-        page.some((message) => message.id === event.payload.id)
+        page.some((message) => message.id === event.message.id)
       );
 
       if (isAlreadyExists) return oldData;
@@ -55,7 +58,7 @@ export const updateUseMessagesOnMessageCreate = (
       return {
         pageParams: oldData.pageParams,
         pages: [
-          [event.payload, ...oldData.pages[0]],
+          [event.message, ...oldData.pages[0]],
           ...oldData.pages.slice(1),
         ],
       };
@@ -68,24 +71,24 @@ export const updateUseMessagesOnMessageUpdate = (
   event: MessageUpdateEventSchema
 ) => {
   queryClient.setQueryData(
-    ["/channels/{channelId}/messages", event.payload.channelId],
+    ["/channels/{channelId}/messages", event.message.channelId],
     (oldData: InfiniteData<MessageSchema[]> | undefined) => {
       if (!oldData) return;
 
       const message = oldData.pages.find((page) =>
-        page.some((message) => message.id === event.payload.id)
+        page.some((message) => message.id === event.message.id)
       );
       // message was updated but it's not fetched yet
       if (!message) return;
 
       return {
         ...oldData,
-        pages: oldData.pages.map((page) => 
+        pages: oldData.pages.map((page) =>
           page.map((message) =>
-            message.id === event.payload.id ? event.payload : message
+            message.id === event.message.id ? event.message : message
           )
-        )
-      }
+        ),
+      };
     }
   );
 };

@@ -30,10 +30,10 @@ export const updateUseUserChannelsOnNewMessage = (
     (oldChannels: ChannelSchema[] | undefined) => {
       if (!oldChannels) return;
 
-      const message = event.payload;
+      const message = event.message;
 
       return oldChannels.map((channel) =>
-        channel.id === event.payload.channelId
+        channel.id === event.message.channelId
           ? {
               ...channel,
               lastMessage: {
@@ -46,7 +46,7 @@ export const updateUseUserChannelsOnNewMessage = (
                 editedTimestamp: message.editedTimestamp,
                 attachmentsCount: message.attachments.length,
               },
-              lastMessageTimestamp: event.payload.timestamp,
+              lastMessageTimestamp: message.timestamp,
             }
           : channel
       );
@@ -75,7 +75,7 @@ export const updateUseUserChannelsOnNewChannel = (
 
 export const updateUseUserChannelOnChannelUpdate = (
   queryClient: QueryClient,
-  event: ChannelUpdateEventSchema,
+  event: ChannelUpdateEventSchema
 ) => {
   queryClient.setQueryData(
     ["/users/@me/channels"],
@@ -83,7 +83,7 @@ export const updateUseUserChannelOnChannelUpdate = (
       if (!oldChannels) return;
 
       return oldChannels.map((oldChannel) =>
-        oldChannel.id === event.payload.id ? event.payload : oldChannel
+        oldChannel.id === event.channel.id ? event.channel : oldChannel
       );
     }
   );
@@ -136,7 +136,11 @@ export const updateUseUserChannelOnMemberAdd = (
         channel.id === event.channelId
           ? {
               ...channel,
-              members: channel.members.some(member => member.id === event.user.id) ? channel.members : [...channel.members, event.user],
+              members: channel.members.some(
+                (member) => member.id === event.user.id
+              )
+                ? channel.members
+                : [...channel.members, event.user],
             }
           : channel
       );
@@ -144,12 +148,12 @@ export const updateUseUserChannelOnMemberAdd = (
   );
 };
 
-const compareIds = (a: string, b: string) => BigInt(a) > BigInt(b) ? a : b;
+const compareIds = (a: string, b: string) => (BigInt(a) > BigInt(b) ? a : b);
 
 export const updateUseUserChannelOnMessageAck = (
   queryClient: QueryClient,
   event: MessageAckEventSchema,
-  currentUserId: string,
+  currentUserId: string
 ) => {
   queryClient.setQueryData(
     ["/users/@me/channels"],
@@ -170,7 +174,10 @@ export const updateUseUserChannelOnMessageAck = (
           channel.id === event.channelId
             ? {
                 ...channel,
-                maxReadAt: compareIds(channel.maxReadAt as string, event.messageId),
+                maxReadAt: compareIds(
+                  channel.maxReadAt as string,
+                  event.messageId
+                ),
               }
             : channel
         );
@@ -178,4 +185,3 @@ export const updateUseUserChannelOnMessageAck = (
     }
   );
 };
-

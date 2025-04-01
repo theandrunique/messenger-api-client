@@ -9,6 +9,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import UsersSearchInput from "../UsersSearchInput";
 import { UserPublicSchema } from "../../../../schemas/user";
 import { getDMChannel } from "../../../../api/api";
+import useGatewayEvents from "../../../../gateway/useGatewayEvents";
+import { GatewayEventType } from "../../../../gateway/types";
+import useCurrentUser from "../../../../api/hooks/useCurrentUser";
+import notifications from "../../../../utils/notifications";
 
 const ChannelSidebar = () => {
   const { channelId } = useParams();
@@ -16,6 +20,17 @@ const ChannelSidebar = () => {
   const [isCreateChannelModalOpen, setIsCreateChannelModalOpen] =
     useState(false);
   const navigate = useNavigate();
+  const { currentUser } = useCurrentUser();
+
+  useGatewayEvents({
+    [GatewayEventType.CHANNEL_MEMBER_REMOVE]: (e) => {
+      if (e.user.id === currentUser!.id && channelId === e.channelId) {
+        console.log("current user was removed from current channel")
+        navigate("/messenger", { replace: true });
+        notifications.info("You have been removed from this channel");
+      }
+    }
+  })
 
   const selectChannel = (channelId: string) => {
     navigate(`/messenger/${channelId}`);

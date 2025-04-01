@@ -1,6 +1,6 @@
-import { ChannelSchema, ChannelType } from "./channel";
-import { MessageSchema } from "./message";
-import { UserPublicSchema } from "./user";
+import { ChannelSchema, ChannelType } from "../schemas/channel";
+import { MessageSchema } from "../schemas/message";
+import { UserPublicSchema } from "../schemas/user";
 
 export enum GatewayEventType {
   MESSAGE_CREATE = "MESSAGE_CREATE",
@@ -20,7 +20,11 @@ export type GatewayEventSchemas = {
   [GatewayEventType.CHANNEL_UPDATE]: ChannelUpdateEventSchema;
   [GatewayEventType.CHANNEL_MEMBER_ADD]: ChannelMemberAddEventSchema;
   [GatewayEventType.CHANNEL_MEMBER_REMOVE]: ChannelMemberRemoveEventSchema;
-}
+};
+
+export type GatewayEventHandlers = {
+  [K in GatewayEventType]?: (data: GatewayEventSchemas[K]) => void;
+};
 
 interface MessageGatewayEventExtra {
   channelType: ChannelType;

@@ -4,6 +4,8 @@ import { ChannelSchema } from "../../../../schemas/channel";
 import Loading from "../../../../components/Loading";
 import MessagesList from "../MessagesList/MessagesList";
 import useMessageAck from "./hooks/useMessageAck";
+import useGatewayEvents from "../../../../gateway/useGatewayEvents";
+import { GatewayEventType } from "../../../../schemas/gateway";
 
 const PendingMessages = () => {
   return <Loading message="Loading messages" />;
@@ -28,19 +30,20 @@ const MessagesContainer = ({ selectedChannel }: MessagesContainerProps) => {
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const scrollPositionsRef = useRef(new Map<string, number>());
 
-  // scroll to bottom on new messages
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container || !bottomRef.current) return;
+  useGatewayEvents({
+    [GatewayEventType.MESSAGE_CREATE]: (_) => {
+      const container = containerRef.current;
+      if (!container || !bottomRef.current) return;
 
-    const scrollToBottomTrigger = 300;
-    const scrollLevel =
-      container.scrollHeight - container.scrollTop - container.clientHeight;
+      const scrollToBottomTrigger = 20;
+      const scrollLevel = container.scrollTop + container.clientHeight;
+      if (scrollLevel < scrollToBottomTrigger) return;
 
-    if (scrollLevel < scrollToBottomTrigger) {
+      console.log("Scroll on new message");
+
       bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages]);
+    },
+  });
 
   // Restore scroll position
   useEffect(() => {
