@@ -31,11 +31,13 @@ const MessagesContainer = ({ selectedChannel }: MessagesContainerProps) => {
       const container = containerRef.current;
       if (!container || !bottomRef.current) return;
 
-      const scrollToBottomTrigger = 20;
-      const scrollLevel = container.scrollTop + container.clientHeight;
-      if (scrollLevel < scrollToBottomTrigger) return;
+      const scrollToBottomTrigger = 150;
+      const scrollLevel = container.scrollHeight - container.scrollTop - container.clientHeight;
+      if (scrollLevel > scrollToBottomTrigger) return;
 
-      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+      requestAnimationFrame(() => {
+        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+      });
     },
   });
 
