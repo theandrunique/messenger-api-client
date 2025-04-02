@@ -8,6 +8,7 @@ import {
   MessageCreateEventSchema,
 } from "../../schemas/gateway";
 import { ChannelSchema } from "../../schemas/channel";
+import { MessageSchema } from "../../schemas/message";
 
 const useUserChannels = () => {
   const context = useQuery({
@@ -23,17 +24,15 @@ export default useUserChannels;
 
 export const updateUseUserChannelsOnNewMessage = (
   queryClient: QueryClient,
-  event: MessageCreateEventSchema
+  message: MessageSchema
 ) => {
   queryClient.setQueryData(
     ["/users/@me/channels"],
     (oldChannels: ChannelSchema[] | undefined) => {
       if (!oldChannels) return;
 
-      const message = event.message;
-
       return oldChannels.map((channel) =>
-        channel.id === event.message.channelId
+        channel.id === message.channelId
           ? {
               ...channel,
               lastMessage: {

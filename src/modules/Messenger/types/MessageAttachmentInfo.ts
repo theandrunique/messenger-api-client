@@ -8,6 +8,7 @@ export type MessageAttachmentStatus =
 
 type MessageAttachmentInfo = {
   file: File;
+  pendingMessageNonce?: string;
   cloudAttachment: CloudAttachmentSchema | null;
   abortController?: AbortController;
   status: MessageAttachmentStatus;

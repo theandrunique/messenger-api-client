@@ -57,8 +57,8 @@ export const GatewayProvider = ({
 
     const handlers: Partial<GatewayEventHandlers> = {
       [GatewayEventType.MESSAGE_CREATE]: (event) => {
-        updateUseUserChannelsOnNewMessage(queryClient, event);
-        updateUseMessagesOnMessageCreate(queryClient, event);
+        updateUseUserChannelsOnNewMessage(queryClient, event.message);
+        updateUseMessagesOnMessageCreate(queryClient, event.message);
       },
       [GatewayEventType.MESSAGE_UPDATE]: (event) => {
         updateUseMessagesOnMessageUpdate(queryClient, event);

@@ -1,6 +1,8 @@
 import { ChannelSchema } from "../../../../schemas/channel";
 import { MessageSchema } from "../../../../schemas/message";
 import MessageCard from "../MessageCard";
+import PendingMessageCard from "../MessageCard/PendingMessageCard";
+import { useMessageMutation } from "../MessageMutationProvider";
 import DateDivider from "./DateDivider";
 
 const groupMessagesByAuthor = (
@@ -50,10 +52,16 @@ interface MessagesListProps {
 
 const MessagesList = ({ messages, channel, bottomRef }: MessagesListProps) => {
   const messageGroupsByDate = groupMessagesByDate(messages);
+  const { pendingMessages } = useMessageMutation();
 
   return (
     <div className="flex flex-col-reverse">
       <div ref={bottomRef}></div>
+      {pendingMessages.filter((m) => m.channelId === channel.id).length > 0 &&
+        pendingMessages.map((message) => (
+          <PendingMessageCard message={message} key={message.nonce} />
+        ))}
+
       {messageGroupsByDate.map(([date, messages]) => {
         const authorGroups = groupMessagesByAuthor(messages);
 

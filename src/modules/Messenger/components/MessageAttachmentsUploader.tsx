@@ -17,6 +17,7 @@ interface MessageAttachmentsUploaderContextProps {
     messageAttachments: MessageAttachmentInfo
   ) => void;
   messageAttachments: MessageAttachmentInfo[];
+  setPendingMessageNonce: (files: File[], nonce: string) => void;
   clearMessageAttachments: (exclude?: MessageAttachmentInfo[]) => void;
 }
 
@@ -47,6 +48,12 @@ const MessageAttachmentsUploader = ({
       prev.map((item) => (item.file === file ? { ...item, ...updates } : item))
     );
   };
+
+  const setPendingMessageNonce = (files: File[], nonce: string) => {
+    setMessageAttachments((prev) =>
+      prev.map((item) => (files.includes(item.file) ? { ...item, nonce } : item))
+    )
+  }
 
   const uploadAttachments = async (files: File[]) => {
     const newAttachments: MessageAttachmentInfo[] = files.map((file) => ({
@@ -149,6 +156,7 @@ const MessageAttachmentsUploader = ({
     onFilesSelect,
     messageAttachments,
     onMessageAttachmentRemove,
+    setPendingMessageNonce,
     clearMessageAttachments,
   };
 

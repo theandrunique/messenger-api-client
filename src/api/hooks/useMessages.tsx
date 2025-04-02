@@ -42,25 +42,22 @@ export default useMessages;
 
 export const updateUseMessagesOnMessageCreate = (
   queryClient: QueryClient,
-  event: MessageCreateEventSchema
+  message: MessageSchema
 ) => {
   queryClient.setQueryData(
-    ["/channels/{channelId}/messages", event.message.channelId],
+    ["/channels/{channelId}/messages", message.channelId],
     (oldData: InfiniteData<MessageSchema[]> | undefined) => {
       if (!oldData) return;
 
       const isAlreadyExists = oldData.pages.some((page) =>
-        page.some((message) => message.id === event.message.id)
+        page.some((oldMessage) => oldMessage.id === message.id)
       );
 
       if (isAlreadyExists) return oldData;
 
       return {
         pageParams: oldData.pageParams,
-        pages: [
-          [event.message, ...oldData.pages[0]],
-          ...oldData.pages.slice(1),
-        ],
+        pages: [[message, ...oldData.pages[0]], ...oldData.pages.slice(1)],
       };
     }
   );

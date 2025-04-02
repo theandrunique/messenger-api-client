@@ -6,6 +6,7 @@ import { Outlet, useNavigate, useParams } from "react-router-dom";
 import Loading from "../../../../components/Loading";
 import SelectChannelMessage from "./SelectChannelMessage";
 import useSmartChannel from "../../../../api/hooks/useSmartChannel";
+import MessageMutationProvider from "../MessageMutationProvider";
 
 const ChannelContainer = () => {
   const { channelId } = useParams();
@@ -35,9 +36,11 @@ const ChannelContainer = () => {
         className="flex flex-col h-full"
         channelId={channelId}
       >
-        <ChannelContainerHeader channel={data} onClick={openChannelInfoModal} />
-        <MessagesContainer selectedChannel={data} />
-        <MessageInputContainer channelId={channelId} />
+        <MessageMutationProvider>
+          <ChannelContainerHeader channel={data} onClick={openChannelInfoModal} />
+          <MessagesContainer selectedChannel={data} />
+          <MessageInputContainer channelId={channelId} />
+        </MessageMutationProvider>
       </MessageAttachmentsUploader>
 
       <Outlet />
