@@ -28,8 +28,11 @@ const MessageMutationProvider = ({
   children: React.ReactNode;
 }) => {
   const [pendingMessages, setPendingMessages] = useState<PendingMessage[]>([]);
-  const { setPendingMessageNonce, messageAttachments } =
-    useMessageAttachmentsUploader();
+  const {
+    setPendingMessageNonce,
+    messageAttachments,
+    clearMessageAttachments,
+  } = useMessageAttachmentsUploader();
   const queryClient = useQueryClient();
 
   const addMessage = (newMessage: Omit<PendingMessage, "nonce">) => {
@@ -44,13 +47,14 @@ const MessageMutationProvider = ({
   useEffect(() => {
     pendingMessages.forEach((message) => {
       const attachments = messageAttachments.filter(
-        (a) => a.pendingMessageNonce === message.nonce
+        (a) => a.nonce === message.nonce
       );
 
       const isAllUploaded = attachments.every((a) => a.status === "success");
 
       if (isAllUploaded) {
         sendMessage(message, attachments);
+        clearMessageAttachments(attachments);
       }
     });
   }, [messageAttachments, pendingMessages]);

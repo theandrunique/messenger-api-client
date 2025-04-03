@@ -6,6 +6,7 @@ import MessagesList from "../MessagesList/MessagesList";
 import useMessageAck from "./hooks/useMessageAck";
 import useGatewayEvents from "../../../../gateway/useGatewayEvents";
 import { GatewayEventType } from "../../../../schemas/gateway";
+import { useMessageMutation } from "../MessageMutationProvider";
 
 interface MessagesContainerProps {
   selectedChannel: ChannelSchema;
@@ -19,8 +20,8 @@ const MessagesContainer = ({ selectedChannel }: MessagesContainerProps) => {
     fetchNextPage,
     isFetchingNextPage,
   } = useMessages(selectedChannel.id);
-
   useMessageAck(messages, selectedChannel);
+  const { pendingMessages } = useMessageMutation();
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -40,6 +41,12 @@ const MessagesContainer = ({ selectedChannel }: MessagesContainerProps) => {
       });
     },
   });
+
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    });
+  }, [pendingMessages]);
 
   // Restore scroll position
   useEffect(() => {

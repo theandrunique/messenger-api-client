@@ -18,7 +18,7 @@ interface MessageAttachmentsUploaderContextProps {
   ) => void;
   messageAttachments: MessageAttachmentInfo[];
   setPendingMessageNonce: (files: File[], nonce: string) => void;
-  clearMessageAttachments: (exclude?: MessageAttachmentInfo[]) => void;
+  clearMessageAttachments: (attachments: MessageAttachmentInfo[]) => void;
 }
 
 const FileUploaderContext = createContext<
@@ -51,9 +51,11 @@ const MessageAttachmentsUploader = ({
 
   const setPendingMessageNonce = (files: File[], nonce: string) => {
     setMessageAttachments((prev) =>
-      prev.map((item) => (files.includes(item.file) ? { ...item, nonce } : item))
-    )
-  }
+      prev.map((item) =>
+        files.includes(item.file) ? { ...item, nonce } : item
+      )
+    );
+  };
 
   const uploadAttachments = async (files: File[]) => {
     const newAttachments: MessageAttachmentInfo[] = files.map((file) => ({
@@ -148,8 +150,10 @@ const MessageAttachmentsUploader = ({
     setMessageAttachments((prev) => prev.filter((f) => f !== attachment));
   };
 
-  const clearMessageAttachments = (exclude?: MessageAttachmentInfo[]) => {
-    setMessageAttachments((prev) => prev.filter((f) => exclude?.includes(f)));
+  const clearMessageAttachments = (attachments: MessageAttachmentInfo[]) => {
+    setMessageAttachments((prev) =>
+      prev.filter((f) => !attachments.includes(f))
+    );
   };
 
   const value = {
