@@ -17,8 +17,7 @@ interface MessageAttachmentsUploaderContextProps {
     messageAttachments: MessageAttachmentInfo
   ) => void;
   messageAttachments: MessageAttachmentInfo[];
-  setPendingMessageNonce: (files: File[], nonce: string) => void;
-  clearMessageAttachments: (attachments: MessageAttachmentInfo[]) => void;
+  clearMessageAttachments: (exclude?: MessageAttachmentInfo[]) => void;
 }
 
 const FileUploaderContext = createContext<
@@ -46,14 +45,6 @@ const MessageAttachmentsUploader = ({
   ) => {
     setMessageAttachments((prev) =>
       prev.map((item) => (item.file === file ? { ...item, ...updates } : item))
-    );
-  };
-
-  const setPendingMessageNonce = (files: File[], nonce: string) => {
-    setMessageAttachments((prev) =>
-      prev.map((item) =>
-        files.includes(item.file) ? { ...item, nonce } : item
-      )
     );
   };
 
@@ -150,17 +141,14 @@ const MessageAttachmentsUploader = ({
     setMessageAttachments((prev) => prev.filter((f) => f !== attachment));
   };
 
-  const clearMessageAttachments = (attachments: MessageAttachmentInfo[]) => {
-    setMessageAttachments((prev) =>
-      prev.filter((f) => !attachments.includes(f))
-    );
+  const clearMessageAttachments = (exclude?: MessageAttachmentInfo[]) => {
+    setMessageAttachments((prev) => prev.filter((f) => exclude?.includes(f)));
   };
 
   const value = {
     onFilesSelect,
     messageAttachments,
     onMessageAttachmentRemove,
-    setPendingMessageNonce,
     clearMessageAttachments,
   };
 

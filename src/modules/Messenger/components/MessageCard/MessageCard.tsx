@@ -1,3 +1,4 @@
+import { Check, CheckCheck } from "lucide-react";
 import useCurrentUser from "../../../../api/hooks/useCurrentUser";
 import { ChannelType } from "../../../../schemas/channel";
 import { MessageSchema } from "../../../../schemas/message";
@@ -6,9 +7,39 @@ import MessageAvatar from "./MessageAvatar";
 import MessageCardContext from "./MessageCardContext";
 import MessageContainer from "./MessageContainer";
 import MetaMessage from "./MetaMessage";
-import { isMetaMessage } from "./utils";
+import { isMeteMessage } from "./utils";
 import { forwardRef } from "react";
-import MessageStatus from "./MessageStatus";
+
+const MessageStatus = ({
+  message,
+  isOwnMessage,
+  maxReadAt,
+}: {
+  message: MessageSchema;
+  isOwnMessage: boolean;
+  maxReadAt: string;
+}) => {
+  return (
+    <div className="flex items-center justify-end gap-1 ml-auto text-[#efeff1] opacity-70 h-5 text-[12px] font-normal">
+      {message.editedTimestamp && <span>edited</span>}
+      <span>
+        {new Date(message.timestamp).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      </span>
+      {isOwnMessage && (
+        <span>
+          {maxReadAt >= message.id ? (
+            <CheckCheck className="w-4 h-4 text-fuchsia-100" />
+          ) : (
+            <Check className="w-4 h-4 text-fuchsia-100" />
+          )}
+        </span>
+      )}
+    </div>
+  );
+};
 
 interface MessageCardProps {
   message: MessageSchema;
@@ -19,15 +50,12 @@ interface MessageCardProps {
 }
 
 const MessageCard = forwardRef<HTMLDivElement, MessageCardProps>(
-  (
-    { message, channelType, lastReadAt: maxReadAt, showAvatar, showUsername },
-    ref
-  ) => {
+  ({ message, channelType, lastReadAt, showAvatar, showUsername }, ref) => {
     const { currentUser } = useCurrentUser();
     const isOwnMessage = message.author.id === currentUser!.id;
     const isGroup = channelType === ChannelType.GROUP;
 
-    if (isMetaMessage(message.type)) return <MetaMessage message={message} />;
+    if (isMeteMessage(message.type)) return <MetaMessage message={message} />;
 
     const contextValue = {
       message,
@@ -69,10 +97,9 @@ const MessageCard = forwardRef<HTMLDivElement, MessageCardProps>(
                 </div>
               )}
               <MessageStatus
-                timestamp={message.timestamp}
-                editedTimestamp={message.editedTimestamp}
+                message={message}
                 isOwnMessage={isOwnMessage}
-                status={maxReadAt >= message.id ? "read" : "unread"}
+                maxReadAt={lastReadAt}
               />
             </div>
           </div>
