@@ -37,7 +37,7 @@ interface ChannelImageProps {
 }
 
 const ChannelImage = ({ channel, member }: ChannelImageProps) => {
-  if (channel.type === ChannelType.PRIVATE) {
+  if (channel.type === ChannelType.DM) {
     return member?.avatar ? (
       <Avatar
         userId={member.id}
@@ -72,7 +72,7 @@ const renderChannelName = (
   channel: ChannelSchema,
   otherMember: UserPublicSchema | null
 ) => {
-  if (channel.type === ChannelType.PRIVATE) {
+  if (channel.type === ChannelType.DM) {
     return otherMember
       ? `${otherMember.username} (${otherMember.globalName})`
       : "Saved Messages";
@@ -82,7 +82,7 @@ const renderChannelName = (
 };
 
 const renderLastMessageText = (channel: ChannelSchema) => {
-  return channel.type === ChannelType.PRIVATE
+  return channel.type === ChannelType.DM
     ? channel.lastMessage
       ? channel.lastMessage.content
       : ""
@@ -125,7 +125,7 @@ const ChannelCard = ({
 }: ChannelCardProps): ReactNode => {
   const { currentUser } = useCurrentUser();
 
-  const isPrivateChannel = channel.type === ChannelType.PRIVATE;
+  const isPrivateChannel = channel.type === ChannelType.DM;
 
   const otherMember = isPrivateChannel
     ? channel.members.find((member) => member.id !== currentUser?.id) || null

@@ -97,7 +97,7 @@ const ChannelContainerHeader = ({
     }
   };
 
-  if (channel.type === ChannelType.PRIVATE) {
+  if (channel.type === ChannelType.DM) {
     return (
       <>
         <div className="border-b border-[#35353b] p-4">
@@ -114,7 +114,7 @@ const ChannelContainerHeader = ({
         />
       </>
     );
-  } else if (channel.type === ChannelType.GROUP) {
+  } else if (channel.type === ChannelType.GROUP_DM) {
     return (
       <div className="border-b border-[#35353b] px-4 py-2 flex items-center justify-between">
         <div className="flex flex-col">

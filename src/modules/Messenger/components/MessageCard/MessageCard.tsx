@@ -53,7 +53,7 @@ const MessageCard = forwardRef<HTMLDivElement, MessageCardProps>(
   ({ message, channelType, lastReadAt, showAvatar, showUsername }, ref) => {
     const { currentUser } = useCurrentUser();
     const isOwnMessage = message.author.id === currentUser!.id;
-    const isGroup = channelType === ChannelType.GROUP;
+    const isGroup = channelType === ChannelType.GROUP_DM;
 
     if (isMeteMessage(message.type)) return <MetaMessage message={message} />;
 

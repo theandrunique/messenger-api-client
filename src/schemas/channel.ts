@@ -1,8 +1,8 @@
 import { UserPublicSchema } from "./user";
 
 export enum ChannelType {
-  PRIVATE = "PRIVATE",
-  GROUP = "GROUP",
+  DM = "DM",
+  GROUP_DM = "GROUP_DM",
 }
 
 export interface MessageInfoSchema {
