@@ -139,7 +139,7 @@ async function baseFetch<T>(
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       const { data } = error.response;
-      throw new ApiError(data.code, data.message, data.errors);
+      throw new ApiError(data.code, data.message, data.errors, data.metadata);
     }
     throw error;
   }
@@ -160,7 +160,7 @@ export const refreshToken = (refreshToken: string) => {
 export const signIn = (
   login: string,
   password: string,
-  totp: string | null
+  totp?: string
 ): Promise<TokenPairSchema> => {
   return baseFetch(() =>
     axiosWithCookie.postForm<TokenPairSchema>("/auth/sign-in", {
@@ -388,8 +388,11 @@ export const getUser = (userId: string): Promise<UserPublicSchema> => {
   );
 };
 
-export const postMessageAck = (channelId: string, messageId: string): Promise<void> => {
+export const postMessageAck = (
+  channelId: string,
+  messageId: string
+): Promise<void> => {
   return baseFetch(() =>
     axiosWithToken.post(`/channels/${channelId}/messages/${messageId}/acks`)
   );
-}
+};
