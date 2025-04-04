@@ -1,9 +1,9 @@
 import { ReactNode } from "react";
 import { ChannelSchema, ChannelType } from "../../../../schemas/channel";
 import Avatar from "../../../../components/Avatar";
-import useCurrentUser from "../../../../api/hooks/useCurrentUser";
 import { UserPublicSchema } from "../../../../schemas/user";
 import { Check, CheckCheck } from "lucide-react";
+import { useCurrentUserId } from "../../../../components/CurrentUserProvider";
 
 const ReadStatus = ({
   channel,
@@ -123,12 +123,12 @@ const ChannelCard = ({
   onClick,
   isActive,
 }: ChannelCardProps): ReactNode => {
-  const { currentUser } = useCurrentUser();
+  const currentUserId = useCurrentUserId();
 
   const isPrivateChannel = channel.type === ChannelType.DM;
 
   const otherMember = isPrivateChannel
-    ? channel.members.find((member) => member.id !== currentUser?.id) || null
+    ? channel.members.find((member) => member.id !== currentUserId) || null
     : null;
 
   return (
@@ -147,7 +147,7 @@ const ChannelCard = ({
           </div>
 
           <div className="flex items-center gap-1 ml-4 shrink-0">
-            <ReadStatus channel={channel} currentUserId={currentUser?.id} />
+            <ReadStatus channel={channel} currentUserId={currentUserId} />
             <div className="text-xs opacity-50">
               {renderLastMessageTime(channel)}
             </div>
@@ -159,7 +159,7 @@ const ChannelCard = ({
             {renderLastMessageText(channel)}
           </div>
           <div>
-            {hasUnreadMessages(channel, currentUser?.id) && (
+            {hasUnreadMessages(channel, currentUserId) && (
               <div className="rounded-full bg-[#9147ff] w-1.5 h-1.5"></div>
             )}
           </div>

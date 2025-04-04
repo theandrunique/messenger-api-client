@@ -2,12 +2,22 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import env from "../env";
 import { getTokens } from "../api/api";
-import useCurrentUser from "../api/hooks/useCurrentUser";
 import { GatewayEventHandlers, GatewayEventType } from "../gateway/types";
-import { updateUseUserChannelOnChannelUpdate, updateUseUserChannelOnMemberAdd, updateUseUserChannelOnMemberRemove, updateUseUserChannelOnMessageAck, updateUseUserChannelsOnNewChannel, updateUseUserChannelsOnNewMessage } from "../api/hooks/useUserChannels";
-import { updateUseMessagesOnMessageCreate, updateUseMessagesOnMessageUpdate } from "../api/hooks/useMessages";
+import {
+  updateUseUserChannelOnChannelUpdate,
+  updateUseUserChannelOnMemberAdd,
+  updateUseUserChannelOnMemberRemove,
+  updateUseUserChannelOnMessageAck,
+  updateUseUserChannelsOnNewChannel,
+  updateUseUserChannelsOnNewMessage,
+} from "../api/hooks/useUserChannels";
+import {
+  updateUseMessagesOnMessageCreate,
+  updateUseMessagesOnMessageUpdate,
+} from "../api/hooks/useMessages";
 import { invalidateUseChannel } from "../api/hooks/useChannel";
 import { useQueryClient } from "@tanstack/react-query";
+import { useCurrentUserId } from "./CurrentUserProvider";
 
 interface GatewayContextType {
   socket: Socket | null;
@@ -22,7 +32,7 @@ export const GatewayProvider = ({
 }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const isConnected = useRef(false);
-  const { currentUser } = useCurrentUser();
+  const currentUserId = useCurrentUserId();
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -53,7 +63,7 @@ export const GatewayProvider = ({
   }, []);
 
   useEffect(() => {
-    if (!socket || !currentUser) return;
+    if (!socket) return;
 
     const handlers: Partial<GatewayEventHandlers> = {
       [GatewayEventType.MESSAGE_CREATE]: (event) => {
@@ -64,11 +74,11 @@ export const GatewayProvider = ({
         updateUseMessagesOnMessageUpdate(queryClient, event);
       },
       [GatewayEventType.CHANNEL_MEMBER_ADD]: (event) => {
-        updateUseUserChannelOnMemberAdd(queryClient, event, currentUser!.id);
+        updateUseUserChannelOnMemberAdd(queryClient, event, currentUserId);
         invalidateUseChannel(queryClient, event.channelId);
       },
       [GatewayEventType.CHANNEL_MEMBER_REMOVE]: (event) => {
-        updateUseUserChannelOnMemberRemove(queryClient, event, currentUser!.id);
+        updateUseUserChannelOnMemberRemove(queryClient, event, currentUserId);
         invalidateUseChannel(queryClient, event.channelId);
       },
       [GatewayEventType.CHANNEL_CREATE]: (event) => {
@@ -79,7 +89,7 @@ export const GatewayProvider = ({
         invalidateUseChannel(queryClient, event.channel.id);
       },
       [GatewayEventType.MESSAGE_ACK]: (event) => {
-        updateUseUserChannelOnMessageAck(queryClient, event, currentUser!.id);
+        updateUseUserChannelOnMessageAck(queryClient, event, currentUserId);
       },
     };
 
@@ -92,7 +102,7 @@ export const GatewayProvider = ({
         socket.off(event, handler as any);
       });
     };
-  }, [socket, currentUser]);
+  }, [socket]);
 
   return (
     <GatewayContext.Provider value={{ socket }}>

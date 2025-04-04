@@ -6,19 +6,19 @@ import { removeChannelMember } from "../../../api/api";
 import useUserChannels from "../../../api/hooks/useUserChannels";
 import notifications from "../../../utils/notifications";
 import { ApiError } from "../../../schemas/common";
-import useCurrentUser from "../../../api/hooks/useCurrentUser";
+import { useCurrentUserId } from "../../../components/CurrentUserProvider";
 
 const LeaveChannelSubmitModal = () => {
   const { channelId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data } = useUserChannels();
-  const { currentUser } = useCurrentUser();
+  const currentUserId = useCurrentUserId();
 
   const { isPending, mutate } = useMutation({
     mutationFn: async () => {
-      if (!channelId || !currentUser) return;
-      return removeChannelMember(channelId, currentUser.id);
+      if (!channelId) return;
+      return removeChannelMember(channelId, currentUserId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/users/@me/channels"] });
@@ -28,6 +28,7 @@ const LeaveChannelSubmitModal = () => {
       if (err instanceof ApiError && err.message) {
         notifications.error(err.message);
       }
+      notifications.error("Something went wrong")
       console.log("Error leaving channel: ", err);
     },
   });

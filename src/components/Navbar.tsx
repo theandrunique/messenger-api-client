@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import useCurrentUser from "../api/hooks/useCurrentUser";
 import Avatar from "./Avatar";
+import { useLoadedCurrentUser } from "./CurrentUserProvider";
 
 const Icon = () => {
   return (
@@ -24,9 +24,7 @@ const Icon = () => {
 };
 
 const Navbar = () => {
-  const { currentUser } = useCurrentUser();
-
-  if (!currentUser) return null;
+  const currentUser = useLoadedCurrentUser();
 
   return (
     <div className="sticky top-0 left-0 w-full bg-[#18181b] border-b border-black">

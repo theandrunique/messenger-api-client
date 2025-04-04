@@ -6,8 +6,8 @@ import Input from "../../../components/ui/Input";
 import Textarea from "../../../components/ui/Textarea";
 import zod from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import useCurrentUser from "../../../api/hooks/useCurrentUser";
 import { useLayoutEffect } from "react";
+import { useLoadedCurrentUser } from "../../../components/CurrentUserProvider";
 
 const profileSettingsSchema = zod.object({
   username: zod.string(),
@@ -18,7 +18,7 @@ const profileSettingsSchema = zod.object({
 type ProfileSettingsSchema = zod.infer<typeof profileSettingsSchema>;
 
 const ProfileSettingsForm = () => {
-  const { currentUser } = useCurrentUser();
+  const currentUser = useLoadedCurrentUser();
 
   const {
     register,
@@ -44,8 +44,6 @@ const ProfileSettingsForm = () => {
   const onSubmit: SubmitHandler<ProfileSettingsSchema> = async (data) => {
     console.log(data);
   };
-
-  if (!currentUser) return null;
 
   return (
     <SimpleCard className="text-[#efeff1] max-w-5xl">

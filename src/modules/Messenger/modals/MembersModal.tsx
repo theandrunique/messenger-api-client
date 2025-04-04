@@ -9,14 +9,14 @@ import Loading from "../../../components/Loading";
 import useUserChannels from "../../../api/hooks/useUserChannels";
 import SelectedUser from "../components/SelectedUser";
 import Button from "../../../components/ui/Button";
-import useCurrentUser from "../../../api/hooks/useCurrentUser";
+import { useCurrentUserId } from "../../../components/CurrentUserProvider";
 
 const MembersModal = () => {
   const { channelId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data, isPending } = useUserChannels();
-  const { data: currentUser } = useCurrentUser();
+  const currentUserId = useCurrentUserId();
 
   const onClose = () => navigate(-1);
 
@@ -70,7 +70,7 @@ const MembersModal = () => {
                 <SelectedUser
                   key={member.id}
                   user={member}
-                  onRemove={currentUser?.id !== member.id ? () => removeMember(member) : undefined}
+                  onRemove={currentUserId !== member.id ? () => removeMember(member) : undefined}
                 />
               ))}
             </div>

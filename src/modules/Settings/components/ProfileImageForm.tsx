@@ -4,13 +4,14 @@ import Button from "../../../components/ui/Button";
 import React, { useRef, useState } from "react";
 import notifications from "../../../utils/notifications";
 import { removeAvatar, updateAvatar } from "../../../api/api";
-import useCurrentUser from "../../../api/hooks/useCurrentUser";
 import CropImageModal from "../modals/CropImageModal";
 import ConfirmDeleteModal from "../modals/ConfirmDeleteAvatarModal";
-
+import { useLoadedCurrentUser } from "../../../components/CurrentUserProvider";
+import useCurrentUser from "../../../api/hooks/useCurrentUser";
 
 const ProfileImageForm = () => {
-  const { currentUser, refetch: updateUser } = useCurrentUser();
+  const { refetch: updateUser } = useCurrentUser();
+  const currentUser = useLoadedCurrentUser();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -58,9 +59,7 @@ const ProfileImageForm = () => {
       notifications.error("Failed to update profile picture.");
       console.error("Error updating avatar", err);
     }
-  }
-
-  if (!currentUser) return null;
+  };
 
   return (
     <>

@@ -6,6 +6,7 @@ import Input from "../../../components/ui/Input";
 import { ApiError } from "../../../schemas/common";
 import notifications from "../../../utils/notifications";
 import { requestEmailVerificationCode, verifyEmail } from "../../../api/api";
+import { useLoadedCurrentUser } from "../../../components/CurrentUserProvider";
 import useCurrentUser from "../../../api/hooks/useCurrentUser";
 
 interface EmailVerificationModalProps {
@@ -44,9 +45,10 @@ const EmailVerificationModal = ({
     } catch (err) {
       if (err instanceof ApiError) {
         notifications.error(err.message);
+      } else {
+        notifications.error("Something went wrong...");
+        console.error("Error while verifying email", err);
       }
-      notifications.error("Something went wrong...");
-      throw err;
     } finally {
       setIsLoading(false);
     }
@@ -93,15 +95,14 @@ const EmailVerificationModal = ({
 };
 
 const ContactsForm = () => {
-  const { currentUser, refetch: updateUser } = useCurrentUser();
+  const { refetch: updateUser } = useCurrentUser();
+  const currentUser = useLoadedCurrentUser();
   const [emailModalOpen, setEmailModalOpen] = useState(false);
 
   const onEmailVerificationSuccess = () => {
     updateUser();
     setEmailModalOpen(false);
   };
-
-  if (!currentUser) return null;
 
   return (
     <>

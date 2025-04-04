@@ -3,9 +3,9 @@ import useChannel from "../../../api/hooks/useChannel";
 import Modal from "../../../components/Modal";
 import Loading from "../../../components/Loading";
 import Avatar from "../../../components/Avatar";
-import useCurrentUser from "../../../api/hooks/useCurrentUser";
 import useUserInfo from "../../../api/hooks/useUserInfo";
 import { Info } from "lucide-react";
+import { useCurrentUserId } from "../../../components/CurrentUserProvider";
 
 interface UserInfoModalProps {
   open: boolean;
@@ -15,14 +15,14 @@ interface UserInfoModalProps {
 const UserInfoModal = ({ open, onClose }: UserInfoModalProps) => {
   const { channelId } = useParams();
   const { data, isLoading } = useChannel(channelId || null);
-  const { currentUser } = useCurrentUser();
+  const currentUserId = useCurrentUserId();
 
   let user = null;
 
   if (data?.members.length === 1) {
     user = data?.members[0];
   } else {
-    user = data?.members.find((member) => member.id !== currentUser?.id);
+    user = data?.members.find((member) => member.id !== currentUserId);
   }
 
   const { data: userInfo } = useUserInfo(user?.id || null);
@@ -79,7 +79,6 @@ const UserInfoModal = ({ open, onClose }: UserInfoModalProps) => {
             )}
           </div>
         </div>
-
       </div>
     </Modal>
   );

@@ -1,5 +1,4 @@
 import { Check, CheckCheck } from "lucide-react";
-import useCurrentUser from "../../../../api/hooks/useCurrentUser";
 import { ChannelType } from "../../../../schemas/channel";
 import { MessageSchema } from "../../../../schemas/message";
 import MessageAttachments from "./MessageAttachments";
@@ -9,6 +8,7 @@ import MessageContainer from "./MessageContainer";
 import MetaMessage from "./MetaMessage";
 import { isMeteMessage } from "./utils";
 import { forwardRef } from "react";
+import { useCurrentUserId } from "../../../../components/CurrentUserProvider";
 
 const MessageStatus = ({
   message,
@@ -51,21 +51,23 @@ interface MessageCardProps {
 
 const MessageCard = forwardRef<HTMLDivElement, MessageCardProps>(
   ({ message, channelType, lastReadAt, showAvatar, showUsername }, ref) => {
-    const { currentUser } = useCurrentUser();
-    const isOwnMessage = message.author.id === currentUser!.id;
+    const currentUserId = useCurrentUserId();
+    const isOwnMessage = message.author.id === currentUserId;
     const isGroup = channelType === ChannelType.GROUP_DM;
 
     if (isMeteMessage(message.type)) return <MetaMessage message={message} />;
 
     return (
-      <MessageCardContext.Provider value={{
-        message,
-        channelType,
-        showAvatar,
-        showUsername,
-        isOwnMessage,
-        isGroup,
-      }}>
+      <MessageCardContext.Provider
+        value={{
+          message,
+          channelType,
+          showAvatar,
+          showUsername,
+          isOwnMessage,
+          isGroup,
+        }}
+      >
         <MessageContainer ref={ref}>
           <MessageAvatar />
 
