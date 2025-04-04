@@ -57,17 +57,15 @@ const MessageCard = forwardRef<HTMLDivElement, MessageCardProps>(
 
     if (isMeteMessage(message.type)) return <MetaMessage message={message} />;
 
-    const contextValue = {
-      message,
-      channelType,
-      showAvatar,
-      showUsername,
-      isOwnMessage,
-      isGroup,
-    };
-
     return (
-      <MessageCardContext.Provider value={contextValue}>
+      <MessageCardContext.Provider value={{
+        message,
+        channelType,
+        showAvatar,
+        showUsername,
+        isOwnMessage,
+        isGroup,
+      }}>
         <MessageContainer ref={ref}>
           <MessageAvatar />
 
