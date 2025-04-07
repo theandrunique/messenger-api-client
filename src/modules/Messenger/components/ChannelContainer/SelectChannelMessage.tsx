@@ -7,7 +7,7 @@ const SelectChannelMessage = () => {
       hidden
       text-[#efeff1]
       flex-1
-      md:flex
+      sm:flex
       flex-col
       h-full
       bg-[#0e0e10]

@@ -11,7 +11,7 @@ const MessengerLayout = () => {
 
       <div className="flex overflow-hidden h-full">
         <ChannelSidebar
-          className={`${channelId ? "hidden md:flex" : "flex"} w-full md:w-72`}
+          className={`${channelId ? "hidden sm:flex" : "flex"} w-full sm:w-72`}
         />
 
         <Outlet />

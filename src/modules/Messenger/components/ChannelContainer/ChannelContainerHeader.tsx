@@ -80,7 +80,7 @@ const BackToChannelsButton = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="md:hidden">
+    <div className="sm:hidden">
       <Button
         variant="icon"
         onClick={() => navigate("/messenger")}
