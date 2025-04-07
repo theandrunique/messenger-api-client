@@ -1,6 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import Avatar from "./Avatar";
 import { useLoadedCurrentUser } from "./CurrentUserProvider";
+import { HTMLAttributes } from 'react';
+import cn from '../utils/cn';
 
 const Icon = () => {
   return (
@@ -23,11 +25,19 @@ const Icon = () => {
   );
 };
 
-const Navbar = () => {
+interface NavbarProps extends HTMLAttributes<HTMLDivElement> {}
+
+const Navbar = ({ className, ...props }: NavbarProps) => {
   const currentUser = useLoadedCurrentUser();
 
   return (
-    <div className="sticky z-50 top-0 left-0 w-full bg-[#18181b] border-b border-black">
+    <div
+      className={cn(
+        "sticky top-0 left-0 w-full bg-[#18181b] border-b border-black",
+        className
+      )}
+      {...props}
+    >
       <div className="text-white flex justify-between items-center h-14">
         <div className="flex items-center space-x-6 ml-2">
           <Icon />

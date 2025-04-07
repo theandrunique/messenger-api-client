@@ -7,7 +7,7 @@ const MessengerLayout = () => {
 
   return (
     <div className="flex flex-col h-[100dvh]">
-      <Navbar />
+      <Navbar className={`${channelId ? "hidden sm:block" : "block"}`} />
 
       <div className="flex overflow-hidden h-full">
         <ChannelSidebar
