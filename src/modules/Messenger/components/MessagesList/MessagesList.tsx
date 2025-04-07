@@ -1,6 +1,7 @@
 import { ChannelSchema } from "../../../../schemas/channel";
 import { MessageSchema } from "../../../../schemas/message";
 import MessageCard from "../MessageCard";
+import { isMetaMessage } from "../MessageCard/utils";
 import DateDivider from "./DateDivider";
 
 const groupMessagesByAuthor = (
@@ -11,15 +12,22 @@ const groupMessagesByAuthor = (
   const groups: MessageSchema[][] = [];
   let currentGroup: MessageSchema[] = [messages[0]];
   let currentAuthorId = messages[0].author.id;
+  let currentIsMeta = isMetaMessage(messages[0].type);
 
   for (let i = 1; i < messages.length; i++) {
     const message = messages[i];
-    if (message.author.id === currentAuthorId) {
-      currentGroup.push(message);
-    } else {
+    const isMeta = isMetaMessage(message.type);
+
+    if (
+      isMeta !== currentIsMeta || 
+      (!isMeta && message.author.id !== currentAuthorId)
+    ) {
       groups.push(currentGroup);
       currentGroup = [message];
       currentAuthorId = message.author.id;
+      currentIsMeta = isMeta;
+    } else {
+      currentGroup.push(message);
     }
   }
 
