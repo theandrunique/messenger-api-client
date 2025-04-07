@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import useCurrentUser from "../../../../api/hooks/useCurrentUser";
 import Button from "../../../../components/ui/Button";
 import { ChannelSchema, ChannelType } from "../../../../schemas/channel";
 import { MoreHorizontal, Settings2, LogOut, Users } from "lucide-react";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import UserInfoModal from "../../modals/UserInfoModal";
 import { ArrowLeft } from "lucide-react";
+import { useCurrentUserId } from "../../../../components/CurrentUserProvider";
+import ChannelImage from "../ChannelSidebar/ChannelImage";
 
 const ChannelMenuButton = () => {
   const [show, setShow] = useState(false);
@@ -101,12 +102,13 @@ const ChannelContainerHeader = ({
   channel,
   onClick,
 }: ChannelContainerHeaderProps) => {
-  const { currentUser } = useCurrentUser();
+  const currentUserId = useCurrentUserId();
   const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false);
 
+  const otherMember =
+    channel.members.find((member) => member.id !== currentUserId) || null;
+
   const getPrivateChannelName = () => {
-    const otherMember =
-      channel.members.find((member) => member.id !== currentUser?.id) || null;
     if (otherMember !== null) {
       return `${otherMember.username} (${otherMember.globalName})`;
     } else {
@@ -117,9 +119,12 @@ const ChannelContainerHeader = ({
   if (channel.type === ChannelType.DM) {
     return (
       <>
-        <div className="border-b border-[#35353b] py-2 px-4 flex items-center justify-start">
+        <div className="border-b border-[#35353b] py-2 px-3 flex items-center justify-start">
           <div className="flex items-center justify-center gap-3">
             <BackToChannelsButton />
+            <div className="sm:hidden w-10 h-10">
+              <ChannelImage channel={channel} member={otherMember} />
+            </div>
             <h2
               className="text-xl font-bold text-white cursor-pointer"
               onClick={() => setIsUserInfoModalOpen(true)}
@@ -136,9 +141,12 @@ const ChannelContainerHeader = ({
     );
   } else if (channel.type === ChannelType.GROUP_DM) {
     return (
-      <div className="border-b border-[#35353b] px-4 py-2 flex items-center justify-between">
-        <div className="flex items-center justify-center gap-3">
+      <div className="border-b border-[#35353b] px-3 py-2 flex items-center justify-between">
+        <div className="flex items-center justify-center gap-3 ">
           <BackToChannelsButton />
+          <div className="sm:hidden w-10 h-10">
+            <ChannelImage channel={channel} member={otherMember} />
+          </div>
           <div className="flex flex-col">
             <h2
               className="text-xl font-bold text-white cursor-pointer"
