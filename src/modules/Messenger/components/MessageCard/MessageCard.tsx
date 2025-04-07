@@ -6,7 +6,7 @@ import MessageAvatar from "./MessageAvatar";
 import MessageCardContext from "./MessageCardContext";
 import MessageContainer from "./MessageContainer";
 import MetaMessage from "./MetaMessage";
-import { isMeteMessage } from "./utils";
+import { isMetaMessage } from "./utils";
 import { forwardRef } from "react";
 import { useCurrentUserId } from "../../../../components/CurrentUserProvider";
 
@@ -55,7 +55,7 @@ const MessageCard = forwardRef<HTMLDivElement, MessageCardProps>(
     const isOwnMessage = message.author.id === currentUserId;
     const isGroup = channelType === ChannelType.GROUP_DM;
 
-    if (isMeteMessage(message.type)) return <MetaMessage message={message} />;
+    if (isMetaMessage(message.type)) return <MetaMessage message={message} />;
 
     return (
       <MessageCardContext.Provider
