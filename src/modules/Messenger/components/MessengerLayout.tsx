@@ -4,7 +4,7 @@ import ChannelSidebar from "./ChannelSidebar";
 
 const MessengerLayout = () => {
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-[100dvh]">
       <Navbar />
 
       <div className="flex overflow-hidden h-full">

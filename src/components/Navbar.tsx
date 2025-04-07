@@ -27,7 +27,7 @@ const Navbar = () => {
   const currentUser = useLoadedCurrentUser();
 
   return (
-    <div className="sticky top-0 left-0 w-full bg-[#18181b] border-b border-black">
+    <div className="sticky z-50 top-0 left-0 w-full bg-[#18181b] border-b border-black">
       <div className="text-white flex justify-between items-center h-14">
         <div className="flex items-center space-x-6 ml-2">
           <Icon />
