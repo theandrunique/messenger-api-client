@@ -47,7 +47,7 @@ const ChannelSidebar = ({ className, ...props }: ChannelSidebarProps) => {
     return (
       <Loading
         message="Loading your channels"
-        className="md:w-72 w-16 bg-[#1f1f23]"
+        className={cn("bg-[#1f1f23]", className)}
       />
     );
 
