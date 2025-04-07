@@ -3,8 +3,9 @@ import useCurrentUser from "../../../../api/hooks/useCurrentUser";
 import Button from "../../../../components/ui/Button";
 import { ChannelSchema, ChannelType } from "../../../../schemas/channel";
 import { MoreHorizontal, Settings2, LogOut, Users } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import UserInfoModal from "../../modals/UserInfoModal";
+import { ArrowLeft } from "lucide-react";
 
 const ChannelMenuButton = () => {
   const [show, setShow] = useState(false);
@@ -75,6 +76,22 @@ const ChannelMenuButton = () => {
   );
 };
 
+const BackToChannelsButton = () => {
+  const navigate = useNavigate();
+
+  return (
+    <div className="md:hidden">
+      <Button
+        variant="icon"
+        onClick={() => navigate("/messenger")}
+        className="p-1"
+      >
+        <ArrowLeft className="w-6 h-6" />
+      </Button>
+    </div>
+  );
+};
+
 interface ChannelContainerHeaderProps {
   channel: ChannelSchema;
   onClick?: () => void;
@@ -100,13 +117,16 @@ const ChannelContainerHeader = ({
   if (channel.type === ChannelType.DM) {
     return (
       <>
-        <div className="border-b border-[#35353b] p-4">
-          <h2
-            className="text-xl font-bold text-white cursor-pointer"
-            onClick={() => setIsUserInfoModalOpen(true)}
-          >
-            {getPrivateChannelName()}
-          </h2>
+        <div className="border-b border-[#35353b] py-2 px-4 flex items-center justify-start">
+          <div className="flex items-center justify-center gap-3">
+            <BackToChannelsButton />
+            <h2
+              className="text-xl font-bold text-white cursor-pointer"
+              onClick={() => setIsUserInfoModalOpen(true)}
+            >
+              {getPrivateChannelName()}
+            </h2>
+          </div>
         </div>
         <UserInfoModal
           open={isUserInfoModalOpen}
@@ -117,16 +137,19 @@ const ChannelContainerHeader = ({
   } else if (channel.type === ChannelType.GROUP_DM) {
     return (
       <div className="border-b border-[#35353b] px-4 py-2 flex items-center justify-between">
-        <div className="flex flex-col">
-          <h2
-            className="text-xl font-bold text-white cursor-pointer"
-            onClick={onClick}
-          >
-            {channel.title}
-          </h2>
-          <h5 className="text-sm text-gray-400">
-            {`${channel.members.length} members`}
-          </h5>
+        <div className="flex items-center justify-center gap-3">
+          <BackToChannelsButton />
+          <div className="flex flex-col">
+            <h2
+              className="text-xl font-bold text-white cursor-pointer"
+              onClick={onClick}
+            >
+              {channel.title}
+            </h2>
+            <h5 className="text-sm text-gray-400">
+              {`${channel.members.length} members`}
+            </h5>
+          </div>
         </div>
 
         <ChannelMenuButton />

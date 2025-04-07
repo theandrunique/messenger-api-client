@@ -2,7 +2,7 @@ import ChannelCard from "./ChannelCard";
 import useUserChannels from "../../../../api/hooks/useUserChannels";
 import Loading from "../../../../components/Loading";
 import CreateChannelModalForm from "../../modals/CreateChannelModalForm";
-import { useState } from "react";
+import { HTMLAttributes, useState } from "react";
 import Button from "../../../../components/ui/Button";
 import { MessageCirclePlus } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -13,8 +13,11 @@ import useGatewayEvents from "../../../../gateway/useGatewayEvents";
 import { GatewayEventType } from "../../../../gateway/types";
 import notifications from "../../../../utils/notifications";
 import { useCurrentUserId } from "../../../../components/CurrentUserProvider";
+import cn from "../../../../utils/cn";
 
-const ChannelSidebar = () => {
+interface ChannelSidebarProps extends HTMLAttributes<HTMLDivElement> {}
+
+const ChannelSidebar = ({ className, ...props }: ChannelSidebarProps) => {
   const { channelId } = useParams();
   const { isLoading, data: channels } = useUserChannels();
   const [isCreateChannelModalOpen, setIsCreateChannelModalOpen] =
@@ -50,7 +53,13 @@ const ChannelSidebar = () => {
 
   return (
     <>
-      <div className="relative md:w-72 w-16 h-full bg-[#1f1f23] flex flex-col overflow-y-auto">
+      <div
+        className={cn(
+          "relative h-full bg-[#1f1f23] flex flex-col overflow-y-auto",
+          className
+        )}
+        {...props}
+      >
         <div className="hidden md:block px-2 pt-2 sticky top-0 z-50 pb-2 pointer-events-none">
           <UsersSearchInput
             onSubmit={(user) => handleUserSelect(user)}
@@ -69,14 +78,14 @@ const ChannelSidebar = () => {
           ))}
         </div>
 
-        <div className="sticky bottom-0 pb-3 flex justify-center md:justify-end pointer-events-none">
+        <div className="sticky bottom-0 pb-3 flex justify-end pointer-events-none">
           <Button
-            className="pointer-events-auto rounded-full p-2 shadow-xl bg-opacity-90 flex items-center gap-1 md:mr-3"
+            className="pointer-events-auto rounded-full p-2 shadow-xl bg-opacity-90 flex items-center gap-1 mr-3"
             variant={"secondary"}
             onClick={() => setIsCreateChannelModalOpen(true)}
           >
             <MessageCirclePlus className="w-6 h-6" />
-            <span className="hidden md:block">Create</span>
+            <span>Create</span>
           </Button>
         </div>
       </div>

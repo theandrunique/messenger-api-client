@@ -4,9 +4,10 @@ const SelectChannelMessage = () => {
   return (
     <div
       className={`
+      hidden
       text-[#efeff1]
       flex-1
-      flex
+      md:flex
       flex-col
       h-full
       bg-[#0e0e10]

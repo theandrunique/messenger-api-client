@@ -1,14 +1,19 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useParams } from "react-router-dom";
 import Navbar from "../../../components/Navbar";
 import ChannelSidebar from "./ChannelSidebar";
 
 const MessengerLayout = () => {
+  const { channelId } = useParams();
+
   return (
     <div className="flex flex-col h-[100dvh]">
       <Navbar />
 
       <div className="flex overflow-hidden h-full">
-        <ChannelSidebar />
+        <ChannelSidebar
+          className={`${channelId ? "hidden md:flex" : "flex"} w-full md:w-72`}
+        />
+
         <Outlet />
       </div>
     </div>

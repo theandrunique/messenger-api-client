@@ -140,7 +140,7 @@ const ChannelCard = ({
         <ChannelImage channel={channel} member={otherMember} />
       </div>
 
-      <div className="hidden md:flex flex-col flex-1 min-w-0 mr-1">
+      <div className="flex flex-col flex-1 min-w-0 mr-1">
         <div className="flex items-center justify-between">
           <div className="font-semibold truncate">
             {renderChannelName(channel, otherMember)}
