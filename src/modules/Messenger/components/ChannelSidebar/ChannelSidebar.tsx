@@ -60,7 +60,7 @@ const ChannelSidebar = ({ className, ...props }: ChannelSidebarProps) => {
         )}
         {...props}
       >
-        <div className="hidden md:block px-2 pt-2 sticky top-0 z-50 pb-2 pointer-events-none">
+        <div className="px-2 pt-2 sticky top-0 z-50 pb-2 pointer-events-none">
           <UsersSearchInput
             onSubmit={(user) => handleUserSelect(user)}
             clearOnSubmit={false}
