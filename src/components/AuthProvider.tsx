@@ -14,7 +14,11 @@ interface AuthContext {
   isLoading: boolean;
   isAuthenticated: boolean | undefined;
   isNetworkError: boolean | undefined;
-  handleSignIn: (login: string, password: string, totp?: string) => Promise<void>;
+  handleSignIn: (
+    login: string,
+    password: string,
+    totp?: string
+  ) => Promise<void>;
   handleSignOut: () => Promise<void>;
 }
 
@@ -39,7 +43,11 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     setupInterceptors(onRefreshError);
   }, []);
 
-  const handleSignIn = async (login: string, password: string, totp?: string) => {
+  const handleSignIn = async (
+    login: string,
+    password: string,
+    totp?: string
+  ) => {
     try {
       const response = await signIn(login, password, totp);
       setTokens(response);
@@ -53,7 +61,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   const handleSignOut = async () => {
     await signOut();
     removeTokens();
-    queryClient.invalidateQueries();
+    queryClient.clear();
     navigate("/sign-in", { replace: true });
   };
 
