@@ -38,15 +38,15 @@ export const updateUseUserChannelsOnNewMessage = (
               ...channel,
               lastMessage: {
                 id: message.id,
-                authorId: message.author.id,
-                authorUsername: message.author.username,
-                authorGlobalName: message.author.globalName,
+                author: message.author,
+                targetUser: message.targetUser,
                 content: message.content,
                 timestamp: message.timestamp,
                 editedTimestamp: message.editedTimestamp,
                 attachmentsCount: message.attachments.length,
+                type: message.type,
+                metadata: message.metadata,
               },
-              lastMessageTimestamp: message.timestamp,
             }
           : channel
       );
@@ -83,7 +83,13 @@ export const updateUseUserChannelOnChannelUpdate = (
       if (!oldChannels) return;
 
       return oldChannels.map((oldChannel) =>
-        oldChannel.id === event.channel.id ? event.channel : oldChannel
+        oldChannel.id === event.channel.id
+          ? {
+              ...event.channel,
+              lastReadMessageId: oldChannel.lastReadMessageId,
+              maxReadMessageId: oldChannel.maxReadMessageId,
+            }
+          : oldChannel
       );
     }
   );
@@ -165,7 +171,10 @@ export const updateUseUserChannelOnMessageAck = (
           channel.id === event.channelId
             ? {
                 ...channel,
-                readAt: compareIds(channel.readAt, event.messageId),
+                lastReadMessageId: compareIds(
+                  channel.lastReadMessageId,
+                  event.messageId
+                ),
               }
             : channel
         );
@@ -174,8 +183,8 @@ export const updateUseUserChannelOnMessageAck = (
           channel.id === event.channelId
             ? {
                 ...channel,
-                maxReadAt: compareIds(
-                  channel.maxReadAt as string,
+                maxReadMessageId: compareIds(
+                  channel.maxReadMessageId as string,
                   event.messageId
                 ),
               }

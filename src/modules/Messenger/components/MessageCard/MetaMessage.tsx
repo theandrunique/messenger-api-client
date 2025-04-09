@@ -1,6 +1,5 @@
 import { MessageSchema, MessageType } from "../../../../schemas/message";
 
-
 const MetaMessage = ({ message }: { message: MessageSchema }) => {
   return (
     <div
@@ -14,8 +13,8 @@ const MetaMessage = ({ message }: { message: MessageSchema }) => {
         `${message.author.username} removed ${message.targetUser?.username}`}
       {message.type === MessageType.MEMBER_LEAVE &&
         `${message.author.username} left the chat`}
-      {message.type === MessageType.CHANNEL_TITLE_CHANGE &&
-        `Channel name changed to "${message.metadata.newTitle}" by ${message.author.username}`}
+      {message.type === MessageType.CHANNEL_NAME_CHANGE &&
+        `Channel name changed to "${message.metadata.newName}" by ${message.author.username}`}
       {message.type === MessageType.CHANNEL_IMAGE_CHANGE &&
         `Channel image updated`}
       {message.type === MessageType.CHANNEL_PINNED_MESSAGE &&
@@ -23,7 +22,7 @@ const MetaMessage = ({ message }: { message: MessageSchema }) => {
       {message.type === MessageType.CHANNEL_UNPIN_MESSAGE &&
         `A message was unpinned`}
     </div>
-  )
+  );
 };
 
 export default MetaMessage;

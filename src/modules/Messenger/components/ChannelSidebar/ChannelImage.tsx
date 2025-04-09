@@ -29,7 +29,7 @@ const ChannelImage = ({ channel, member }: ChannelImageProps) => {
   return channel.image ? (
     <img src={channel.image} className="w-full h-full object-cover" />
   ) : (
-    <FirstLetterImage letter={channel?.title || "G"} />
+    <FirstLetterImage letter={channel?.name || "G"} />
   );
 };
 

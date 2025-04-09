@@ -20,7 +20,7 @@ const useMessageAck = (messages: MessageSchema[], channel: ChannelSchema) => {
       );
     };
     const shouldSendAck = (messageId: string) => {
-      return BigInt(messageId) > BigInt(channel.readAt);
+      return BigInt(messageId) > BigInt(channel.lastReadMessageId);
     };
 
     const handleIntersection = (entries: IntersectionObserverEntry[]) => {
@@ -60,7 +60,7 @@ const useMessageAck = (messages: MessageSchema[], channel: ChannelSchema) => {
 
     messages.forEach((message) => {
       if (message.author.id === currentUserId) return;
-      if (BigInt(message.id) <= BigInt(channel.readAt)) return;
+      if (BigInt(message.id) <= BigInt(channel.lastReadMessageId)) return;
 
       const newElement = document.querySelector(
         `[data-message-id="${message.id}"]`

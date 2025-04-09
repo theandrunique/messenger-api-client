@@ -12,11 +12,11 @@ const ReadStatus = ({
   channel: ChannelSchema;
   currentUserId?: string;
 }) => {
-  if (channel.lastMessage?.authorId !== currentUserId) return null;
+  if (channel.lastMessage?.author.id !== currentUserId) return null;
 
   return (
     <div className="text-fuchsia-400">
-      {channel.maxReadAt === channel.lastMessage.id ? (
+      {channel.maxReadMessageId === channel.lastMessage.id ? (
         <CheckCheck className="w-4 h-4" />
       ) : (
         <Check className="w-4 h-4" />
@@ -32,9 +32,11 @@ interface ChannelCardProps {
 }
 
 const hasUnreadMessages = (channel: ChannelSchema, currentUserId?: string) => {
-  if (channel.lastMessage?.authorId === currentUserId) return false;
+  if (channel.lastMessage?.author.id === currentUserId) return false;
 
-  return channel.lastMessage && channel.readAt < channel.lastMessage.id;
+  return (
+    channel.lastMessage && channel.lastReadMessageId < channel.lastMessage.id
+  );
 };
 
 const renderChannelName = (
@@ -46,7 +48,7 @@ const renderChannelName = (
       ? `${otherMember.username} (${otherMember.globalName})`
       : "Saved Messages";
   } else {
-    return channel.title || channel.members.map((m) => m.username).join(", ");
+    return channel.name || channel.members.map((m) => m.username).join(", ");
   }
 };
 
@@ -56,7 +58,7 @@ const renderLastMessageText = (channel: ChannelSchema) => {
       ? channel.lastMessage.content
       : ""
     : channel.lastMessage
-      ? `${channel.lastMessage.authorUsername}: ${channel.lastMessage.content}`
+      ? `${channel.lastMessage.author.username}: ${channel.lastMessage.content}`
       : "";
 };
 

@@ -28,7 +28,7 @@ const LeaveChannelSubmitModal = () => {
       if (err instanceof ApiError && err.message) {
         notifications.error(err.message);
       }
-      notifications.error("Something went wrong")
+      notifications.error("Something went wrong");
       console.log("Error leaving channel: ", err);
     },
   });
@@ -49,7 +49,7 @@ const LeaveChannelSubmitModal = () => {
         <h2 className="text-xl font-bold mb-4 text-center">Leaving channel</h2>
         <p className="mb-6 text-center">
           Are you sure you want to leave{" "}
-          <span className="font-semibold">{channel.title}</span> channel?
+          <span className="font-semibold">{channel.name}</span> channel?
         </p>
         <div className="space-x-2 flex justify-end">
           <Button variant={"secondary"} onClick={onClose}>

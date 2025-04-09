@@ -15,7 +15,7 @@ import SelectedUser from "../components/SelectedUser";
 import { UserPublicSchema } from "../../../schemas/user";
 
 const createChannelSchema = z.object({
-  title: z.string().min(1, "Channel name is required").max(50),
+  name: z.string().min(1, "Channel name is required").max(50),
   members: z.array(z.string()).min(0),
 });
 
@@ -45,13 +45,13 @@ const CreateChannelModalForm = ({
     formState: { errors },
   } = useForm<CreateChannelFormData>({
     resolver: zodResolver(createChannelSchema),
-    defaultValues: { title: "", members: [] },
+    defaultValues: { name: "", members: [] },
   });
 
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationFn: (data: CreateChannelFormData) =>
-      createChannel(data.title, data.members),
+      createChannel(data.name, data.members),
     onSuccess: (createdChannel) => {
       updateUseUserChannelsOnNewChannel(queryClient, createdChannel);
       onSubmit(createdChannel);
@@ -97,13 +97,13 @@ const CreateChannelModalForm = ({
           className="flex flex-col px-8 gap-3 mb-4"
         >
           <div className="w-full">
-            <div className="text-base font-semibold mb-1">Channel Title:</div>
+            <div className="text-base font-semibold mb-1">Channel name:</div>
             <Input
               className="w-full"
-              {...register("title")}
+              {...register("name")}
               placeholder="Enter channel name"
             />
-            {errors.title && <ErrorMessage message={errors.title.message} />}
+            {errors.name && <ErrorMessage message={errors.name.message} />}
           </div>
 
           <div className="w-full">

@@ -19,7 +19,7 @@ const groupMessagesByAuthor = (
     const isMeta = isMetaMessage(message.type);
 
     if (
-      isMeta !== currentIsMeta || 
+      isMeta !== currentIsMeta ||
       (!isMeta && message.author.id !== currentAuthorId)
     ) {
       groups.push(currentGroup);
@@ -75,7 +75,7 @@ const MessagesList = ({ messages, channel, bottomRef }: MessagesListProps) => {
                     key={message.id}
                     message={message}
                     channelType={channel.type}
-                    lastReadAt={channel.maxReadAt as string}
+                    lastReadAt={channel.maxReadMessageId as string}
                     showAvatar={index === 0}
                     showUsername={index === group.length - 1}
                   />

@@ -1,3 +1,4 @@
+import { MessageType } from "./message";
 import { UserPublicSchema } from "./user";
 
 export enum ChannelType {
@@ -7,24 +8,24 @@ export enum ChannelType {
 
 export interface MessageInfoSchema {
   id: string;
-  authorId: string;
-  authorUsername: string;
-  authorGlobalName: string;
+  author: UserPublicSchema;
+  targetUser?: UserPublicSchema;
   content: string;
   timestamp: Date;
   editedTimestamp: Date | null;
   attachmentsCount: number;
+  type: MessageType;
+  metadata: Record<string, string>;
 }
 
 export interface ChannelSchema {
   id: string;
   ownerId: string | null;
-  title: string | null;
+  name: string | null;
   image: string | null;
   type: ChannelType;
-  readAt: string;
-  maxReadAt: string | null;
-  lastMessageTimestamp: Date | null;
+  lastReadMessageId: string;
+  maxReadMessageId: string | null;
   lastMessage: MessageInfoSchema;
   members: UserPublicSchema[];
 }

@@ -152,7 +152,7 @@ const ChannelContainerHeader = ({
               className="text-xl font-bold text-white cursor-pointer"
               onClick={onClick}
             >
-              {channel.title}
+              {channel.name}
             </h2>
             <h5 className="text-sm text-gray-400">
               {`${channel.members.length} members`}

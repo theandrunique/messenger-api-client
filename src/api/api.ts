@@ -330,12 +330,12 @@ export const searchUsers = (query: string): Promise<UserPublicSchema[]> => {
 };
 
 export const createChannel = (
-  title: string,
+  name: string,
   members: string[]
 ): Promise<ChannelSchema> => {
   return baseFetch(() =>
     axiosWithToken.post<ChannelSchema>("/users/@me/channels", {
-      title,
+      name,
       members,
     })
   );
@@ -343,11 +343,11 @@ export const createChannel = (
 
 export const updateChannel = (
   channelId: string,
-  title: string
+  name: string
 ): Promise<ChannelSchema> => {
   return baseFetch(() =>
     axiosWithToken.post<ChannelSchema>(`/channels/${channelId}`, {
-      title,
+      name,
     })
   );
 };

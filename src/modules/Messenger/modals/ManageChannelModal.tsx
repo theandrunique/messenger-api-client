@@ -16,7 +16,7 @@ import { ApiError } from "../../../schemas/common";
 import notifications from "../../../utils/notifications";
 
 const editChannelSchema = z.object({
-  title: z.string().min(1, "Channel title is required").max(50),
+  name: z.string().min(1, "Channel name is required").max(50),
   image: z.string().optional(),
 });
 
@@ -46,10 +46,10 @@ const ManageChannelModal = () => {
   useEffect(() => {
     if (channel) {
       setInitialData({
-        title: channel.title as string,
+        name: channel.name as string,
         image: channel.image || undefined,
       });
-      reset({ title: channel.title as string });
+      reset({ name: channel.name as string });
     }
   }, [channel, reset]);
 
@@ -58,8 +58,8 @@ const ManageChannelModal = () => {
     console.log("submitting", formData);
     const updates = [];
 
-    if (formData.title !== initialData.title) {
-      updates.push(updateChannel(channelId, formData.title));
+    if (formData.name !== initialData.name) {
+      updates.push(updateChannel(channelId, formData.name));
     }
     if (formData.image !== initialData.image) {
       // TODO: add channel image updating
@@ -107,13 +107,13 @@ const ManageChannelModal = () => {
             <Avatar
               userId={channel.id}
               avatar={channel.image}
-              username={channel.title as string}
+              username={channel.name as string}
               className="w-16 h-16"
             />
             <div className="flex flex-col">
-              <div>Channel title</div>
-              <Input {...register("title")} />
-              {errors.title && <ErrorMessage message={errors.title.message} />}
+              <div>Channel name</div>
+              <Input {...register("name")} />
+              {errors.name && <ErrorMessage message={errors.name.message} />}
             </div>
           </div>
 

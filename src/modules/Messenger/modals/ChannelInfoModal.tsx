@@ -52,11 +52,11 @@ const ChannelInfoModal = () => {
             <Avatar
               userId={channel.id}
               avatar={channel.image}
-              username={channel.title as string}
+              username={channel.name as string}
               className="w-16 h-16"
             />
             <div className="flex flex-col gap-1">
-              <div className="font-semibold text-xl">{channel.title}</div>
+              <div className="font-semibold text-xl">{channel.name}</div>
               <div className="text-sm opacity-50">
                 {channel.members.length} members
               </div>
