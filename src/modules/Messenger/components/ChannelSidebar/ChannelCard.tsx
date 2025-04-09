@@ -4,6 +4,7 @@ import { UserPublicSchema } from "../../../../schemas/user";
 import { Check, CheckCheck } from "lucide-react";
 import { useCurrentUserId } from "../../../../components/CurrentUserProvider";
 import ChannelImage from "./ChannelImage";
+import { isMetaMessage, renderMetaMessageText } from "../MessageCard/utils";
 
 const ReadStatus = ({
   channel,
@@ -53,13 +54,17 @@ const renderChannelName = (
 };
 
 const renderLastMessageText = (channel: ChannelSchema) => {
-  return channel.type === ChannelType.DM
-    ? channel.lastMessage
-      ? channel.lastMessage.content
-      : ""
-    : channel.lastMessage
-      ? `${channel.lastMessage.author.username}: ${channel.lastMessage.content}`
-      : "";
+  if (!channel.lastMessage) return "";
+
+  if (isMetaMessage(channel.lastMessage.type)) {
+    return renderMetaMessageText(channel.lastMessage);
+  }
+
+  if (channel.type === ChannelType.DM) {
+    return channel.lastMessage.content;
+  } else if (channel.type === ChannelType.GROUP_DM) {
+    return `${channel.lastMessage.author.username}: ${channel.lastMessage.content}`;
+  }
 };
 
 const renderLastMessageTime = (channel: ChannelSchema) => {
