@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { ChannelSchema, ChannelType } from "../../../../schemas/channel";
 import { UserPublicSchema } from "../../../../schemas/user";
-import { Check, CheckCheck } from "lucide-react";
+import { Check, CheckCheck, Users } from "lucide-react";
 import { useCurrentUserId } from "../../../../components/CurrentUserProvider";
 import ChannelImage from "./ChannelImage";
 import { isMetaMessage, renderMetaMessageText } from "../MessageCard/utils";
@@ -49,7 +49,15 @@ const renderChannelName = (
       ? `${otherMember.username} (${otherMember.globalName})`
       : "Saved Messages";
   } else {
-    return channel.name || channel.members.map((m) => m.username).join(", ");
+    if (!channel.name) {
+      return channel.members.map((m) => m.username).join(", ");
+    }
+    return (
+      <div className="flex items-center justify-center gap-1">
+        <Users className="w-4 h-4" />
+        {channel.name}
+      </div>
+    );
   }
 };
 
