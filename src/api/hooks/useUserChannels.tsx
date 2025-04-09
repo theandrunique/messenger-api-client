@@ -8,6 +8,7 @@ import {
   MessageCreateEventSchema,
 } from "../../schemas/gateway";
 import { ChannelSchema } from "../../schemas/channel";
+import { selectBiggest } from "../../utils";
 
 const useUserChannels = () => {
   const context = useQuery({
@@ -154,8 +155,6 @@ export const updateUseUserChannelOnMemberAdd = (
   );
 };
 
-const compareIds = (a: string, b: string) => (BigInt(a) > BigInt(b) ? a : b);
-
 export const updateUseUserChannelOnMessageAck = (
   queryClient: QueryClient,
   event: MessageAckEventSchema,
@@ -171,7 +170,7 @@ export const updateUseUserChannelOnMessageAck = (
           channel.id === event.channelId
             ? {
                 ...channel,
-                lastReadMessageId: compareIds(
+                lastReadMessageId: selectBiggest(
                   channel.lastReadMessageId,
                   event.messageId
                 ),
@@ -183,8 +182,8 @@ export const updateUseUserChannelOnMessageAck = (
           channel.id === event.channelId
             ? {
                 ...channel,
-                maxReadMessageId: compareIds(
-                  channel.maxReadMessageId as string,
+                maxReadMessageId: selectBiggest(
+                  channel.maxReadMessageId,
                   event.messageId
                 ),
               }

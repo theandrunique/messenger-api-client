@@ -24,7 +24,7 @@ export interface ChannelSchema {
   name: string | null;
   image: string | null;
   type: ChannelType;
-  lastReadMessageId: string;
+  lastReadMessageId: string | null;
   maxReadMessageId: string | null;
   lastMessage: MessageInfoSchema;
   members: UserPublicSchema[];

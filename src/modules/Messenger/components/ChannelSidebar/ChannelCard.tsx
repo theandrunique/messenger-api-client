@@ -5,6 +5,7 @@ import { Check, CheckCheck, Users } from "lucide-react";
 import { useCurrentUserId } from "../../../../components/CurrentUserProvider";
 import ChannelImage from "./ChannelImage";
 import { isMetaMessage, renderMetaMessageText } from "../MessageCard/utils";
+import { compareIds } from "../../../../utils";
 
 const ReadStatus = ({
   channel,
@@ -34,10 +35,9 @@ interface ChannelCardProps {
 
 const hasUnreadMessages = (channel: ChannelSchema, currentUserId?: string) => {
   if (channel.lastMessage?.author.id === currentUserId) return false;
+  if (!channel.lastMessage) return false;
 
-  return (
-    channel.lastMessage && channel.lastReadMessageId < channel.lastMessage.id
-  );
+  return compareIds(channel.lastMessage.id, channel.lastReadMessageId)
 };
 
 const renderChannelName = (

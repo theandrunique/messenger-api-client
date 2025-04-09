@@ -3,6 +3,7 @@ import { MessageSchema } from "../../../../../schemas/message";
 import { postMessageAck } from "../../../../../api/api";
 import { ChannelSchema } from "../../../../../schemas/channel";
 import { useCurrentUserId } from "../../../../../components/CurrentUserProvider";
+import { compareIds } from "../../../../../utils";
 
 const useMessageAck = (messages: MessageSchema[], channel: ChannelSchema) => {
   const ackTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -20,7 +21,7 @@ const useMessageAck = (messages: MessageSchema[], channel: ChannelSchema) => {
       );
     };
     const shouldSendAck = (messageId: string) => {
-      return BigInt(messageId) > BigInt(channel.lastReadMessageId);
+      return compareIds(messageId, channel.lastReadMessageId);
     };
 
     const handleIntersection = (entries: IntersectionObserverEntry[]) => {
@@ -60,7 +61,8 @@ const useMessageAck = (messages: MessageSchema[], channel: ChannelSchema) => {
 
     messages.forEach((message) => {
       if (message.author.id === currentUserId) return;
-      if (BigInt(message.id) <= BigInt(channel.lastReadMessageId)) return;
+      if (message.id === channel.lastReadMessageId) return;
+      if (compareIds(channel.lastReadMessageId, message.id)) return;
 
       const newElement = document.querySelector(
         `[data-message-id="${message.id}"]`
