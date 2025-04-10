@@ -106,7 +106,11 @@ const MessageAttachmentsUploader = ({
 
   const handleDragEnter = (e: DragEvent) => {
     e.preventDefault();
-    setIsDragging(true);
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const root = e.currentTarget as HTMLElement;
+    if (el && root.contains(el)) {
+      setIsDragging(true);
+    }
   };
 
   const handleDragLeave = (e: DragEvent) => {
@@ -123,7 +127,6 @@ const MessageAttachmentsUploader = ({
     e.preventDefault();
     setIsDragging(false);
     const files = Array.from(e.dataTransfer.files);
-
     uploadAttachments(files);
   };
 
