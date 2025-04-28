@@ -22,7 +22,9 @@ export const renderMetaMessageText = (message: MessageSchema | MessageInfoSchema
     return `A message was pinned`;
   } else if (message.type === MessageType.CHANNEL_UNPIN_MESSAGE) {
     return `A message was unpinned`;
+  } else if (message.type === MessageType.CHANNEL_CREATE) {
+    return `${message.author.username} created the group "${message.metadata.channelName}"`
   } else {
-    throw new Error("Invalid message type");
+    return `Unknown message type ${message.type}`
   }
 };
