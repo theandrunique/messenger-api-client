@@ -3,9 +3,10 @@ import { ChannelSchema, ChannelType } from "../../../../schemas/channel";
 import { UserPublicSchema } from "../../../../schemas/user";
 import { Check, CheckCheck, Users } from "lucide-react";
 import { useCurrentUserId } from "../../../../components/CurrentUserProvider";
-import ChannelImage from "./ChannelImage";
-import { isMetaMessage, renderMetaMessageText } from "../MessageCard/utils";
+import { isMetaMessage, renderMetaMessageText } from "../MessageCard/utils.tsx";
 import { compareIds } from "../../../../utils";
+import ChannelImage from "../../../../components/ChannelImage.tsx";
+import Avatar from "../../../../components/Avatar.tsx";
 
 const ReadStatus = ({
   channel,
@@ -37,7 +38,7 @@ const hasUnreadMessages = (channel: ChannelSchema, currentUserId?: string) => {
   if (channel.lastMessage?.author.id === currentUserId) return false;
   if (!channel.lastMessage) return false;
 
-  return compareIds(channel.lastMessage.id, channel.lastReadMessageId)
+  return compareIds(channel.lastMessage.id, channel.lastReadMessageId);
 };
 
 const renderChannelName = (
@@ -102,6 +103,41 @@ const renderLastMessageTime = (channel: ChannelSchema) => {
       : messageDate.toLocaleDateString();
 };
 
+const FirstLetterImage = ({ letter }: { letter: string }) => (
+  <div className="w-full h-full rounded-full overflow-hidden font-semibold bg-slate-700 text-white flex items-center justify-center">
+    {letter[0].toUpperCase()}
+  </div>
+);
+
+const ChannelImg = ({
+  channel,
+  member,
+}: {
+  channel: ChannelSchema;
+  member: UserPublicSchema | null;
+}) => {
+  if (channel.type === ChannelType.DM) {
+    return member?.avatar ? (
+      <Avatar
+        userId={member.id}
+        avatar={member.avatar}
+        username={member.username}
+        className="w-full h-full"
+      />
+    ) : (
+      <FirstLetterImage letter={member?.username || "S"} />
+    );
+  }
+  return (
+    <ChannelImage
+      image={channel.image}
+      channelId={channel.id}
+      channelName={channel?.name || "G"}
+      className="w-full h-full"
+    />
+  );
+};
+
 const ChannelCard = ({
   channel,
   onClick,
@@ -121,7 +157,7 @@ const ChannelCard = ({
       className={`flex items-center p-2 cursor-pointer ${isActive && "bg-[#35353b]"} hover:bg-[#37373a] text-[#efeff1] gap-3`}
     >
       <div className="w-12 h-12 rounded-full overflow-hidden">
-        <ChannelImage channel={channel} member={otherMember} />
+        <ChannelImg channel={channel} member={otherMember} />
       </div>
 
       <div className="flex flex-col flex-1 min-w-0 mr-1">

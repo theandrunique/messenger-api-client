@@ -1,11 +1,11 @@
 import { Outlet, useNavigate, useParams } from "react-router-dom";
-import Avatar from "../../../components/Avatar";
 import Modal from "../../../components/Modal";
 import Button from "../../../components/ui/Button";
 import SelectedUser from "../components/SelectedUser";
 import { UserPlusIcon, Users } from "lucide-react";
 import Loading from "../../../components/Loading";
 import useChannel from "../../../api/hooks/useChannel";
+import ChannelImage from "../../../components/ChannelImage";
 
 const ChannelInfoModal = () => {
   const { channelId } = useParams();
@@ -49,10 +49,10 @@ const ChannelInfoModal = () => {
           <div className="py-3 px-5 font-semibold text-xl">Channel Info</div>
 
           <div className="flex gap-5 items-center px-8 py-3">
-            <Avatar
-              userId={channel.id}
-              avatar={channel.image}
-              username={channel.name as string}
+            <ChannelImage
+              image={channel.image}
+              channelId={channel.id}
+              channelName={channel.name as string}
               className="w-16 h-16"
             />
             <div className="flex flex-col gap-1">

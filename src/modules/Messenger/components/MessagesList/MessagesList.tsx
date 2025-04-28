@@ -1,7 +1,7 @@
 import { ChannelSchema } from "../../../../schemas/channel";
 import { MessageSchema } from "../../../../schemas/message";
 import MessageCard from "../MessageCard";
-import { isMetaMessage } from "../MessageCard/utils";
+import { isMetaMessage } from "../MessageCard/utils.tsx";
 import DateDivider from "./DateDivider";
 
 const groupMessagesByAuthor = (

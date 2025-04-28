@@ -6,7 +6,7 @@ import MessageAvatar from "./MessageAvatar";
 import MessageCardContext from "./MessageCardContext";
 import MessageContainer from "./MessageContainer";
 import MetaMessage from "./MetaMessage";
-import { isMetaMessage } from "./utils";
+import { isMetaMessage } from "./utils.tsx";
 import { forwardRef } from "react";
 import { useCurrentUserId } from "../../../../components/CurrentUserProvider";
 

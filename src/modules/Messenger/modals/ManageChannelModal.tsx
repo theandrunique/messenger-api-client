@@ -1,6 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
 import Modal from "../../../components/Modal";
-import Avatar from "../../../components/Avatar";
 import useUserChannels from "../../../api/hooks/useUserChannels";
 import Loading from "../../../components/Loading";
 import Button from "../../../components/ui/Button";
@@ -14,6 +13,7 @@ import { updateChannel } from "../../../api/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { ApiError } from "../../../schemas/common";
 import notifications from "../../../utils/notifications";
+import ChannelImage from "../../../components/ChannelImage";
 
 const editChannelSchema = z.object({
   name: z.string().min(1, "Channel name is required").max(50),
@@ -104,11 +104,11 @@ const ManageChannelModal = () => {
 
         <form onSubmit={handleSubmit(onSubmit, (err) => console.log(err))}>
           <div className="flex gap-5 items-center px-8 py-3">
-            <Avatar
-              userId={channel.id}
-              avatar={channel.image}
-              username={channel.name as string}
-              className="w-16 h-16"
+            <ChannelImage
+              image={channel.image}
+              channelId={channel.id}
+              channelName={channel.name as string}
+              className="w-[4.5rem] h-[4.5rem]"
             />
             <div className="flex flex-col">
               <div>Channel name</div>

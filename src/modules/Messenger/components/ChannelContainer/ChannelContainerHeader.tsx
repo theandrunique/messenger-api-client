@@ -6,7 +6,8 @@ import { useNavigate } from "react-router-dom";
 import UserInfoModal from "../../modals/UserInfoModal";
 import { ArrowLeft } from "lucide-react";
 import { useCurrentUserId } from "../../../../components/CurrentUserProvider";
-import ChannelImage from "../ChannelSidebar/ChannelImage";
+import ChannelImage from "../../../../components/ChannelImage";
+import Avatar from "../../../../components/Avatar";
 
 const ChannelMenuButton = () => {
   const [show, setShow] = useState(false);
@@ -123,7 +124,11 @@ const ChannelContainerHeader = ({
           <div className="flex items-center justify-center gap-3">
             <BackToChannelsButton />
             <div className="sm:hidden w-10 h-10">
-              <ChannelImage channel={channel} member={otherMember} />
+              <Avatar
+                avatar={otherMember?.avatar || null}
+                userId={otherMember?.id as string}
+                username={otherMember?.username as string}
+              />
             </div>
             <h2
               className="text-xl font-bold text-white cursor-pointer"
@@ -145,7 +150,11 @@ const ChannelContainerHeader = ({
         <div className="flex items-center justify-center gap-3 ">
           <BackToChannelsButton />
           <div className="sm:hidden w-10 h-10">
-            <ChannelImage channel={channel} member={otherMember} />
+            <ChannelImage
+              image={channel.image}
+              channelId={channel.id}
+              channelName={channel.name as string}
+            />
           </div>
           <div className="flex flex-col">
             <h2

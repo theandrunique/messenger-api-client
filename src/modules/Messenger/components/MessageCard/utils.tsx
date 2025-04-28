@@ -7,7 +7,9 @@ export const isMetaMessage = (messageType: MessageType): boolean => {
   );
 };
 
-export const renderMetaMessageText = (message: MessageSchema | MessageInfoSchema) => {
+export const renderMetaMessageText = (
+  message: MessageSchema | MessageInfoSchema
+) => {
   if (message.type === MessageType.MEMBER_ADD) {
     return `${message.author.username} added ${message.targetUser?.username}`;
   } else if (message.type === MessageType.MEMBER_REMOVE) {
@@ -15,16 +17,16 @@ export const renderMetaMessageText = (message: MessageSchema | MessageInfoSchema
   } else if (message.type === MessageType.MEMBER_LEAVE) {
     return `${message.author.username} left the chat`;
   } else if (message.type === MessageType.CHANNEL_NAME_CHANGE) {
-    return `Channel name changed to "${message.metadata.newName}" by ${message.author.username}`;
+    return `${message.author.username} changed channel name to "${message.metadata.newName}"`;
   } else if (message.type === MessageType.CHANNEL_IMAGE_CHANGE) {
-    return "Channel image updated";
+    return `${message.author.username} updated channel image`;
   } else if (message.type === MessageType.CHANNEL_PINNED_MESSAGE) {
     return `A message was pinned`;
   } else if (message.type === MessageType.CHANNEL_UNPIN_MESSAGE) {
     return `A message was unpinned`;
   } else if (message.type === MessageType.CHANNEL_CREATE) {
-    return `${message.author.username} created the group "${message.metadata.channelName}"`
+    return `${message.author.username} created the group "${message.metadata.channelName}"`;
   } else {
-    return `Unknown message type ${message.type}`
+    return `Unknown message type ${message.type}`;
   }
 };
