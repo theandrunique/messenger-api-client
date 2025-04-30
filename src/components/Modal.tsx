@@ -78,7 +78,7 @@ const Modal = ({
     if (closeOnOverlayClick && e.target === e.currentTarget) onClose();
   };
 
-  if (open === false) return null;
+  if (!open) return null;
 
   return createPortal(
     <div
@@ -86,23 +86,21 @@ const Modal = ({
       aria-modal="true"
       ref={modalRef}
       tabIndex={-1}
-      className="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center"
+      className="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center overflow-y-auto4"
       onClick={handleOverlayClick}
       {...props}
     >
-      <div className="w-screen h-screen overflow-y-auto">
-        <div className="flex min-h-full items-center justify-center p-4">
-          <div className="bg-[#18181b] rounded-lg relative">
-            {onBack && (
-              <div className="absolute top-2.5 left-2.5">
-                <ModalBackButton onBack={onBack} />
-              </div>
-            )}
-            <div className="absolute top-2.5 right-2.5">
-              <ModalCloseButton onClose={onClose} />
+      <div className="max-h-full max-w-full">
+        <div className="relative bg-[#18181b] rounded-lg">
+          {onBack && (
+            <div className="absolute top-2.5 left-2.5">
+              <ModalBackButton onBack={onBack} />
             </div>
-            {children}
+          )}
+          <div className="absolute top-2.5 right-2.5">
+            <ModalCloseButton onClose={onClose} />
           </div>
+          {children}
         </div>
       </div>
     </div>,
