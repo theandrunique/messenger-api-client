@@ -1,0 +1,9 @@
+/* Скрываем скроллбар но оставляем возможность скролла */
+.scrollbar-transparent {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.scrollbar-transparent::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Opera */
+}
