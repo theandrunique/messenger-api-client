@@ -343,12 +343,10 @@ export const createChannel = (
 
 export const updateChannel = (
   channelId: string,
-  name: string
+  formData: FormData
 ): Promise<ChannelSchema> => {
   return baseFetch(() =>
-    axiosWithToken.post<ChannelSchema>(`/channels/${channelId}`, {
-      name,
-    })
+    axiosWithToken.patchForm<ChannelSchema>(`/channels/${channelId}`, formData)
   );
 };
 
