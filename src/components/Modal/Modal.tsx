@@ -1,40 +1,12 @@
-import React, { HTMLAttributes, useEffect, useRef, MouseEvent } from "react";
-import Button from "./ui/Button";
+import { HTMLAttributes, useEffect, useRef, MouseEvent } from "react";
 import { ArrowLeft, X } from "lucide-react";
 import { createPortal } from "react-dom";
-
-const useFocusTrap = (ref: React.RefObject<HTMLElement>, open: boolean) => {
-  useEffect(() => {
-    if (!open || !ref.current) return;
-
-    const focusableElements = ref.current.querySelectorAll<HTMLElement>(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    );
-
-    const firstElement = focusableElements[0];
-    const lastElement = focusableElements[focusableElements.length - 1];
-
-    const handleTab = (e: KeyboardEvent) => {
-      if (e.key !== "Tab") return;
-
-      if (!e.shiftKey && document.activeElement === lastElement) {
-        e.preventDefault();
-        firstElement.focus();
-      }
-
-      if (e.shiftKey && document.activeElement === firstElement) {
-        e.preventDefault();
-        lastElement.focus();
-      }
-    };
-
-    document.addEventListener("keydown", handleTab);
-    return () => document.removeEventListener("keydown", handleTab);
-  }, [open, ref]);
-};
+import Button from "../ui/Button";
+import useFocusTrap from "./useFocusTrap";
+import "./modal.css";
 
 interface ModalProps extends HTMLAttributes<HTMLDivElement> {
-  onClose: () => void;
+  onClose?: () => void;
   onBack?: () => void;
   open: boolean;
   closeOnEsc?: boolean;
@@ -56,7 +28,7 @@ const Modal = ({
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (closeOnEsc && e.key === "Escape") onClose();
+      if (closeOnEsc && e.key === "Escape") onClose?.();
     };
 
     if (open) {
@@ -75,7 +47,7 @@ const Modal = ({
   }, [open]);
 
   const handleOverlayClick = (e: MouseEvent<HTMLDivElement>) => {
-    if (closeOnOverlayClick && e.target === e.currentTarget) onClose();
+    if (closeOnOverlayClick && e.target === e.currentTarget) onClose?.();
   };
 
   if (!open) return null;
@@ -86,7 +58,7 @@ const Modal = ({
       aria-modal="true"
       ref={modalRef}
       tabIndex={-1}
-      className="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center overflow-y-auto4"
+      className="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center overflow-y-auto py-4"
       onClick={handleOverlayClick}
       {...props}
     >
@@ -97,9 +69,11 @@ const Modal = ({
               <ModalBackButton onBack={onBack} />
             </div>
           )}
-          <div className="absolute top-2.5 right-2.5">
-            <ModalCloseButton onClose={onClose} />
-          </div>
+          {onClose && (
+            <div className="absolute top-2.5 right-2.5">
+              <ModalCloseButton onClose={onClose} />
+            </div>
+          )}
           {children}
         </div>
       </div>
@@ -107,6 +81,7 @@ const Modal = ({
     document.body
   );
 };
+
 interface ModalCloseButtonProps {
   onClose: () => void;
 }

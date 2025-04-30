@@ -1,7 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import Modal from "../../../components/Modal";
 import SelectedUser from "../components/SelectedUser";
-import useUserChannels from "../../../api/hooks/useUserChannels";
 import Loading from "../../../components/Loading";
 import { useLayoutEffect, useState } from "react";
 import { UserPublicSchema } from "../../../schemas/user";
@@ -11,13 +9,14 @@ import Button from "../../../components/ui/Button";
 import { addChannelMember } from "../../../api/api";
 import { ApiError } from "../../../schemas/common";
 import notifications from "../../../utils/notifications";
+import Modal from "../../../components/Modal";
+import useSmartChannel from "../../../api/hooks/useSmartChannel";
 
 const AddChannelMembersModal = () => {
   const { channelId } = useParams();
   const [selectedUsers, setSelectedUsers] = useState<UserPublicSchema[]>([]);
   const navigate = useNavigate();
-
-  const { data, isPending } = useUserChannels();
+  const { data, isPending } = useSmartChannel(channelId);
   const queryClient = useQueryClient();
 
   const { mutate, isPending: isPendingMutation } = useMutation({
@@ -37,14 +36,7 @@ const AddChannelMembersModal = () => {
     },
   });
 
-  const onClose = () => {
-    navigate(-1);
-  };
-
-  if (!channelId) {
-    console.error("Channel ID not found");
-    return;
-  }
+  const onClose = () => navigate(-1);
 
   const removeUser = (userToRemove: UserPublicSchema) => {
     setSelectedUsers((prev) =>
@@ -60,26 +52,24 @@ const AddChannelMembersModal = () => {
     setSelectedUsers([]);
   }, []);
 
+  if (!channelId) {
+    console.error("Channel ID not found");
+    return;
+  }
+
   if (isPending || !data)
     return (
-      <Modal open={true} onClose={onClose} closeOnOverlayClick={true}>
+      <Modal open={true} onClose={onClose}>
         <Loading message="Loading" />
       </Modal>
     );
 
-  const channel = data.find((c) => c.id === channelId);
-
-  if (!channel) {
-    console.error("Channel not found");
-    return;
-  }
-
   return (
-    <Modal open={true} onClose={onClose}>
+    <Modal open={true}>
       <div className="w-[400px] text-[#efeff1]">
         <div className="py-3 px-5 font-semibold text-xl">Add members</div>
 
-        <div className="px-5">
+        <div className="px-5 pb-3">
           <div className="w-full">
             {selectedUsers.length > 0 && (
               <div className="flex flex-wrap gap-1 mb-2 max-h-32 overflow-y-auto">
@@ -94,11 +84,11 @@ const AddChannelMembersModal = () => {
             )}
             <UsersSearchInput
               onSubmit={(user) => addUser(user)}
-              excludeIds={channel.members.map((member) => member.id)}
+              excludeIds={data.members.map((member) => member.id)}
             />
           </div>
 
-          <div className="w-full flex justify-end items-center mt-3 gap-2 mb-5">
+          <div className="w-full flex justify-end items-center mt-3 gap-2">
             <Button variant={"secondary"} onClick={onClose}>
               Cancel
             </Button>

@@ -94,7 +94,7 @@ const CreateChannelModalForm = ({
 
         <form
           onSubmit={handleSubmit((data) => mutate(data))}
-          className="flex flex-col px-8 gap-3 mb-4"
+          className="flex flex-col px-8 gap-3 pb-3"
         >
           <div className="w-full">
             <div className="text-base font-semibold mb-1">Channel name:</div>

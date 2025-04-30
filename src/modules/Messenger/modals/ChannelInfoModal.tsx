@@ -16,9 +16,7 @@ const ChannelInfoModal = () => {
     navigate(-1);
   };
 
-  const navigateToAddMembers = () => {
-    navigate("add-members");
-  };
+  const navigateToAddMembers = () => navigate("add-members");
 
   if (!channelId) {
     console.error("Channel ID not found");
@@ -63,7 +61,7 @@ const ChannelInfoModal = () => {
             </div>
           </div>
 
-          <div className="px-5">
+          <div className="px-5 pb-3">
             <div className="flex items-center justify-between mb-3">
               <div className="flex gap-5">
                 <Users className="opacity-70" />
@@ -78,7 +76,7 @@ const ChannelInfoModal = () => {
               </Button>
             </div>
 
-            <div className="flex flex-col gap-1 mb-5">
+            <div className="flex flex-col gap-1">
               {channel.members.map((member) => (
                 <SelectedUser key={member.id} user={member} />
               ))}
