@@ -85,7 +85,7 @@ const ManageChannelModal = () => {
     setSelectedFile(null);
     URL.revokeObjectURL(tempImage!);
     setTempImage(null);
-  }
+  };
 
   const onSubmit = async (data: EditChannelFormData) => {
     if (!channelId || !initialData) return;
@@ -131,7 +131,7 @@ const ManageChannelModal = () => {
 
   return (
     <>
-      <Modal open={true} onClose={onClose}>
+      <Modal open={true}>
         <div className="w-[400px] text-[#efeff1]">
           <div className="py-3 px-5 font-semibold text-xl">Edit channel</div>
 
@@ -145,14 +145,15 @@ const ManageChannelModal = () => {
             />
 
             <div className="flex gap-5 items-center px-8 py-3">
-
-              <div onClick={handleImageClick} className="cursor-pointer relative group">
+              <div
+                onClick={handleImageClick}
+                className="cursor-pointer relative group"
+              >
                 {tempImage ? (
                   <img
                     src={tempImage}
                     className="w-[4.5rem] h-[4.5rem] group-hover:opacity-75 transition-opacity rounded-full"
                   />
-
                 ) : (
                   <ChannelImage
                     image={tempImage || data.image}
@@ -161,7 +162,6 @@ const ManageChannelModal = () => {
                     className="w-[4.5rem] h-[4.5rem] group-hover:opacity-75 transition-opacity"
                   />
                 )}
-
 
                 <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
                   <Camera className="w-10 h-10" />
@@ -215,10 +215,7 @@ const ManageChannelModal = () => {
 
           <div className="flex justify-end p-3">
             <div className="space-x-2">
-              <Button
-                variant="secondary"
-                onClick={handleCloseCropModal}
-              >
+              <Button variant="secondary" onClick={handleCloseCropModal}>
                 Cancel
               </Button>
               <Button variant="primary" onClick={handleCropComplete}>

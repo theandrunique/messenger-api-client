@@ -1,11 +1,11 @@
 import { useParams } from "react-router-dom";
-import useChannel from "../../../api/hooks/useChannel";
 import Modal from "../../../components/Modal";
 import Loading from "../../../components/Loading";
 import Avatar from "../../../components/Avatar";
 import useUserInfo from "../../../api/hooks/useUserInfo";
 import { Info } from "lucide-react";
 import { useCurrentUserId } from "../../../components/CurrentUserProvider";
+import useSmartChannel from "../../../api/hooks/useSmartChannel";
 
 interface UserInfoModalProps {
   open: boolean;
@@ -14,7 +14,7 @@ interface UserInfoModalProps {
 
 const UserInfoModal = ({ open, onClose }: UserInfoModalProps) => {
   const { channelId } = useParams();
-  const { data, isLoading } = useChannel(channelId || null);
+  const { data, isPending } = useSmartChannel(channelId);
   const currentUserId = useCurrentUserId();
 
   let user = null;
@@ -27,7 +27,7 @@ const UserInfoModal = ({ open, onClose }: UserInfoModalProps) => {
 
   const { data: userInfo } = useUserInfo(user?.id || null);
 
-  if (isLoading || !data || !userInfo) {
+  if (isPending || !data || !userInfo) {
     return (
       <Modal open={open} onClose={onClose} closeOnOverlayClick={true}>
         <Loading message="Loading" />
