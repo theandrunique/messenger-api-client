@@ -6,9 +6,9 @@ import { useNavigate } from "react-router-dom";
 import UserInfoModal from "../../modals/UserInfoModal";
 import { ArrowLeft } from "lucide-react";
 import { useCurrentUserId } from "../../../../components/CurrentUserProvider";
-import ChannelImage from "../../../../components/ChannelImage";
 import { Avatar } from "../../../../components/Avatar/Avatar";
 import { SavedMessagesIcon, UserAvatar, UserAvatarFallback } from "../../../../components/Avatar/UserAvatar";
+import { ChannelImage, ChannelImageFallback } from "../../../../components/Avatar/ChannelImage";
 
 const ChannelMenuButton = () => {
   const [show, setShow] = useState(false);
@@ -156,11 +156,10 @@ const ChannelContainerHeader = ({
         <div className="flex items-center justify-center gap-3 ">
           <BackToChannelsButton />
           <div className="sm:hidden w-10 h-10">
-            <ChannelImage
-              image={channel.image}
-              channelId={channel.id}
-              channelName={channel.name as string}
-            />
+            <Avatar>
+              <ChannelImage channelId={channel.id} image={channel.image} />
+              <ChannelImageFallback name={channel.name} />
+            </Avatar>
           </div>
           <div className="flex flex-col">
             <h2

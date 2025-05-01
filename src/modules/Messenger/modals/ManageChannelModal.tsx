@@ -12,12 +12,16 @@ import { updateChannel } from "../../../api/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { ApiError } from "../../../schemas/common";
 import notifications from "../../../utils/notifications";
-import ChannelImage from "../../../components/ChannelImage";
 import ImageCropper, {
   ImageCropperHandle,
 } from "../../../components/ImageCropper";
 import useSmartChannel from "../../../api/hooks/useSmartChannel";
 import { Camera } from "lucide-react";
+import { Avatar, AvatarImage } from "../../../components/Avatar/Avatar";
+import {
+  ChannelImage,
+  ChannelImageFallback,
+} from "../../../components/Avatar/ChannelImage";
 
 const editChannelSchema = z.object({
   name: z.string().min(1, "Channel name is required").max(50),
@@ -144,25 +148,19 @@ const ManageChannelModal = () => {
               onChange={handleFileSelect}
             />
 
-            <div className="flex gap-5 items-center px-8 py-3">
+            <div className="flex gap-5 items-center justify-start px-8 py-3">
               <div
                 onClick={handleImageClick}
-                className="cursor-pointer relative group"
+                className="cursor-pointer relative group w-[4.5rem] h-[4.5rem]"
               >
-                {tempImage ? (
-                  <img
-                    src={tempImage}
-                    className="w-[4.5rem] h-[4.5rem] group-hover:opacity-75 transition-opacity rounded-full"
-                  />
-                ) : (
-                  <ChannelImage
-                    image={tempImage || data.image}
-                    channelId={data.id}
-                    channelName={data.name as string}
-                    className="w-[4.5rem] h-[4.5rem] group-hover:opacity-75 transition-opacity"
-                  />
-                )}
-
+                <Avatar className="group-hover:opacity-75 transition-opacity">
+                  {tempImage ? (
+                    <AvatarImage src={tempImage} />
+                  ) : (
+                    <ChannelImage channelId={data.id} image={data.image} />
+                  )}
+                  <ChannelImageFallback name={data.name} />
+                </Avatar>
                 <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
                   <Camera className="w-10 h-10" />
                 </div>

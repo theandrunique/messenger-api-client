@@ -5,7 +5,11 @@ import SelectedUser from "../components/SelectedUser";
 import { UserPlusIcon, Users } from "lucide-react";
 import Loading from "../../../components/Loading";
 import useChannel from "../../../api/hooks/useChannel";
-import ChannelImage from "../../../components/ChannelImage";
+import { Avatar } from "../../../components/Avatar/Avatar";
+import {
+  ChannelImage,
+  ChannelImageFallback,
+} from "../../../components/Avatar/ChannelImage";
 
 const ChannelInfoModal = () => {
   const { channelId } = useParams();
@@ -47,12 +51,11 @@ const ChannelInfoModal = () => {
           <div className="py-3 px-5 font-semibold text-xl">Channel Info</div>
 
           <div className="flex gap-5 items-center px-8 py-3">
-            <ChannelImage
-              image={channel.image}
-              channelId={channel.id}
-              channelName={channel.name as string}
-              className="w-16 h-16"
-            />
+            <Avatar className="w-16 h-16">
+              <ChannelImage channelId={channel.id} image={channel.image} />
+              <ChannelImageFallback name={channel.name} />
+            </Avatar>
+
             <div className="flex flex-col gap-1">
               <div className="font-semibold text-xl">{channel.name}</div>
               <div className="text-sm opacity-50">

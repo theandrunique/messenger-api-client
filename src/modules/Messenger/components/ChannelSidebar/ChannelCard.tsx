@@ -5,13 +5,16 @@ import { Check, CheckCheck, Users } from "lucide-react";
 import { useCurrentUserId } from "../../../../components/CurrentUserProvider";
 import { isMetaMessage, renderMetaMessageText } from "../MessageCard/utils.tsx";
 import { compareIds } from "../../../../utils";
-import ChannelImage from "../../../../components/ChannelImage.tsx";
 import {
   SavedMessagesIcon,
   UserAvatar,
   UserAvatarFallback,
 } from "../../../../components/Avatar/UserAvatar.tsx";
 import { Avatar } from "../../../../components/Avatar/Avatar.tsx";
+import {
+  ChannelImage,
+  ChannelImageFallback,
+} from "../../../../components/Avatar/ChannelImage.tsx";
 
 const ReadStatus = ({
   channel,
@@ -128,12 +131,10 @@ const ChannelImg = ({
     );
   }
   return (
-    <ChannelImage
-      image={channel.image}
-      channelId={channel.id}
-      channelName={channel?.name || "G"}
-      className="w-full h-full"
-    />
+    <Avatar>
+      <ChannelImage channelId={channel.id} image={channel.image} />
+      <ChannelImageFallback name={channel.name} />
+    </Avatar>
   );
 };
 
