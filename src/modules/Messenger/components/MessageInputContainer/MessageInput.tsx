@@ -3,7 +3,8 @@ import Button from "../../../../components/ui/Button";
 import { ChangeEvent, useRef } from "react";
 import { useMessageAttachmentsUploader } from "../MessageAttachmentsUploader";
 import Textarea from "../../../../components/ui/Textarea";
-import "./input.css"
+import "./input.css";
+import Tooltip from "../../../../components/Tooltip";
 
 interface MessageInputProps {
   onSubmit: (messageContent: string) => Promise<void>;
@@ -56,13 +57,15 @@ const MessageInput = ({ onSubmit }: MessageInputProps) => {
   return (
     <div className="relative w-full min-h-[44px]">
       <div className="absolute inset-y-0 left-2 flex items-center">
-        <Button
-          onClick={() => document.getElementById("fileInput")?.click()}
-          className="p-1"
-          variant="icon"
-        >
-          <PlusCircle className="w-6 h-6 text-[#9d9d9e]" />
-        </Button>
+        <Tooltip side="top-left" content={<div>Add an attachment</div>}>
+          <Button
+            onClick={() => document.getElementById("fileInput")?.click()}
+            className="p-1"
+            variant="icon"
+          >
+            <PlusCircle className="w-6 h-6 text-[#9d9d9e]" />
+          </Button>
+        </Tooltip>
       </div>
 
       <div className="flex items-center h-full">

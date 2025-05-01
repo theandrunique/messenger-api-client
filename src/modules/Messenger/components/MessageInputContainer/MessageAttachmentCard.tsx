@@ -2,8 +2,8 @@ import { FileIcon, X, CircleAlert } from "lucide-react";
 import MessageAttachmentInfo from "../../types/MessageAttachmentInfo";
 import cn from "../../../../utils/cn";
 import Button from "../../../../components/ui/Button";
-import Tooltip from "../../../../components/Tooltip";
 import Spinner from "../../../../components/Spinner";
+import Tooltip from "../../../../components/Tooltip";
 
 const formatFileSize = (size: number) => {
   if (size < 1024) return `${size} B`;
