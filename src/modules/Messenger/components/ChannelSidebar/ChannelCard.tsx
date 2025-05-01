@@ -6,7 +6,12 @@ import { useCurrentUserId } from "../../../../components/CurrentUserProvider";
 import { isMetaMessage, renderMetaMessageText } from "../MessageCard/utils.tsx";
 import { compareIds } from "../../../../utils";
 import ChannelImage from "../../../../components/ChannelImage.tsx";
-import Avatar from "../../../../components/Avatar.tsx";
+import {
+  SavedMessagesIcon,
+  UserAvatar,
+  UserAvatarFallback,
+} from "../../../../components/Avatar/UserAvatar.tsx";
+import { Avatar } from "../../../../components/Avatar/Avatar.tsx";
 
 const ReadStatus = ({
   channel,
@@ -103,12 +108,6 @@ const renderLastMessageTime = (channel: ChannelSchema) => {
       : messageDate.toLocaleDateString();
 };
 
-const FirstLetterImage = ({ letter }: { letter: string }) => (
-  <div className="w-full h-full rounded-full overflow-hidden font-semibold bg-slate-700 text-white flex items-center justify-center">
-    {letter[0].toUpperCase()}
-  </div>
-);
-
 const ChannelImg = ({
   channel,
   member,
@@ -117,15 +116,15 @@ const ChannelImg = ({
   member: UserPublicSchema | null;
 }) => {
   if (channel.type === ChannelType.DM) {
-    return member?.avatar ? (
-      <Avatar
-        userId={member.id}
-        avatar={member.avatar}
-        username={member.username}
-        className="w-full h-full"
-      />
+    return member !== null ? (
+      <Avatar>
+        <UserAvatar userId={member.id} avatar={member.avatar} />
+        <UserAvatarFallback username={member.username} />
+      </Avatar>
     ) : (
-      <FirstLetterImage letter={member?.username || "S"} />
+      <Avatar>
+        <SavedMessagesIcon />
+      </Avatar>
     );
   }
   return (

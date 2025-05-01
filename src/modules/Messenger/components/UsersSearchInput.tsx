@@ -1,10 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import Avatar from "../../../components/Avatar";
 import Input from "../../../components/ui/Input";
 import { searchUsers } from "../../../api/api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { UserPublicSchema } from "../../../schemas/user";
 import { Search } from "lucide-react";
+import {
+  UserAvatar,
+  UserAvatarFallback,
+} from "../../../components/Avatar/UserAvatar";
+import { Avatar } from "../../../components/Avatar/Avatar";
 
 interface SearchResultProps {
   result: UserPublicSchema;
@@ -18,12 +22,10 @@ const SearchResult = ({ result, isActive, onClick }: SearchResultProps) => {
       <div
         className={`flex items-center ${isActive && "bg-[#35353b]"} rounded-md px-1 py-2 gap-2 hover:bg-[#3d3d40]`}
       >
-        <Avatar
-          userId={result.id}
-          avatar={result.avatar}
-          username={result.username}
-          className="w-8 h-8"
-        />
+        <Avatar className="w-8 h-8">
+          <UserAvatar userId={result.id} avatar={result.avatar} />
+          <UserAvatarFallback username={result.username} />
+        </Avatar>
         <div className="font-semibold">
           {result.username} ({result.globalName})
         </div>
@@ -38,7 +40,11 @@ interface UsersSearchInputProps {
   clearOnSubmit?: boolean;
 }
 
-const UsersSearchInput = ({ onSubmit, excludeIds = [], clearOnSubmit = true }: UsersSearchInputProps) => {
+const UsersSearchInput = ({
+  onSubmit,
+  excludeIds = [],
+  clearOnSubmit = true,
+}: UsersSearchInputProps) => {
   const [query, setQuery] = useState("");
   const [activeSuggestion, setActiveSuggestion] = useState(-1);
   const [isOpen, setIsOpen] = useState(false);
@@ -132,7 +138,10 @@ const UsersSearchInput = ({ onSubmit, excludeIds = [], clearOnSubmit = true }: U
   };
 
   return (
-    <div className="relative w-full text-[#efeff1] pointer-events-auto" ref={wrapperRef}>
+    <div
+      className="relative w-full text-[#efeff1] pointer-events-auto"
+      ref={wrapperRef}
+    >
       <div className="relative">
         <div className="absolute inset-y-0 left-0 flex items-center pl-2">
           <Search className="w-5 h-5" />

@@ -1,7 +1,11 @@
 import { X } from "lucide-react";
-import Avatar from "../../../components/Avatar";
 import Button from "../../../components/ui/Button";
 import { UserPublicSchema } from "../../../schemas/user";
+import {
+  UserAvatar,
+  UserAvatarFallback,
+} from "../../../components/Avatar/UserAvatar";
+import { Avatar } from "../../../components/Avatar/Avatar";
 
 interface SelectedUserProps {
   user: UserPublicSchema;
@@ -15,12 +19,10 @@ const SelectedUser = ({ user, onRemove }: SelectedUserProps) => {
       className="flex items-center gap-2 bg-[#1f1f23] p-2 rounded-2xl justify-between"
     >
       <div className="flex items-center gap-2">
-        <Avatar
-          className="w-8 h-8"
-          userId={user.id}
-          username={user.username}
-          avatar={user.avatar}
-        />
+        <Avatar className="w-8 h-8">
+          <UserAvatar userId={user.id} avatar={user.avatar} />
+          <UserAvatarFallback username={user.username} />
+        </Avatar>
         <div className="font-semibold">
           {user.username} ({user.globalName})
         </div>

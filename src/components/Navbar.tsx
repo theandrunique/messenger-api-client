@@ -1,8 +1,9 @@
-import { Link } from 'react-router-dom';
-import Avatar from "./Avatar";
+import { Link } from "react-router-dom";
 import { useLoadedCurrentUser } from "./CurrentUserProvider";
-import { HTMLAttributes } from 'react';
-import cn from '../utils/cn';
+import { HTMLAttributes } from "react";
+import cn from "../utils/cn";
+import { Avatar } from "./Avatar/Avatar";
+import { UserAvatar, UserAvatarFallback } from "./Avatar/UserAvatar";
 
 const Icon = () => {
   return (
@@ -57,12 +58,10 @@ const Navbar = ({ className, ...props }: NavbarProps) => {
             {currentUser.username}
           </Link>
 
-          <Avatar
-            avatar={currentUser.avatar}
-            userId={currentUser.id}
-            username={currentUser.username}
-            className="w-8 h-8 rounded-full"
-          />
+          <Avatar className="w-8 h-8">
+            <UserAvatar userId={currentUser.id} avatar={currentUser.avatar} />
+            <UserAvatarFallback username={currentUser.username} />
+          </Avatar>
         </div>
       </div>
     </div>

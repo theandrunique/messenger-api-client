@@ -1,11 +1,15 @@
 import { useParams } from "react-router-dom";
 import Modal from "../../../components/Modal";
 import Loading from "../../../components/Loading";
-import Avatar from "../../../components/Avatar";
 import useUserInfo from "../../../api/hooks/useUserInfo";
 import { Info } from "lucide-react";
 import { useCurrentUserId } from "../../../components/CurrentUserProvider";
 import useSmartChannel from "../../../api/hooks/useSmartChannel";
+import {
+  UserAvatar,
+  UserAvatarFallback,
+} from "../../../components/Avatar/UserAvatar";
+import { Avatar } from "../../../components/Avatar/Avatar";
 
 interface UserInfoModalProps {
   open: boolean;
@@ -46,18 +50,16 @@ const UserInfoModal = ({ open, onClose }: UserInfoModalProps) => {
         <div className="py-3 px-5 font-semibold text-xl">User Info</div>
 
         <div className="flex gap-5 items-center px-8 py-3">
-          <Avatar
-            userId={userInfo.id}
-            avatar={userInfo.avatar}
-            username={userInfo.username}
-            className="w-16 h-16"
-          />
+          <Avatar className="w-16 h-16">
+            <UserAvatar userId={userInfo.id} avatar={userInfo.avatar} />
+            <UserAvatarFallback username={userInfo.username} />
+          </Avatar>
           <div className="flex flex-col gap-1">
             <div className="font-semibold text-xl">{userInfo.username}</div>
           </div>
         </div>
 
-        <div className="px-5 flex gap-5 mb-5">
+        <div className="px-5 flex gap-5 pb-5">
           <div>
             <Info className="w-8 h-8 mt-1" />
           </div>

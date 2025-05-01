@@ -1,4 +1,3 @@
-import Avatar from "../../../components/Avatar";
 import SimpleCard from "../../../components/SimpleCard";
 import Button from "../../../components/ui/Button";
 import React, { useRef, useState } from "react";
@@ -8,6 +7,9 @@ import CropImageModal from "../modals/CropImageModal";
 import ConfirmDeleteModal from "../modals/ConfirmDeleteAvatarModal";
 import { useLoadedCurrentUser } from "../../../components/CurrentUserProvider";
 import useCurrentUser from "../../../api/hooks/useCurrentUser";
+import { Avatar, AvatarFallback } from "../../../components/Avatar/Avatar";
+import { UserAvatar } from "../../../components/Avatar/UserAvatar";
+import { Camera } from "lucide-react";
 
 const ProfileImageForm = () => {
   const { refetch: updateUser } = useCurrentUser();
@@ -66,12 +68,12 @@ const ProfileImageForm = () => {
       <SimpleCard className="max-w-5xl p-5">
         <div className="flex">
           <div>
-            <Avatar
-              userId={currentUser.id}
-              avatar={currentUser.avatar}
-              username={currentUser.username}
-              className="w-24 h-24 rounded-full bg-[#374151]"
-            />
+            <Avatar className="w-24 h-24">
+              <UserAvatar userId={currentUser.id} avatar={currentUser.avatar} />
+              <AvatarFallback>
+                <Camera className="w-12 h-12" />
+              </AvatarFallback>
+            </Avatar>
           </div>
 
           <div className="ml-4 flex flex-col justify-center items-start space-y-2">

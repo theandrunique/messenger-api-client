@@ -7,7 +7,8 @@ import UserInfoModal from "../../modals/UserInfoModal";
 import { ArrowLeft } from "lucide-react";
 import { useCurrentUserId } from "../../../../components/CurrentUserProvider";
 import ChannelImage from "../../../../components/ChannelImage";
-import Avatar from "../../../../components/Avatar";
+import { Avatar } from "../../../../components/Avatar/Avatar";
+import { SavedMessagesIcon, UserAvatar, UserAvatarFallback } from "../../../../components/Avatar/UserAvatar";
 
 const ChannelMenuButton = () => {
   const [show, setShow] = useState(false);
@@ -124,11 +125,16 @@ const ChannelContainerHeader = ({
           <div className="flex items-center justify-center gap-3">
             <BackToChannelsButton />
             <div className="sm:hidden w-10 h-10">
-              <Avatar
-                avatar={otherMember?.avatar || null}
-                userId={otherMember?.id as string}
-                username={otherMember?.username as string}
-              />
+              {otherMember !== null ? (
+                <Avatar>
+                  <UserAvatar userId={otherMember.id} avatar={otherMember.avatar}/>
+                  <UserAvatarFallback username={otherMember.username} />
+                </Avatar>
+              ) : (
+                <Avatar>
+                  <SavedMessagesIcon />
+                </Avatar>
+              )}
             </div>
             <h2
               className="text-xl font-bold text-white cursor-pointer"
