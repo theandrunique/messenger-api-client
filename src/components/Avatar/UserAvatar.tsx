@@ -1,6 +1,5 @@
-import { useContext } from "react";
 import env from "../../env";
-import { AvatarContext, AvatarFallback, AvatarImage } from "./Avatar";
+import { AvatarFallback, AvatarImage } from "./Avatar";
 import { Bookmark } from "lucide-react";
 
 interface UserAvatarProps {
@@ -9,13 +8,12 @@ interface UserAvatarProps {
 }
 
 export const UserAvatar = ({ userId, avatar }: UserAvatarProps) => {
-  const context = useContext(AvatarContext);
+  const src =
+    userId && avatar
+      ? `${env.IMAGE_ENDPOINT}/avatars/${userId}/${avatar}`
+      : undefined;
 
-  if (!userId || !avatar) context?.setHasError(true);
-
-  const src = `${env.IMAGE_ENDPOINT}/avatars/${userId}/${avatar}`;
-
-  return <AvatarImage src={!userId || !avatar ? undefined : src} />;
+  return <AvatarImage src={src} />;
 };
 
 export const UserAvatarFallback = ({ username }: { username: string }) => {

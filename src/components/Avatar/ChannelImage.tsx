@@ -1,5 +1,4 @@
-import { useContext } from "react";
-import { AvatarContext, AvatarFallback, AvatarImage } from "./Avatar";
+import { AvatarFallback, AvatarImage } from "./Avatar";
 import env from "../../env";
 
 interface ChannelImageProps {
@@ -8,13 +7,12 @@ interface ChannelImageProps {
 }
 
 export const ChannelImage = ({ channelId, image }: ChannelImageProps) => {
-  const context = useContext(AvatarContext);
+  const src =
+    channelId && image
+      ? `${env.IMAGE_ENDPOINT}/channels/${channelId}/images/${image}`
+      : undefined;
 
-  if (!channelId || !image) context?.setHasError(true);
-
-  const src = `${env.IMAGE_ENDPOINT}/channels/${channelId}/images/${image}`;
-
-  return <AvatarImage src={!channelId || !image ? undefined : src} />;
+  return <AvatarImage src={src} />;
 };
 
 export const ChannelImageFallback = ({
