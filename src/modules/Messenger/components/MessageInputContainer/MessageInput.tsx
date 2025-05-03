@@ -57,14 +57,17 @@ const MessageInput = ({ onSubmit }: MessageInputProps) => {
   return (
     <div className="relative w-full min-h-[44px]">
       <div className="absolute inset-y-0 left-2 flex items-center">
-        <Tooltip side="top-left" content={<div>Add an attachment</div>}>
-          <Button
-            onClick={() => document.getElementById("fileInput")?.click()}
-            className="p-1"
-            variant="icon"
-          >
-            <PlusCircle className="w-6 h-6 text-[#9d9d9e]" />
-          </Button>
+        <Tooltip placement="top">
+          <Tooltip.Trigger>
+            <Button
+              onClick={() => document.getElementById("fileInput")?.click()}
+              className="p-1"
+              variant="icon"
+            >
+              <PlusCircle className="w-6 h-6 text-[#9d9d9e]" />
+            </Button>
+          </Tooltip.Trigger>
+          <Tooltip.Content>Add an attachment</Tooltip.Content>
         </Tooltip>
       </div>
 

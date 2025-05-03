@@ -60,8 +60,11 @@ const MessageAttachmentCard = ({
 
       {attachment.status === "error" && (
         <div className="absolute inset-y-0 right-1 flex items-center justify-center">
-          <Tooltip content={attachment.errors?.join("\n")}>
-            <CircleAlert className="w-5 h-5 text-red-500 mr-1" />
+          <Tooltip>
+            <Tooltip.Trigger>
+              <CircleAlert className="w-5 h-5 text-red-500 mr-1" />
+            </Tooltip.Trigger>
+            <Tooltip.Content>{attachment.errors?.join("\n")}</Tooltip.Content>
           </Tooltip>
         </div>
       )}
