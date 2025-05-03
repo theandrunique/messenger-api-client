@@ -18,7 +18,7 @@ import {
   useTransitionStyles,
 } from "@floating-ui/react";
 
-const TooltipContext = createContext<{
+export const TooltipContext = createContext<{
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setFloating: (node: HTMLElement | null) => void;
@@ -33,6 +33,7 @@ const TooltipContext = createContext<{
     userProps?: React.HTMLProps<HTMLElement>
   ) => Record<string, unknown>;
   disabled: boolean;
+  setDisabled: React.Dispatch<React.SetStateAction<boolean>>,
   floatingContext: FloatingContext;
   transitionStyles: React.CSSProperties;
   isMounted: boolean;
@@ -41,14 +42,13 @@ const TooltipContext = createContext<{
 const Tooltip = ({
   children,
   placement = "top",
-  disabled = false,
 }: {
   children: ReactNode;
   placement?: Placement;
-  disabled?: boolean;
 }) => {
   const [open, setOpen] = useState(false);
   const arrowRef = useRef<SVGSVGElement>(null);
+  const [disabled, setDisabled] = useState(false);
 
   const data = useFloating({
     placement,
@@ -81,7 +81,6 @@ const Tooltip = ({
     useDismiss(data.context),
     useRole(data.context, { role: "tooltip" }),
   ]);
-  
 
   return (
     <TooltipContext.Provider
@@ -96,6 +95,7 @@ const Tooltip = ({
         getReferenceProps,
         getFloatingProps,
         disabled,
+        setDisabled,
         floatingContext: data.context,
         transitionStyles,
         isMounted,

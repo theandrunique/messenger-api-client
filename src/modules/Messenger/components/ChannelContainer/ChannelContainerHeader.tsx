@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Button from "../../../../components/ui/Button";
 import { ChannelSchema, ChannelType } from "../../../../schemas/channel";
 import { MoreHorizontal, Settings2, LogOut, Users } from "lucide-react";
@@ -7,75 +7,70 @@ import UserInfoModal from "../../modals/UserInfoModal";
 import { ArrowLeft } from "lucide-react";
 import { useCurrentUserId } from "../../../../components/CurrentUserProvider";
 import { Avatar } from "../../../../components/Avatar/Avatar";
-import { SavedMessagesIcon, UserAvatar, UserAvatarFallback } from "../../../../components/Avatar/UserAvatar";
-import { ChannelImage, ChannelImageFallback } from "../../../../components/Avatar/ChannelImage";
+import {
+  SavedMessagesIcon,
+  UserAvatar,
+  UserAvatarFallback,
+} from "../../../../components/Avatar/UserAvatar";
+import {
+  ChannelImage,
+  ChannelImageFallback,
+} from "../../../../components/Avatar/ChannelImage";
+import Tooltip from "../../../../components/Tooltip";
+import DropdownMenu from "../../../../components/DropdownMenu";
 
 const ChannelMenuButton = () => {
-  const [show, setShow] = useState(false);
-  const wrapperRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(event.target as Node)
-      ) {
-        setShow(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const menuButtons = [
+    {
+      onClick: () => navigate("manage-channel"),
+      icon: Settings2,
+      content: "Manage channel",
+    },
+    {
+      onClick: () => navigate("members"),
+      icon: Users,
+      content: "Members",
+    },
+    {
+      onClick: () => navigate("leave"),
+      icon: LogOut,
+      content: "Leave channel",
+    },
+  ];
 
   return (
-    <div className="relative text-[#efeff1]" ref={wrapperRef}>
-      <Button
-        variant="icon"
-        className="p-1"
-        onClick={() => setShow((prev) => !prev)}
-      >
-        <MoreHorizontal />
-      </Button>
+    <DropdownMenu placement="bottom-end">
+      <Tooltip placement="bottom">
+        <Tooltip.Trigger>
+          <DropdownMenu.Trigger>
+            <Button variant="icon" className="p-1">
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenu.Trigger>
+        </Tooltip.Trigger>
+        <Tooltip.Content>Menu</Tooltip.Content>
+      </Tooltip>
 
-      {show && (
-        <div className="absolute top-full right-[-10px] bg-[#18181b] rounded-md shadow-[0_8px_30px_rgb(0,0,0,0.8)] z-50">
-          <div className="flex flex-col p-1 gap-1 w-42">
+      <DropdownMenu.Content className="w-42">
+        <div className="flex flex-col p-1 gap-1">
+          {menuButtons.map((button, i) => (
             <Button
+              key={i}
               variant="icon"
               className="whitespace-nowrap"
-              onClick={() => navigate("manage-channel")}
+              onClick={button.onClick}
             >
               <div className="flex items-center gap-2">
-                <Settings2 className="w-5 h-5" />
-                <div>Manage channel</div>
+                <button.icon className="w-5 h-5" />
+                <div>{button.content}</div>
               </div>
             </Button>
-            <Button
-              variant="icon"
-              className="whitespace-nowrap"
-              onClick={() => navigate("members")}
-            >
-              <div className="flex items-center gap-2">
-                <Users className="w-5 h-5" />
-                <div>Members</div>
-              </div>
-            </Button>
-            <Button
-              variant="icon"
-              className="whitespace-nowrap"
-              onClick={() => navigate("leave")}
-            >
-              <div className="flex items-center gap-2">
-                <LogOut className="w-5 h-5" />
-                <div>Leave channel</div>
-              </div>
-            </Button>
-          </div>
+          ))}
         </div>
-      )}
-    </div>
+      </DropdownMenu.Content>
+    </DropdownMenu>
   );
 };
 
@@ -127,7 +122,10 @@ const ChannelContainerHeader = ({
             <div className="sm:hidden w-10 h-10">
               {otherMember !== null ? (
                 <Avatar>
-                  <UserAvatar userId={otherMember.id} avatar={otherMember.avatar}/>
+                  <UserAvatar
+                    userId={otherMember.id}
+                    avatar={otherMember.avatar}
+                  />
                   <UserAvatarFallback username={otherMember.username} />
                 </Avatar>
               ) : (
