@@ -61,12 +61,7 @@ const renderChannelName = (
     if (!channel.name) {
       return channel.members.map((m) => m.username).join(", ");
     }
-    return (
-      <div className="flex items-center justify-center gap-1">
-        <Users className="w-4 h-4" />
-        {channel.name}
-      </div>
-    );
+    return channel.name;
   }
 };
 
@@ -162,11 +157,14 @@ const ChannelCard = ({
 
       <div className="flex flex-col flex-1 min-w-0 mr-1">
         <div className="flex items-center justify-between">
-          <div className="font-semibold truncate">
-            {renderChannelName(channel, otherMember)}
+          <div className="flex items-center font-semibold gap-1 min-w-0">
+            {channel.type === ChannelType.GROUP_DM && <Users className="w-4 h-4 shrink-0" />}
+            <div className="truncate">
+              {renderChannelName(channel, otherMember)}
+            </div>
           </div>
 
-          <div className="flex items-center gap-1 ml-4 shrink-0">
+          <div className="flex items-center ml-1.5 gap-1 shrink-0">
             <ReadStatus channel={channel} currentUserId={currentUserId} />
             <div className="text-xs opacity-50">
               {renderLastMessageTime(channel)}
