@@ -63,7 +63,7 @@ const SecurityForm = () => {
 
       <EnableTotpMfaModalForm
         open={mfaModalOpen}
-        onClose={() => setMfaModalOpen(false)}
+        onOpenChange={setMfaModalOpen}
         onSubmit={updateUser}
       />
     </>

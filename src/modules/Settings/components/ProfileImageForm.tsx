@@ -4,7 +4,7 @@ import React, { useRef, useState } from "react";
 import notifications from "../../../utils/notifications";
 import { removeAvatar, updateAvatar } from "../../../api/api";
 import CropImageModal from "../modals/CropImageModal";
-import ConfirmDeleteModal from "../modals/ConfirmDeleteAvatarModal";
+import ConfirmDeleteAvatarDialog from "../modals/ConfirmDeleteAvatarModal";
 import { useLoadedCurrentUser } from "../../../components/CurrentUserProvider";
 import useCurrentUser from "../../../api/hooks/useCurrentUser";
 import { Avatar, AvatarFallback } from "../../../components/Avatar/Avatar";
@@ -115,14 +115,14 @@ const ProfileImageForm = () => {
       {selectedFile && (
         <CropImageModal
           open={cropModalOpen}
-          onClose={() => setCropModalOpen(false)}
+          onOpenChange={() => setCropModalOpen(false)}
           file={selectedFile}
           onSubmit={onProfilePictureUpdateSubmit}
         />
       )}
-      <ConfirmDeleteModal
+      <ConfirmDeleteAvatarDialog
         open={deleteModalOpen}
-        onClose={() => setDeleteModalOpen(false)}
+        onOpenChange={setDeleteModalOpen}
         onConfirm={onClearProfilePicture}
       />
     </>

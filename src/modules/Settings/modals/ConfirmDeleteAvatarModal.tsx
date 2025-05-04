@@ -1,37 +1,37 @@
-import Modal from "../../../components/Modal";
+import Dialog from "../../../components/Dialog";
 import Button from "../../../components/ui/Button";
 
 interface ConfirmDeleteModalProps {
   open: boolean;
-  onClose: () => void;
+  onOpenChange: (open: boolean) => void;
   onConfirm: () => void;
 }
 
-const ConfirmDeleteModal = ({
+const ConfirmDeleteAvatarDialog = ({
   open,
-  onClose,
+  onOpenChange,
   onConfirm,
 }: ConfirmDeleteModalProps) => {
   return (
-    <Modal open={open} onClose={onClose}>
-      <div className="p-4 text-[#efeff1]">
-        <h2 className="text-xl font-bold mb-4 text-center">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <Dialog.Content>
+        <Dialog.Title className="text-xl text-center mb-4">
           Clear Profile Picture
-        </h2>
-        <p className="mb-6 text-center">
+        </Dialog.Title>
+        <p className="mb-4 text-center">
           Are you sure you want to remove your profile picture?
         </p>
         <div className="space-x-2 flex justify-end">
-          <Button variant={"secondary"} onClick={onClose}>
-            Cancel
-          </Button>
+          <Dialog.Close asChild>
+            <Button variant={"secondary"}>Cancel</Button>
+          </Dialog.Close>
           <Button value={"primary"} onClick={onConfirm}>
             Remove
           </Button>
         </div>
-      </div>
-    </Modal>
+      </Dialog.Content>
+    </Dialog>
   );
 };
 
-export default ConfirmDeleteModal;
+export default ConfirmDeleteAvatarDialog;

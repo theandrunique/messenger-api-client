@@ -11,7 +11,7 @@ import SimpleCard from "../components/SimpleCard";
 import FullScreenLoading from "../components/FullScreenLoading";
 import { useEffect, useState } from "react";
 import { useAuth } from "../components/AuthProvider";
-import Modal from "../components/Modal";
+import Dialog from "../components/Dialog";
 
 const schema = zod.object({
   login: zod.string().min(1, "Login is required"),
@@ -103,28 +103,31 @@ function SignInPage() {
           </SimpleCard>
         </div>
       </div>
-      <Modal open={isTotpMfaOpen} onClose={() => setIsTotpMfaOpen(false)}>
-        <div className="w-[500px] flex flex-col items-center p-4 text-[#efeff1]">
-          <h2 className="font-bold text-2xl text-center mb-4">
-            Welcome back {username} ({globalName})!
-          </h2>
-        </div>
-        <div className="px-8 pb-8 text-[#efeff1] flex flex-col items-center gap-2">
-          <p>Please enter the code from your authenticator app</p>
-          <div className="flex gap-2">
-            <Input {...register("totp")} type="text" placeholder="code" />
-            <Button
-              disabled={isSubmitting}
-              variant={"primary"}
-              onClick={handleSubmit(onSubmit)}
-            >
-              Submit
-            </Button>
+
+      <Dialog open={isTotpMfaOpen} onOpenChange={setIsTotpMfaOpen}>
+        <Dialog.Content>
+          <div className="w-[450px] flex flex-col items-center p-4 text-[#efeff1]">
+            <h2 className="font-bold text-2xl text-center mb-4">
+              Welcome back {username} ({globalName})!
+            </h2>
           </div>
-          <ErrorMessage message={errors.totp?.message} className="text-right" />
-          <ErrorMessage message={errors.root?.message} />
-        </div>
-      </Modal>
+          <div className="px-8 pb-8 text-[#efeff1] flex flex-col items-center gap-2">
+            <p>Please enter the code from your authenticator app</p>
+            <div className="flex gap-2">
+              <Input {...register("totp")} type="text" placeholder="code" />
+              <Button
+                disabled={isSubmitting}
+                variant={"primary"}
+                onClick={handleSubmit(onSubmit)}
+              >
+                Submit
+              </Button>
+            </div>
+            <ErrorMessage message={errors.totp?.message} className="text-right" />
+            <ErrorMessage message={errors.root?.message} />
+          </div>
+        </Dialog.Content>
+      </Dialog>
     </>
   );
 }

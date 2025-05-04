@@ -30,6 +30,7 @@ const DialogContent = React.forwardRef<
         ref={ref}
         className={cn(
           "relative",
+          "rounded-lg bg-[#18181b] p-4 text-[#efeff1]",
           "duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
           className
         )}
@@ -48,7 +49,7 @@ const DialogTitle = React.forwardRef<
   <DialogPrimitive.Title
     ref={ref}
     className={cn(
-      "text-lg font-semibold leading-none tracking-tight",
+      "text-xl font-semibold leading-none",
       className
     )}
     {...props}

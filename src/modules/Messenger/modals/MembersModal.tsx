@@ -1,28 +1,25 @@
-import { Outlet, useNavigate, useParams } from "react-router-dom";
-import Modal from "../../../components/Modal";
+import { useParams } from "react-router-dom";
 import { UserPublicSchema } from "../../../schemas/user";
 import { removeChannelMember } from "../../../api/api";
 import notifications from "../../../utils/notifications";
 import { useQueryClient } from "@tanstack/react-query";
 import { ApiError } from "../../../schemas/common";
 import Loading from "../../../components/Loading";
-import useUserChannels from "../../../api/hooks/useUserChannels";
 import SelectedUser from "../components/SelectedUser";
 import Button from "../../../components/ui/Button";
 import { useCurrentUserId } from "../../../components/CurrentUserProvider";
+import useSmartChannel from "../../../api/hooks/useSmartChannel";
+import Dialog from "../../../components/Dialog";
+import { useState } from "react";
+import AddChannelMembersDialog from "./AddChannelMembersModal";
 
-const MembersModal = () => {
+const MembersDialogContent = () => {
   const { channelId } = useParams();
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { data, isPending } = useUserChannels();
+  const { data, isPending } = useSmartChannel(channelId);
   const currentUserId = useCurrentUserId();
 
-  const onClose = () => navigate(-1);
-
-  const navigateToAddMembers = () => {
-    navigate("add-members");
-  };
+  const [isAddMembersDialogOpen, setIsAddMembersDialogOpen] = useState(false);
 
   const removeMember = async (member: UserPublicSchema) => {
     try {
@@ -39,54 +36,37 @@ const MembersModal = () => {
     }
   };
 
-  if (isPending || !data)
-    return (
-      <Modal open={true} onClose={onClose} closeOnOverlayClick={true}>
-        <Loading message="Loading" />
-      </Modal>
-    );
-
-  const channel = data.find((c) => c.id === channelId);
-
-  if (!channel) {
-    console.error("Channel not found");
-    return;
-  }
+  if (isPending || !data) return <Loading message="Loading" />;
 
   return (
     <>
-      <Modal
-        open={true}
-        onClose={onClose}
-        closeOnOverlayClick={true}
-        closeOnEsc={true}
-      >
-        <div className="w-[400px] text-[#efeff1]">
-          <div className="pt-3 px-5 font-semibold text-xl">Members</div>
+      <Dialog.Content>
+        <div className="w-[350px]">
+          <Dialog.Title className="mb-3">Members</Dialog.Title>
 
-          <div className="p-5">
-            <div className="flex flex-col gap-1 mb-5">
-              {channel.members.map((member) => (
-                <SelectedUser
-                  key={member.id}
-                  user={member}
-                  onRemove={currentUserId !== member.id ? () => removeMember(member) : undefined}
-                />
-              ))}
-            </div>
+          <div className="flex flex-col gap-1 mb-5">
+            {data.members.map((member) => (
+              <SelectedUser
+                key={member.id}
+                user={member}
+                onRemove={
+                  currentUserId !== member.id
+                    ? () => removeMember(member)
+                    : undefined
+                }
+              />
+            ))}
+          </div>
 
-            <div className="flex items-center">
-              <Button variant="secondary" onClick={navigateToAddMembers}>
-                Add members
-              </Button>
-            </div>
-
+          <div className="flex items-center">
+            <Button variant="secondary" onClick={() => setIsAddMembersDialogOpen(true)}>Add members</Button>
           </div>
         </div>
-      </Modal>
-      <Outlet />
+      </Dialog.Content>
+
+      <AddChannelMembersDialog open={isAddMembersDialogOpen} onOpenChange={setIsAddMembersDialogOpen} />
     </>
   );
 };
 
-export default MembersModal;
+export default MembersDialogContent;

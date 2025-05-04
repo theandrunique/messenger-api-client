@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import SelectedUser from "../components/SelectedUser";
 import Loading from "../../../components/Loading";
 import { useLayoutEffect, useState } from "react";
@@ -9,13 +9,18 @@ import Button from "../../../components/ui/Button";
 import { addChannelMember } from "../../../api/api";
 import { ApiError } from "../../../schemas/common";
 import notifications from "../../../utils/notifications";
-import Modal from "../../../components/Modal";
 import useSmartChannel from "../../../api/hooks/useSmartChannel";
+import Dialog from "../../../components/Dialog";
 
-const AddChannelMembersModal = () => {
+const AddChannelMembersDialog = ({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) => {
   const { channelId } = useParams();
   const [selectedUsers, setSelectedUsers] = useState<UserPublicSchema[]>([]);
-  const navigate = useNavigate();
   const { data, isPending } = useSmartChannel(channelId);
   const queryClient = useQueryClient();
 
@@ -26,7 +31,7 @@ const AddChannelMembersModal = () => {
       ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/users/@me/channels"] });
-      onClose();
+      onOpenChange(false);
     },
     onError: (err) => {
       if (err instanceof ApiError && err.message) {
@@ -35,8 +40,6 @@ const AddChannelMembersModal = () => {
       console.log("Error creating channel: ", err);
     },
   });
-
-  const onClose = () => navigate(-1);
 
   const removeUser = (userToRemove: UserPublicSchema) => {
     setSelectedUsers((prev) =>
@@ -49,8 +52,10 @@ const AddChannelMembersModal = () => {
   };
 
   useLayoutEffect(() => {
-    setSelectedUsers([]);
-  }, []);
+    if (open) {
+      setSelectedUsers([]);
+    }
+  }, [open]);
 
   if (!channelId) {
     console.error("Channel ID not found");
@@ -59,17 +64,22 @@ const AddChannelMembersModal = () => {
 
   if (isPending || !data)
     return (
-      <Modal open={true} onClose={onClose}>
-        <Loading message="Loading" />
-      </Modal>
+      <Dialog>
+        <Dialog.Content>
+          <Loading message="Loading" />;
+        </Dialog.Content>
+      </Dialog>
     );
 
   return (
-    <Modal open={true}>
-      <div className="w-[400px] text-[#efeff1]">
-        <div className="py-3 px-5 font-semibold text-xl">Add members</div>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <Dialog.Content
+        onEscapeKeyDown={(e) => e.preventDefault()}
+        onPointerDownOutside={(e) => e.preventDefault()}
+      >
+        <div className="w-[350px]">
+          <Dialog.Title className="mb-3">Add Members</Dialog.Title>
 
-        <div className="px-5 pb-3">
           <div className="w-full">
             {selectedUsers.length > 0 && (
               <div className="flex flex-wrap gap-1 mb-2 max-h-32 overflow-y-auto">
@@ -84,14 +94,19 @@ const AddChannelMembersModal = () => {
             )}
             <UsersSearchInput
               onSubmit={(user) => addUser(user)}
-              excludeIds={data.members.map((member) => member.id)}
+              excludeIds={data.members
+                .map((member) => member.id)
+                .concat(selectedUsers.map((m) => m.id))}
             />
           </div>
 
           <div className="w-full flex justify-end items-center mt-3 gap-2">
-            <Button variant={"secondary"} onClick={onClose}>
-              Cancel
-            </Button>
+            <Dialog.Close asChild>
+              <Button type="button" variant={"secondary"}>
+                Cancel
+              </Button>
+            </Dialog.Close>
+
             <Button
               onClick={() => mutate()}
               disabled={selectedUsers.length === 0 || isPendingMutation}
@@ -101,9 +116,9 @@ const AddChannelMembersModal = () => {
             </Button>
           </div>
         </div>
-      </div>
-    </Modal>
+      </Dialog.Content>
+    </Dialog>
   );
 };
 
-export default AddChannelMembersModal;
+export default AddChannelMembersDialog;

@@ -1,5 +1,4 @@
 import { useParams } from "react-router-dom";
-import Modal from "../../../components/Modal";
 import Loading from "../../../components/Loading";
 import useUserInfo from "../../../api/hooks/useUserInfo";
 import { Info } from "lucide-react";
@@ -10,13 +9,14 @@ import {
   UserAvatarFallback,
 } from "../../../components/Avatar/UserAvatar";
 import { Avatar } from "../../../components/Avatar/Avatar";
+import Dialog from "../../../components/Dialog";
 
 interface UserInfoModalProps {
   open: boolean;
-  onClose: () => void;
+  onOpenChange: (open: boolean) => void;
 }
 
-const UserInfoModal = ({ open, onClose }: UserInfoModalProps) => {
+const UserInfoModal = ({ open, onOpenChange }: UserInfoModalProps) => {
   const { channelId } = useParams();
   const { data, isPending } = useSmartChannel(channelId);
   const currentUserId = useCurrentUserId();
@@ -33,56 +33,55 @@ const UserInfoModal = ({ open, onClose }: UserInfoModalProps) => {
 
   if (isPending || !data || !userInfo) {
     return (
-      <Modal open={open} onClose={onClose} closeOnOverlayClick={true}>
-        <Loading message="Loading" />
-      </Modal>
+      <Dialog>
+        <Dialog.Content>
+          <Loading message="Loading" />
+        </Dialog.Content>
+      </Dialog>
     );
   }
 
   return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      closeOnOverlayClick={true}
-      closeOnEsc={true}
-    >
-      <div className="w-[400px] text-[#efeff1]">
-        <div className="py-3 px-5 font-semibold text-xl">User Info</div>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <Dialog.Content>
+        <div className="w-[370px] text-[#efeff1]">
+          <Dialog.Title>User info</Dialog.Title>
 
-        <div className="flex gap-5 items-center px-8 py-3">
-          <Avatar className="w-16 h-16">
-            <UserAvatar userId={userInfo.id} avatar={userInfo.avatar} />
-            <UserAvatarFallback username={userInfo.username} />
-          </Avatar>
-          <div className="flex flex-col gap-1">
-            <div className="font-semibold text-xl">{userInfo.username}</div>
-          </div>
-        </div>
-
-        <div className="px-5 flex gap-5 pb-5">
-          <div>
-            <Info className="w-8 h-8 mt-1" />
+          <div className="flex gap-5 items-center px-4 my-3">
+            <Avatar className="w-16 h-16">
+              <UserAvatar userId={userInfo.id} avatar={userInfo.avatar} />
+              <UserAvatarFallback username={userInfo.username} />
+            </Avatar>
+            <div className="flex flex-col gap-1">
+              <div className="font-semibold text-xl">{userInfo.username}</div>
+            </div>
           </div>
 
-          <div className="flex flex-col gap-3">
-            <div className="flex flex-col">
-              <span>@{userInfo.username}</span>
-              <span className="opacity-50">Username</span>
+          <div className="flex gap-5">
+            <div>
+              <Info className="w-8 h-8 mt-1" />
             </div>
-            <div className="flex flex-col">
-              <span>{userInfo.globalName}</span>
-              <span className="opacity-50">Global name</span>
-            </div>
-            {userInfo.bio && (
+
+            <div className="flex flex-col gap-3">
               <div className="flex flex-col">
-                <span>{userInfo.bio}</span>
-                <span className="opacity-50">Bio</span>
+                <span>@{userInfo.username}</span>
+                <span className="opacity-50">Username</span>
               </div>
-            )}
+              <div className="flex flex-col">
+                <span>{userInfo.globalName}</span>
+                <span className="opacity-50">Global name</span>
+              </div>
+              {userInfo.bio && (
+                <div className="flex flex-col">
+                  <span>{userInfo.bio}</span>
+                  <span className="opacity-50">Bio</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-    </Modal>
+      </Dialog.Content>
+    </Dialog>
   );
 };
 

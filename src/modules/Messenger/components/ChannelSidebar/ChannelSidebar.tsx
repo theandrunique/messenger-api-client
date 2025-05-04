@@ -93,7 +93,7 @@ const ChannelSidebar = ({ className, ...props }: ChannelSidebarProps) => {
       <CreateChannelModalForm
         onSubmit={(channel) => selectChannel(channel.id)}
         open={isCreateChannelModalOpen}
-        onClose={() => setIsCreateChannelModalOpen(false)}
+        onOpenChange={() => setIsCreateChannelModalOpen(false)}
       />
     </>
   );

@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import Modal from "../../../components/Modal";
 import SimpleCard from "../../../components/SimpleCard";
 import Button from "../../../components/ui/Button";
 import Input from "../../../components/ui/Input";
@@ -8,16 +7,17 @@ import notifications from "../../../utils/notifications";
 import { requestEmailVerificationCode, verifyEmail } from "../../../api/api";
 import { useLoadedCurrentUser } from "../../../components/CurrentUserProvider";
 import useCurrentUser from "../../../api/hooks/useCurrentUser";
+import Dialog from "../../../components/Dialog";
 
 interface EmailVerificationModalProps {
   open: boolean;
-  onClose: () => void;
+  onOpenChange: (open: boolean) => void;
   onSubmit?: () => void;
 }
 
 const EmailVerificationModal = ({
   open,
-  onClose,
+  onOpenChange,
   onSubmit,
 }: EmailVerificationModalProps) => {
   const [code, setCode] = useState("");
@@ -55,42 +55,44 @@ const EmailVerificationModal = ({
   };
 
   return (
-    <Modal open={open} onClose={onClose}>
-      <div className="p-4 px-10 text-[#efeff1] w-[400px] flex flex-col items-center gap-1">
-        <h2 className="font-bold text-2xl mb-4">Email Verification</h2>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <Dialog.Content>
+        <div className="p-4 px-10 text-[#efeff1] w-[350px] flex flex-col items-center gap-1">
+          <h2 className="font-bold text-2xl mb-4">Email Verification</h2>
 
-        <div className="w-full mb-2">
-          <div>Enter the code sent to your email:</div>
+          <div className="w-full mb-2">
+            <div>Enter the code sent to your email:</div>
+          </div>
+
+          <Input
+            type="text"
+            onChange={(e) => setCode(e.target.value)}
+            className="w-full"
+          />
+
+          <div className="flex w-full justify-end">
+            <Button
+              disabled={!code.trim() || isLoading}
+              variant={"primary"}
+              onClick={submitHandler}
+            >
+              {isLoading ? "Verifying..." : "Submit"}
+            </Button>
+          </div>
+
+          <div className="flex items-center justify-center">
+            <div className="text-md">Don't see the code?</div>
+            <Button
+              className="text-md"
+              variant={"link"}
+              onClick={handleCodeResend}
+            >
+              Resend code
+            </Button>
+          </div>
         </div>
-
-        <Input
-          type="text"
-          onChange={(e) => setCode(e.target.value)}
-          className="w-full"
-        />
-
-        <div className="flex w-full justify-end">
-          <Button
-            disabled={!code.trim() || isLoading}
-            variant={"primary"}
-            onClick={submitHandler}
-          >
-            {isLoading ? "Verifying..." : "Submit"}
-          </Button>
-        </div>
-
-        <div className="flex items-center justify-center">
-          <div className="text-md">Don't see the code?</div>
-          <Button
-            className="text-md"
-            variant={"link"}
-            onClick={handleCodeResend}
-          >
-            Resend code
-          </Button>
-        </div>
-      </div>
-    </Modal>
+      </Dialog.Content>
+    </Dialog>
   );
 };
 
@@ -142,7 +144,7 @@ const ContactsForm = () => {
 
       <EmailVerificationModal
         open={emailModalOpen}
-        onClose={() => setEmailModalOpen(false)}
+        onOpenChange={setEmailModalOpen}
         onSubmit={onEmailVerificationSuccess}
       />
     </>

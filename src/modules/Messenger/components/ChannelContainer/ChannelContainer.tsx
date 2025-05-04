@@ -2,19 +2,14 @@ import MessagesContainer from "./MessagesContainer";
 import MessageInputContainer from "../MessageInputContainer";
 import ChannelContainerHeader from "./ChannelContainerHeader";
 import MessageAttachmentsUploader from "../MessageAttachmentsUploader";
-import { Outlet, useNavigate, useParams } from "react-router-dom";
+import { Outlet, useParams } from "react-router-dom";
 import Loading from "../../../../components/Loading";
 import SelectChannelMessage from "./SelectChannelMessage";
 import useSmartChannel from "../../../../api/hooks/useSmartChannel";
 
 const ChannelContainer = () => {
   const { channelId } = useParams();
-  const navigate = useNavigate();
   const { data, isPending, isError, error } = useSmartChannel(channelId);
-
-  const openChannelInfoModal = () => {
-    navigate("info");
-  };
 
   if (channelId === undefined) return <SelectChannelMessage />;
 
@@ -35,7 +30,7 @@ const ChannelContainer = () => {
         className="flex flex-col h-full"
         channelId={channelId}
       >
-        <ChannelContainerHeader channel={data} onClick={openChannelInfoModal} />
+        <ChannelContainerHeader channel={data} />
         <MessagesContainer selectedChannel={data} />
         <MessageInputContainer channelId={channelId} />
       </MessageAttachmentsUploader>
