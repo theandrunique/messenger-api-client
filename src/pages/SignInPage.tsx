@@ -106,12 +106,12 @@ function SignInPage() {
 
       <Dialog open={isTotpMfaOpen} onOpenChange={setIsTotpMfaOpen}>
         <Dialog.Content>
-          <div className="w-[450px] flex flex-col items-center p-4 text-[#efeff1]">
+          <div className="w-[430px] flex flex-col items-center text-[#efeff1]">
             <h2 className="font-bold text-2xl text-center mb-4">
               Welcome back {username} ({globalName})!
             </h2>
           </div>
-          <div className="px-8 pb-8 text-[#efeff1] flex flex-col items-center gap-2">
+          <div className="text-[#efeff1] flex flex-col items-center gap-2">
             <p>Please enter the code from your authenticator app</p>
             <div className="flex gap-2">
               <Input {...register("totp")} type="text" placeholder="code" />
@@ -120,7 +120,7 @@ function SignInPage() {
                 variant={"primary"}
                 onClick={handleSubmit(onSubmit)}
               >
-                Submit
+                {isSubmitting ? "Submitting..." : "Submit"}
               </Button>
             </div>
             <ErrorMessage message={errors.totp?.message} className="text-right" />

@@ -79,26 +79,24 @@ const EnableTotpMfaModalForm = ({
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <Dialog.Content className="w-[450px]">
-          <div className="w-[450px] flex flex-col items-center p-4 px-16 text-[#efeff1]">
+          <div className="flex flex-col items-center px-16 text-[#efeff1]">
             <h2 className="font-bold text-2xl text-center mb-4">
               Enable Two-Factor Authentication
             </h2>
           </div>
 
-          <div className="px-4">
-            <p className="text-center text-md text-[#efeff1] mb-3">
-              Scan this QR code in your authenticator app:
-            </p>
-            <div className="w-full flex flex-col mb-3">
-              <QRCodeSVG className="w-full h-44" value={otpAuthUrl} />
-            </div>
-            <div className="w-full flex justify-center">
-              <Dialog.Close asChild>
-                <Button variant={"primary"}>
-                  Done
-                </Button>
-              </Dialog.Close>
-            </div>
+          <p className="text-center text-md text-[#efeff1] mb-3">
+            Scan this QR code in your authenticator app:
+          </p>
+          <div className="w-full flex flex-col mb-3">
+            <QRCodeSVG className="w-full h-44" value={otpAuthUrl} />
+          </div>
+          <div className="w-full flex justify-center">
+            <Dialog.Close asChild>
+              <Button variant={"primary"}>
+                Done
+              </Button>
+            </Dialog.Close>
           </div>
         </Dialog.Content>
       </Dialog>
@@ -109,13 +107,13 @@ const EnableTotpMfaModalForm = ({
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <Dialog.Content>
-          <div className="w-[500px] flex flex-col items-center p-4 px-16 text-[#efeff1]">
+          <div className="w-[450px] flex flex-col items-center px-16 text-[#efeff1]">
             <h2 className="font-bold text-2xl text-center mb-4">
               Enable Two-Factor Authentication
             </h2>
           </div>
 
-          <div className="px-8 pb-8">
+          <div className="px-4">
             <div className="text-center text-md text-[#efeff1] mb-3">
               Enter the code sent to{" "}
               <span className="font-semibold">{currentUser?.email}</span>:
@@ -156,13 +154,13 @@ const EnableTotpMfaModalForm = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <Dialog.Content>
-        <div className="w-[450px] flex flex-col items-center p-4 px-16 text-[#efeff1]">
+        <div className="w-[450px] flex flex-col items-center px-16 text-[#efeff1]">
           <h2 className="font-bold text-2xl text-center mb-4">
             Enable Two-Factor Authentication
           </h2>
         </div>
 
-        <div className="px-8 pb-8">
+        <div className="px-4">
           <div className="w-full flex flex-col">
             <Input
               type="password"

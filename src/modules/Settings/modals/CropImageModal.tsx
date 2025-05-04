@@ -33,9 +33,9 @@ const CropImageModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <Dialog.Content>
+      <Dialog.Content className="p-0">
         <div className="w-[550px]">
-          <Dialog.Title className="text-xl text-center">Update Profile Picture</Dialog.Title>
+          <Dialog.Title className="text-xl text-center my-3">Update Profile Picture</Dialog.Title>
 
           <ImageCropper
             ref={cropperRef}
