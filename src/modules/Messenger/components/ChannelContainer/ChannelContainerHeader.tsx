@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Button from "../../../../components/ui/Button";
 import { ChannelSchema, ChannelType } from "../../../../schemas/channel";
-import { MoreHorizontal, Settings2, LogOut, Users } from "lucide-react";
+import { MoreHorizontal, Settings2, LogOut, Users, Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import UserInfoModal from "../../modals/UserInfoModal";
 import { ArrowLeft } from "lucide-react";
@@ -18,6 +18,7 @@ import {
 } from "../../../../components/Avatar/ChannelImage";
 import Tooltip from "../../../../components/Tooltip";
 import DropdownMenu from "../../../../components/DropdownMenu";
+import Dialog from "../../../../components/Dialog";
 
 const ChannelMenuButton = () => {
   const navigate = useNavigate();
@@ -171,6 +172,17 @@ const ChannelContainerHeader = ({
             </h5>
           </div>
         </div>
+
+        <Dialog>
+          <Dialog.Trigger>
+            <Button>
+              <Menu />
+            </Button>
+          </Dialog.Trigger>
+          <Dialog.Content>
+            <div className="w-96 h-96 bg-white">lol</div>
+          </Dialog.Content>
+        </Dialog>
 
         <ChannelMenuButton />
       </div>
