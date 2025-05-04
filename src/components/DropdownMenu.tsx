@@ -6,7 +6,6 @@ import {
   cloneElement,
   ReactElement,
   HTMLAttributes,
-  useLayoutEffect,
 } from "react";
 import cn from "../utils/cn";
 import {
@@ -22,7 +21,6 @@ import {
   useRole,
   useTransitionStyles,
 } from "@floating-ui/react";
-import { TooltipContext } from "./Tooltip";
 
 const DropdownMenuContext = createContext<{
   open: boolean;
@@ -103,19 +101,6 @@ const DropdownMenuTrigger = ({ children }: DropdownMenuTriggerProps) => {
   const ctx = useContext(DropdownMenuContext);
   if (!ctx)
     throw new Error("DropdownMenuTrigger must be used within DropdownMenu");
-
-  const tooltip = useContext(TooltipContext);
-
-  useLayoutEffect(() => {
-    if (tooltip) {
-      tooltip.setDisabled(ctx.open);
-    }
-    return () => {
-      if (tooltip) {
-        tooltip.disabled = false;
-      }
-    };
-  }, [ctx.open]);
 
   return cloneElement(children, {
     ...ctx.getReferenceProps(),

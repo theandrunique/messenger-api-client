@@ -43,15 +43,13 @@ const ChannelMenuButton = () => {
 
   return (
     <DropdownMenu placement="bottom-end">
-      <Tooltip placement="bottom">
-        <Tooltip.Trigger>
-          <DropdownMenu.Trigger>
-            <Button variant="icon" className="p-1">
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenu.Trigger>
+      <Tooltip>
+        <Tooltip.Trigger asChild>
+          <Button variant="icon" className="p-1">
+            <MoreHorizontal />
+          </Button>
         </Tooltip.Trigger>
-        <Tooltip.Content>Menu</Tooltip.Content>
+        <Tooltip.Content side="bottom">Menu</Tooltip.Content>
       </Tooltip>
 
       <DropdownMenu.Content className="w-42">
