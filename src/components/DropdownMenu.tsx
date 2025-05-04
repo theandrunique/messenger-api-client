@@ -1,153 +1,56 @@
-import {
-  createContext,
-  PropsWithChildren,
-  useState,
-  useContext,
-  cloneElement,
-  ReactElement,
-  HTMLAttributes,
-} from "react";
+import * as React from "react";
+import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import cn from "../utils/cn";
-import {
-  autoUpdate,
-  flip,
-  offset,
-  Placement,
-  shift,
-  useClick,
-  useDismiss,
-  useFloating,
-  useInteractions,
-  useRole,
-  useTransitionStyles,
-} from "@floating-ui/react";
+import Button from "./ui/Button";
 
-const DropdownMenuContext = createContext<{
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setFloating: (node: HTMLElement | null) => void;
-  setReference: (node: HTMLElement | null) => void;
-  x: number | null;
-  y: number | null;
-  getReferenceProps: (
-    userProps?: React.HTMLProps<Element>
-  ) => Record<string, unknown>;
-  getFloatingProps: (
-    userProps?: React.HTMLProps<HTMLElement>
-  ) => Record<string, unknown>;
-  transitionStyles: React.CSSProperties;
-  isMounted: boolean;
-} | null>(null);
+const DropdownMenuContent = React.forwardRef<
+  React.ElementRef<typeof DropdownMenuPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content>
+>(({ className, sideOffset = 0, collisionPadding = 5, ...props }, ref) => (
+  <DropdownMenuPrimitive.Portal>
+    <DropdownMenuPrimitive.Content
+      ref={ref}
+      sideOffset={sideOffset}
+      collisionPadding={collisionPadding}
+      className={cn(
+        "z-50 max-h-[var(--radix-dropdown-menu-content-available-height)] min-w-[8rem]",
+        "overflow-y-auto overflow-x-hidden rounded-md p-1",
+        "bg-[#18181b] shadow-[0_8px_30px_rgb(0,0,0,0.8)]",
+        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+        "data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-dropdown-menu-content-transform-origin]",
+        className
+      )}
+      {...props}
+    />
+  </DropdownMenuPrimitive.Portal>
+));
 
-interface DropdownMenuProps extends PropsWithChildren {
-  placement: Placement;
+const DropdownMenuItem = React.forwardRef<
+  React.ElementRef<typeof DropdownMenuPrimitive.Item>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item>
+>(({ children, className, ...props }, ref) => (
+  <DropdownMenuPrimitive.Item ref={ref} {...props}>
+    {children}
+  </DropdownMenuPrimitive.Item>
+));
+
+interface DropdownMenuButtonProps extends React.PropsWithChildren {
+  onClick?: () => void;
 }
 
-export const DropdownMenu = ({
-  children,
-  placement = "bottom",
-}: DropdownMenuProps) => {
-  const [open, setOpen] = useState(false);
-
-  const data = useFloating({
-    open,
-    onOpenChange: setOpen,
-    placement,
-    middleware: [offset(0), flip(), shift({ padding: 5 })],
-    whileElementsMounted: autoUpdate,
-  });
-
-  const { getReferenceProps, getFloatingProps } = useInteractions([
-    useClick(data.context),
-    useDismiss(data.context),
-    useRole(data.context, { role: "menu" }),
-  ]);
-
-  const { styles: transitionStyles, isMounted } = useTransitionStyles(
-    data.context,
-    {
-      initial: {
-        opacity: 0,
-        transform: "scale(0.9)",
-      },
-      duration: 200,
-    }
-  );
-  return (
-    <DropdownMenuContext.Provider
-      value={{
-        open,
-        setOpen,
-        setReference: data.refs.setReference,
-        setFloating: data.refs.setFloating,
-        x: data.x,
-        y: data.y,
-        getReferenceProps: getReferenceProps,
-        getFloatingProps: getFloatingProps,
-        transitionStyles,
-        isMounted,
-      }}
-    >
+const DropdownMenuButton = ({ children, onClick }: DropdownMenuButtonProps) => (
+  <DropdownMenu.Item asChild onSelect={onClick}>
+    <Button variant="icon" className="flex items-center gap-2 whitespace-nowrap">
       {children}
-    </DropdownMenuContext.Provider>
-  );
-};
+    </Button>
+  </DropdownMenu.Item>
+);
 
-interface DropdownMenuTriggerProps {
-  children: ReactElement;
-}
-
-const DropdownMenuTrigger = ({ children }: DropdownMenuTriggerProps) => {
-  const ctx = useContext(DropdownMenuContext);
-  if (!ctx)
-    throw new Error("DropdownMenuTrigger must be used within DropdownMenu");
-
-  return cloneElement(children, {
-    ...ctx.getReferenceProps(),
-    ref: ctx.setReference,
-  });
-};
-
-interface DropdownMenuContent extends HTMLAttributes<HTMLDivElement> {}
-
-const DropdownMenuContent = ({
-  children,
-  className,
-  ...props
-}: DropdownMenuContent) => {
-  const ctx = useContext(DropdownMenuContext);
-  if (!ctx)
-    throw new Error("DropdownMenuContent must be used within DropdownMenu");
-
-  if (!ctx.isMounted || ctx.x == null || ctx.y == null) return null;
-
-  return (
-    <div
-      ref={ctx.setFloating}
-      {...ctx.getFloatingProps({
-        style: {
-          position: "absolute",
-          top: ctx.y,
-          left: ctx.x,
-          zIndex: 1,
-        },
-      })}
-    >
-      <div
-        className={cn(
-          "bg-[#18181b] rounded-md shadow-[0_8px_30px_rgb(0,0,0,0.8)]",
-          className
-        )}
-        style={ctx.transitionStyles}
-        {...props}
-      >
-        {children}
-      </div>
-    </div>
-  );
-};
-
-DropdownMenu.Content = DropdownMenuContent;
-DropdownMenu.Trigger = DropdownMenuTrigger;
+const DropdownMenu = Object.assign(DropdownMenuPrimitive.Root, {
+  Item: DropdownMenuItem,
+  Content: DropdownMenuContent,
+  Trigger: DropdownMenuPrimitive.Trigger,
+  Button: DropdownMenuButton,
+});
 
 export default DropdownMenu;

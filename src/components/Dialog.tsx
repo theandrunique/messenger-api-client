@@ -1,140 +1,78 @@
-import {
-  createContext,
-  PropsWithChildren,
-  useContext,
-  cloneElement,
-  ReactElement,
-  useMemo,
-  ReactNode,
-  useState,
-} from "react";
-import {
-  autoUpdate,
-  FloatingFocusManager,
-  FloatingOverlay,
-  FloatingPortal,
-  useClick,
-  useDismiss,
-  useFloating,
-  useInteractions,
-  useRole,
-  useTransitionStyles,
-} from "@floating-ui/react";
+import * as React from "react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import cn from "../utils/cn";
+import Button from "./ui/Button";
+import { X } from "lucide-react";
 
-interface DialogOptions {
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-}
+const DialogOverlay = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Overlay>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
+>(({ className, ...props }, ref) => (
+  <DialogPrimitive.Overlay
+    ref={ref}
+    className={cn(
+      "fixed inset-0 z-50 grid place-content-center overflow-auto",
+      "bg-black/80",
+      "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      className
+    )}
+    {...props}
+  />
+));
 
-const useDialog = ({ open, onOpenChange }: DialogOptions) => {
-  const isControlled = open !== undefined;
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
-  const actualOpen = isControlled ? open : uncontrolledOpen;
-  const setOpen = isControlled ? onOpenChange : setUncontrolledOpen;
-
-  const data = useFloating({
-    open: actualOpen,
-    onOpenChange: setOpen,
-    whileElementsMounted: autoUpdate,
-  });
-
-  const click = useClick(data.context);
-  const dismiss = useDismiss(data.context, {
-    outsidePressEvent: "mousedown",
-  });
-  const role = useRole(data.context);
-
-  const interactions = useInteractions([click, dismiss, role]);
-
-  const transitionStyles = useTransitionStyles(data.context, {
-    initial: {
-      opacity: 0,
-      transform: "scale(0.9)",
-    },
-    duration: 200,
-  });
-
-  return useMemo(
-    () => ({
-      open: actualOpen,
-      onOpenChange: setOpen,
-      ...interactions,
-      ...data,
-      ...transitionStyles,
-    }),
-    [actualOpen, setOpen, interactions, data, transitionStyles]
-  );
-};
-
-type ContextType = ReturnType<typeof useDialog> | null;
-
-const DialogContext = createContext<ContextType | null>(null);
-
-const useDialogContext = () => {
-  const context = useContext(DialogContext);
-  if (!context)
-    throw new Error("Dialog components must be wrapped in <Dialog />");
-  return context;
-};
-
-const Dialog = ({
-  children,
-  ...options
-}: DialogOptions & { children: ReactNode }) => {
-  const dialog = useDialog(options);
-  return (
-    <DialogContext.Provider value={dialog}>{children}</DialogContext.Provider>
-  );
-};
-
-interface DialogTriggerProps {
-  children: ReactElement;
-}
-
-const DialogTrigger = ({ children }: DialogTriggerProps) => {
-  const context = useDialogContext();
-  return cloneElement(
-    children,
-    context.getReferenceProps({
-      ref: context.refs.setReference,
-    })
-  );
-};
-
-interface DialogContentProps extends PropsWithChildren {}
-
-const DialogContent = ({ children }: DialogContentProps) => {
-  const context = useDialogContext();
-
-  if (!context.isMounted) return null;
-
-  return (
-    <FloatingPortal>
-      <FloatingOverlay
-        lockScroll
+const DialogContent = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
+>(({ className, children, ...props }, ref) => (
+  <DialogPrimitive.DialogPortal>
+    <DialogOverlay>
+      <DialogPrimitive.Content
+        ref={ref}
         className={cn(
-          "fixed inset-0 z-50 grid place-content-center",
-          "bg-black/80",
-          "transition-opacity duration-200 ease-in-out",
-          "data-[state=open]:opacity-100 data-[state=closed]:opacity-0",
+          "relative",
+          "duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+          className
         )}
+        {...props}
       >
-        <FloatingFocusManager context={context.context}>
-          <div
-            ref={context.refs.setFloating}
-            {...context.getFloatingProps()}
-            style={context.styles}
-          >
-            {children}
-          </div>
-        </FloatingFocusManager>
-      </FloatingOverlay>
-    </FloatingPortal>
+        {children}
+      </DialogPrimitive.Content>
+    </DialogOverlay>
+  </DialogPrimitive.DialogPortal>
+));
+
+const DialogTitle = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Title>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
+>(({ className, ...props }, ref) => (
+  <DialogPrimitive.Title
+    ref={ref}
+    className={cn(
+      "text-lg font-semibold leading-none tracking-tight",
+      className
+    )}
+    {...props}
+  />
+));
+
+const DialogCloseButton = () => {
+  return (
+    <div className="absolute top-2.5 right-2.5">
+      <DialogPrimitive.Close asChild>
+        <Button className="p-1" variant={"icon"}>
+          <X className="w-5 h-5" />
+        </Button>
+      </DialogPrimitive.Close>
+    </div>
   );
 };
 
-Dialog.Trigger = DialogTrigger;
-Dialog.Content = DialogContent;
+const Dialog = Object.assign(DialogPrimitive.Root, {
+  Trigger: DialogPrimitive.Trigger,
+  Content: DialogContent,
+  Close: DialogPrimitive.Close,
+  CloseButton: DialogCloseButton,
+  Title: DialogTitle,
+});
 
 export default Dialog;

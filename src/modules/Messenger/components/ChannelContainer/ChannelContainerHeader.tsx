@@ -42,30 +42,25 @@ const ChannelMenuButton = () => {
   ];
 
   return (
-    <DropdownMenu placement="bottom-end">
+    <DropdownMenu>
       <Tooltip>
         <Tooltip.Trigger asChild>
-          <Button variant="icon" className="p-1">
-            <MoreHorizontal />
-          </Button>
+          <DropdownMenu.Trigger asChild>
+            <Button variant="icon">
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenu.Trigger>
         </Tooltip.Trigger>
         <Tooltip.Content side="bottom">Menu</Tooltip.Content>
       </Tooltip>
 
-      <DropdownMenu.Content className="w-42">
-        <div className="flex flex-col p-1 gap-1">
+      <DropdownMenu.Content>
+        <div className="flex flex-col">
           {menuButtons.map((button, i) => (
-            <Button
-              key={i}
-              variant="icon"
-              className="whitespace-nowrap"
-              onClick={button.onClick}
-            >
-              <div className="flex items-center gap-2">
-                <button.icon className="w-5 h-5" />
-                <div>{button.content}</div>
-              </div>
-            </Button>
+            <DropdownMenu.Button key={i} onClick={button.onClick}>
+              <button.icon className="w-5 h-5" />
+              <div>{button.content}</div>
+            </DropdownMenu.Button>
           ))}
         </div>
       </DropdownMenu.Content>
@@ -172,12 +167,16 @@ const ChannelContainerHeader = ({
         </div>
 
         <Dialog>
-          <Dialog.Trigger>
+          <Dialog.Trigger asChild>
             <Button>
               <Menu />
             </Button>
           </Dialog.Trigger>
-          <Dialog.Content>
+          <Dialog.Content
+            onEscapeKeyDown={(e) => e.preventDefault()}
+            onPointerDownOutside={(e) => e.preventDefault()}
+          >
+            <Dialog.CloseButton />
             <div className="w-96 h-96 bg-white">lol</div>
           </Dialog.Content>
         </Dialog>
