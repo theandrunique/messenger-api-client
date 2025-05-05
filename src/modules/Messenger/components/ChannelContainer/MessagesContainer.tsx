@@ -27,7 +27,8 @@ const MessagesContainer = ({ selectedChannel }: MessagesContainerProps) => {
   const scrollPositionsRef = useRef(new Map<string, number>());
 
   useGatewayEvents({
-    [GatewayEventType.MESSAGE_CREATE]: (_) => {
+    [GatewayEventType.MESSAGE_CREATE]: (e) => {
+      if (e.message.channelId !== selectedChannel.id) return;
       const container = containerRef.current;
       if (!container || !bottomRef.current) return;
 
@@ -39,7 +40,7 @@ const MessagesContainer = ({ selectedChannel }: MessagesContainerProps) => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
       });
     },
-  });
+  }, [selectedChannel]);
 
   // Restore scroll position
   useEffect(() => {

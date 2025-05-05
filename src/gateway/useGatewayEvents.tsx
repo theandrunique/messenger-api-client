@@ -2,7 +2,10 @@ import { useEffect, useRef } from "react";
 import { GatewayEventHandlers } from "./types";
 import { useGateway } from "../components/GatewayProvider";
 
-const useGatewayEvents = (handlers?: Partial<GatewayEventHandlers>) => {
+const useGatewayEvents = (
+  handlers?: Partial<GatewayEventHandlers>,
+  deps?: React.DependencyList
+) => {
   const { socket } = useGateway();
   const handlersRef = useRef(handlers);
 
@@ -23,7 +26,7 @@ const useGatewayEvents = (handlers?: Partial<GatewayEventHandlers>) => {
         socket.off(event, handler as any);
       });
     };
-  }, [socket]);
+  }, [socket, deps]);
 };
 
 export default useGatewayEvents;
