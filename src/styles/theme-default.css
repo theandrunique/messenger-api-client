@@ -1,0 +1,18 @@
+:root {
+  --color-text-base: #efeff1;
+  --color-text-error: @apply text-red-600;
+
+  --color-button-primary: #9147ff;
+  --color-button-primary-hover: #772ce8;
+  --color-button-primary-active: initial;
+
+  --color-button-secondary: #2f2f35;
+  --color-button-secondary-hover: #35353b;
+  --color-button-secondary-active: initial;
+
+  --color-button-icon: transparent;
+  --color-button-icon-hover: #35353b;
+  --color-button-icon-active: initial;
+
+  --color-input-border: initial;
+}

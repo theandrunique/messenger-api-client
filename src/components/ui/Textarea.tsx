@@ -18,6 +18,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
           bg-[#18181b]
           text-[#efeff1]
           outline-none
+          placeholder:text-[#9d9d9e]
           focus:outline-[3px]
           focus:outline-[#a970ff]
           focus:outline-offset-0

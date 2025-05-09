@@ -12,7 +12,7 @@ const ErrorMessage = ({ message, className, ...props }: ErrorMessageProps) => {
     <p 
       className={cn(`
         text-sm
-      text-red-600`,
+        text-red-600`,
         className
       )}
       {...props}

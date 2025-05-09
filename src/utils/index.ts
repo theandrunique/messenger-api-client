@@ -11,3 +11,15 @@ export const selectBiggest = (a: string | null, b: string | null) => {
   if (b === null) return a;
   return BigInt(a) > BigInt(b) ? a : b;
 };
+
+export const switchTheme = async (theme: "default") => {
+  await import(`../styles/theme-${theme}.css`);
+
+  document.documentElement.classList.forEach((cls) => {
+    if (cls.startsWith('theme-')) {
+      document.documentElement.classList.remove(cls);
+    }
+  });
+
+  document.documentElement.classList.add(`theme-${theme}`);
+}

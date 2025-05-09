@@ -1,0 +1,21 @@
+:root {
+  --color-text-base: initial;
+  --color-text-error: initial;
+
+  --color-button-primary: initial;
+  --color-button-primary-hover: initial;
+  --color-button-primary-active: initial;
+
+  --color-button-secondary: initial;
+  --color-button-secondary-hover: initial;
+  --color-button-secondary-active: initial;
+
+  --color-button-icon: initial;
+  --color-button-icon-hover: initial;
+  --color-button-icon-active: initial;
+
+  --color-input-border: initial;
+  --color-input-border-focused: initial;
+  --color-input-bg: initial;
+  --color-input-placeholder: initial;
+}

@@ -5,9 +5,9 @@ import cn from "../../utils/cn";
 const buttonVariants = cva("", {
   variants: {
     variant: {
-      primary: "bg-[#9147ff] hover:bg-[#772ce8]",
-      secondary: "bg-[#2f2f35] hover:bg-[#35353b]",
-      icon: "bg-transparent hover:bg-[#35353b] p-1",
+      primary: "bg-[var(--color-button-primary)] hover:bg-[var(--color-button-primary-hover)]",
+      secondary: "bg-[var(--color-button-secondary)] hover:bg-[var(--color-button-secondary-hover)]",
+      icon: "bg-[var(--color-button-icon)] hover:bg-[var(--color-button-icon-hover)] p-1",
       destructive: "",
       link: "hover:underline",
     },
@@ -29,7 +29,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           px-2
           py-1
           text-sm
-          text-[#efeff1]
+          text-[var(--color-text-base)]
           rounded-[4px]
           font-semibold
           disabled:opacity-50
