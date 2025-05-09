@@ -83,7 +83,7 @@ const MessagesContainer = ({ selectedChannel }: MessagesContainerProps) => {
     <div
       ref={containerRef}
       onScroll={!isPending ? handleAutoLoadOnScroll : undefined}
-      className="messages-container flex-1 p-4 overflow-y-auto bg-[#0e0e10]"
+      className="messages-container flex-1 px-3 overflow-y-auto bg-[#0e0e10]"
     >
       {isPending ? (
         <Loading message="Loading messages" />

@@ -3,7 +3,9 @@ import { MessageSchema, MessageType } from "../../../../schemas/message";
 
 export const isMetaMessage = (messageType: MessageType): boolean => {
   return (
-    messageType !== MessageType.DEFAULT && messageType !== MessageType.REPLY
+    messageType !== MessageType.DEFAULT
+    && messageType !== MessageType.REPLY
+    && messageType !== MessageType.FORWARD
   );
 };
 

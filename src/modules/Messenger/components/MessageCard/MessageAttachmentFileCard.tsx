@@ -1,5 +1,5 @@
 import { AttachmentSchema } from "../../../../schemas/message";
-import { File, Music } from "lucide-react";
+import { File, Play } from "lucide-react";
 
 const formatFileSize = (size: number) => {
   if (size < 1024) return `${size} B`;
@@ -30,19 +30,21 @@ const MessageAttachmentFileCard = ({
     }
 
     return isAudio ? (
-      <Music className="w-8 h-8 text-[#9147ff]" />
+      <Play className="w-5 h-5 text-white" fill="white" />
     ) : (
-      <File className="w-8 h-8 text-[#9147ff]" />
+      <File className="w-5 h-5 text-white" />
     );
   };
 
   return (
     <div
-      className="flex gap-2 items-center w-full px-3 py-2 rounded-lg bg-[#2a2a2e] hover:bg-opacity-90 cursor-pointer transition"
+      className="flex gap-2.5 items-center min-w-48 cursor-pointer"
       onClick={handleClick}
     >
-      {renderPreview()}
-      <div className="flex flex-col">
+      <div className="rounded-full bg-[#2a2a2e] p-3">
+        {renderPreview()}
+      </div>
+      <div className="flex flex-col overflow-hidden">
         <div className="text-[#efeff1] text-sm font-medium truncate">
           {attachment.filename}
         </div>

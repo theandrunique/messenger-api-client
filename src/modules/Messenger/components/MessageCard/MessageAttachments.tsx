@@ -1,12 +1,12 @@
 import { AttachmentSchema } from "../../../../schemas/message";
+import MediaGrid from "./MediaGrid";
 import MessageAttachmentFileCard from "./MessageAttachmentFileCard";
-import MediaGrid from "./MessageAttachmentMediaGrid";
 
-const MessageAttachments = ({
-  attachments,
-}: {
+interface MessageAttachmentsProps {
   attachments: AttachmentSchema[];
-}) => {
+}
+
+const MessageAttachments = ({ attachments }: MessageAttachmentsProps) => {
   const imagesAndVideos = attachments.filter(
     (a) =>
       a.contentType.startsWith("image/") || a.contentType.startsWith("video/")
@@ -20,7 +20,7 @@ const MessageAttachments = ({
   );
 
   return (
-    <div className="mb-2 space-y-2">
+    <div className="space-y-2">
       {imagesAndVideos.length > 0 && (
         <MediaGrid attachments={imagesAndVideos} />
       )}

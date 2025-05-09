@@ -3,7 +3,6 @@ import { ChannelSchema, ChannelType } from "../../../../schemas/channel";
 import { UserPublicSchema } from "../../../../schemas/user";
 import { Check, CheckCheck, Users } from "lucide-react";
 import { useCurrentUserId } from "../../../../components/CurrentUserProvider";
-import { isMetaMessage, renderMetaMessageText } from "../MessageCard/utils.tsx";
 import { compareIds } from "../../../../utils";
 import {
   SavedMessagesIcon,
@@ -15,6 +14,7 @@ import {
   ChannelImage,
   ChannelImageFallback,
 } from "../../../../components/Avatar/ChannelImage.tsx";
+import { isMetaMessage, renderMetaMessageText } from "../MessageCard/utils.ts";
 
 const ReadStatus = ({
   channel,

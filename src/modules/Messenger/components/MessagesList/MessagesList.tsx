@@ -1,7 +1,7 @@
 import { ChannelSchema } from "../../../../schemas/channel";
 import { MessageSchema } from "../../../../schemas/message";
-import MessageCard from "../MessageCard";
-import { isMetaMessage } from "../MessageCard/utils.tsx";
+import { isMetaMessage } from "../MessageCard/utils.ts";
+import MessageGroup from "../MessageGroup/MessageGroup.tsx";
 import DateDivider from "./DateDivider";
 
 const groupMessagesByAuthor = (
@@ -36,17 +36,16 @@ const groupMessagesByAuthor = (
 };
 
 const groupMessagesByDate = (messages: MessageSchema[]) => {
-  const groupedMessagesByDate = messages.reduce(
-    (acc, message) => {
-      const dateKey = new Date(message.timestamp).toDateString();
-      if (!acc[dateKey]) {
-        acc[dateKey] = [];
-      }
-      acc[dateKey].push(message);
-      return acc;
-    },
-    {} as Record<string, typeof messages>
-  );
+  const groupedMessagesByDate = messages.reduce<
+    Record<string, MessageSchema[]>
+  >((acc, message) => {
+    const dateKey = new Date(message.timestamp).toDateString();
+    if (!acc[dateKey]) {
+      acc[dateKey] = [];
+    }
+    acc[dateKey].push(message);
+    return acc;
+  }, {});
   return Object.entries(groupedMessagesByDate);
 };
 
@@ -60,7 +59,7 @@ const MessagesList = ({ messages, channel, bottomRef }: MessagesListProps) => {
   const messageGroupsByDate = groupMessagesByDate(messages);
 
   return (
-    <div className="flex flex-col-reverse">
+    <div className="flex flex-col-reverse gap-2 mt-2">
       <div ref={bottomRef}></div>
       {messageGroupsByDate.map(([date, messages]) => {
         const authorGroups = groupMessagesByAuthor(messages);
@@ -68,18 +67,9 @@ const MessagesList = ({ messages, channel, bottomRef }: MessagesListProps) => {
         return (
           <div key={date}>
             <DateDivider timestamp={messages[0].timestamp} />
-            <div className="flex flex-col-reverse">
+            <div className="flex flex-col-reverse gap-2">
               {authorGroups.map((group) =>
-                group.map((message, index) => (
-                  <MessageCard
-                    key={message.id}
-                    message={message}
-                    channelType={channel.type}
-                    lastReadAt={channel.maxReadMessageId as string}
-                    showAvatar={index === 0}
-                    showUsername={index === group.length - 1}
-                  />
-                ))
+                <MessageGroup messages={group} channel={channel} />
               )}
             </div>
           </div>

@@ -12,8 +12,8 @@ const getDateString = (timestamp: string): string => {
 
 const DateDivider = ({ timestamp: date }: DateDividerProps) => {
   return (
-    <div className="flex w-auto items-center justify-center rounded-full sticky top-0 z-10 pointer-events-none">
-      <div className="px-3 mb-1 py-1 bg-[#1f1f23]/80 rounded-full text-white text-xs font-semibold shadow-lg">
+    <div className="flex w-auto items-center justify-center rounded-full sticky top-2 z-10 pointer-events-none">
+      <div className="px-3 mb-2 py-1 bg-[#1f1f23]/80 rounded-full text-white text-xs font-semibold shadow-lg">
         {getDateString(date)}
       </div>
     </div>

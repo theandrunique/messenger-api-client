@@ -1,7 +1,7 @@
 import { Avatar } from "../../../../components/Avatar/Avatar.tsx";
 import { ChannelImage } from "../../../../components/Avatar/ChannelImage.tsx";
 import { MessageSchema, MessageType } from "../../../../schemas/message";
-import { renderMetaMessageText } from "./utils.tsx";
+import { renderMetaMessageText } from "./utils";
 
 const MetaMessage = ({ message }: { message: MessageSchema }) => {
   return (
