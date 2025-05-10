@@ -58,17 +58,20 @@ interface MessagesListProps {
 }
 
 const MessagesList = ({ messages, channel, bottomRef }: MessagesListProps) => {
-  const [isWideLayout, setIsWideLayout] = useState(false);
+  const getInitialWide = () => {
+    if (typeof window !== "undefined") {
+      return window.innerWidth > 800;
+    }
+    return false;
+  };
+  const [isWideLayout, setIsWideLayout] = useState(getInitialWide);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     const observer = new ResizeObserver(([entry]) => {
-      const width = entry.contentRect.width;
-      setIsWideLayout(width > 800);
+      setIsWideLayout(entry.contentRect.width > 800);
     });
-
     if (containerRef.current) observer.observe(containerRef.current);
-
     return () => observer.disconnect();
   }, []);
 
