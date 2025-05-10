@@ -9,6 +9,10 @@ import RepliedMessage from "./RepliedMessage";
 import { useMessageDeleteModal } from "./MessageDeleteModal";
 import { useEditMessage } from "../EditMessageProvider";
 
+function isDefined<T>(value: T): value is NonNullable<T> {
+  return value !== undefined && value !== null;
+}
+
 function getBubbleBorderRadius({
   forceLeftAlign,
   isOwnMessage,
@@ -78,19 +82,19 @@ const MessageCard = ({
       onClick: () => replyContext.setReplyMessage(message),
       icon: CornerUpLeft,
     },
+    isOwnMessage
+      ? {
+          content: "Edit",
+          onClick: () => editMessage.set(message),
+          icon: Pencil,
+        }
+      : undefined,
     {
+      content: "Delete",
       onClick: () => deleteModal.open(message),
       icon: Trash,
-      content: "Delete",
     },
-  ];
-
-  if (isOwnMessage)
-    contextMenuButtons.push({
-      content: "Edit",
-      onClick: () => editMessage.set(message),
-      icon: Pencil,
-    });
+  ].filter(isDefined);
 
   return (
     <div
