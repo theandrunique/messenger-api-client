@@ -82,7 +82,7 @@ const MessageCard = ({
           maxWidth: "min(90%, 28rem)",
         }}
       >
-        {(!isOwnMessage && isFirstInGroup) && (
+        {!isOwnMessage && isFirstInGroup && (
           <div className={`font-semibold leading-none`}>
             {message.author.globalName}
           </div>

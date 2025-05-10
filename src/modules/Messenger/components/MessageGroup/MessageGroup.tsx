@@ -40,7 +40,7 @@ const MessageGroup = ({ messages, channel, isWideLayout }: MessageGroupProps) =>
         </div>
       )}
 
-      <div className="flex flex-col-reverse gap-0.5 w-full">
+      <div className="flex flex-col-reverse gap-0.5 grow min-w-0">
         {messages.map((message, i) => (
           <MessageCard
             message={message}
