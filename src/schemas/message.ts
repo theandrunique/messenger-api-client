@@ -32,6 +32,7 @@ export interface MessageSchema {
   author: UserPublicSchema;
   targetUser: UserPublicSchema | null;
   attachments: AttachmentSchema[];
+  referencedMessage: MessageSchema;
   metadata: Record<string, string>;
 }
 

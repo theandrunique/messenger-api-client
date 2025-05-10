@@ -1,10 +1,11 @@
 import { CornerUpLeft, CornerUpRight, Pencil, Trash } from "lucide-react";
 import ContextMenu from "../../../../components/ContextMenu";
-import { MessageSchema } from "../../../../schemas/message";
+import { MessageSchema, MessageType } from "../../../../schemas/message";
 import cn from "../../../../utils/cn";
 import MessageAttachments from "./MessageAttachments";
 import MessageStatus from "./MessageStatus";
 import { useReplyContext } from "../ReplyContextProvider";
+import RepliedMessage from "./RepliedMessage";
 
 function getBubbleBorderRadius({
   forceLeftAlign,
@@ -116,6 +117,12 @@ const MessageCard = ({
               <div className={`font-semibold leading-none`}>
                 {message.author.globalName}
               </div>
+            )}
+            {message.type === MessageType.REPLY && (
+              <RepliedMessage
+                message={message.referencedMessage}
+                isOwnMessage={isOwnMessage}
+              />
             )}
             {message.attachments.length > 0 && (
               <MessageAttachments attachments={message.attachments} />
