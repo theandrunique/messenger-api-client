@@ -1,4 +1,4 @@
-import { CornerUpLeft, CornerUpRight, Pencil, Trash } from "lucide-react";
+import { CornerUpLeft, Pencil, Trash } from "lucide-react";
 import ContextMenu from "../../../../components/ContextMenu";
 import { MessageSchema, MessageType } from "../../../../schemas/message";
 import cn from "../../../../utils/cn";
@@ -7,6 +7,7 @@ import MessageStatus from "./MessageStatus";
 import { useReplyContext } from "../ReplyContextProvider";
 import RepliedMessage from "./RepliedMessage";
 import { useMessageDeleteModal } from "./MessageDeleteModal";
+import { useEditMessage } from "../EditMessageProvider";
 
 function getBubbleBorderRadius({
   forceLeftAlign,
@@ -61,6 +62,7 @@ const MessageCard = ({
   maxReadAt,
 }: MessageCard) => {
   const replyContext = useReplyContext();
+  const editMessage = useEditMessage();
   const deleteModal = useMessageDeleteModal();
 
   const borderRadius = getBubbleBorderRadius({
@@ -77,21 +79,18 @@ const MessageCard = ({
       icon: CornerUpLeft,
     },
     {
-      content: "Edit",
-      onClick: () => alert("edit"),
-      icon: Pencil,
-    },
-    {
-      content: "Forward",
-      onClick: () => alert("forward"),
-      icon: CornerUpRight,
-    },
-    {
       onClick: () => deleteModal.open(message),
       icon: Trash,
       content: "Delete",
     },
   ];
+
+  if (isOwnMessage)
+    contextMenuButtons.push({
+      content: "Edit",
+      onClick: () => editMessage.set(message),
+      icon: Pencil,
+    });
 
   return (
     <div

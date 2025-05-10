@@ -4,6 +4,7 @@ import cn from "../../../../utils/cn";
 import Button from "../../../../components/ui/Button";
 import Spinner from "../../../../components/Spinner";
 import Tooltip from "../../../../components/Tooltip";
+import { AttachmentSchema } from "../../../../schemas/message";
 
 const formatFileSize = (size: number) => {
   if (size < 1024) return `${size} B`;
@@ -81,3 +82,48 @@ const MessageAttachmentCard = ({
 };
 
 export default MessageAttachmentCard;
+
+export const ExistedAttachment = ({
+  attachment,
+  onRemove,
+}: {
+  attachment: AttachmentSchema;
+  onRemove: () => void;
+}) => {
+  const isImage = attachment.contentType.startsWith("image");
+  
+  return (
+    <div
+      className={cn(
+        `bg-[#1f1f23] border border-[#38383f] p-1 px-2 rounded-lg flex flex-col items-center gap-1 relative max-w-36`,
+      )}
+    >
+      <div className="relative rounded overflow-hidden">
+        {isImage ? (
+          <img
+            src={attachment.url}
+            alt={attachment.filename}
+            className="w-24 h-24 object-cover rounded"
+          />
+        ) : (
+          <FileIcon className="w-24 h-24 text-gray-400" />
+        )}
+      </div>
+
+      <div className="flex flex-col flex-1 truncate w-full h-full">
+        <span className="text-sm text-[#efeff1] truncate">{attachment.filename}</span>
+        <span className="text-xs text-gray-400">
+          {formatFileSize(attachment.size)}
+        </span>
+      </div>
+
+      <Button
+        className="absolute top-1 right-1 p-1 text-gray-400"
+        variant="icon"
+        onClick={onRemove}
+      >
+        <X className="w-4 h-4" />
+      </Button>
+    </div>
+  );
+};

@@ -10,6 +10,7 @@ import useGatewayEvents from "../../../../gateway/useGatewayEvents";
 import { GatewayEventType } from "../../../../gateway/types";
 import { useCurrentUserId } from "../../../../components/CurrentUserProvider";
 import ReplyContextProvider from "../ReplyContextProvider";
+import EditMessageProvider from "../EditMessageProvider";
 
 const ChannelContainer = () => {
   const { channelId } = useParams();
@@ -45,9 +46,11 @@ const ChannelContainer = () => {
         channelId={channelId}
       >
         <ReplyContextProvider>
-          <ChannelContainerHeader channel={data} />
-          <MessagesContainer selectedChannel={data} />
-          <MessageInputContainer channelId={channelId} />
+          <EditMessageProvider>
+            <ChannelContainerHeader channel={data} />
+            <MessagesContainer selectedChannel={data} />
+            <MessageInputContainer channelId={channelId} />
+          </EditMessageProvider>
         </ReplyContextProvider>
       </MessageAttachmentsUploader>
 

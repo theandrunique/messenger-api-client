@@ -299,8 +299,25 @@ export const deleteMessage = (
 ): Promise<void> => {
   return baseFetch(() =>
     axiosWithToken.delete(`/channels/${channelId}/messages/${messageId}`)
-  )
-}
+  );
+};
+
+export const updateMessage = (
+  channelId: string,
+  messageId: string,
+  content: string,
+  attachments: MessageAttachmentUploadSchema[]
+): Promise<MessageSchema> => {
+  return baseFetch(() =>
+    axiosWithToken.put<MessageSchema>(
+      `/channels/${channelId}/messages/${messageId}`,
+      {
+        content,
+        attachments,
+      }
+    )
+  );
+};
 
 export const uploadFile = async (
   uploadUrl: string,
