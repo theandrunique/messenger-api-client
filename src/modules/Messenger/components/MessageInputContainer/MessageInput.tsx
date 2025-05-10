@@ -49,7 +49,6 @@ const MessageInput = ({ onSubmit }: MessageInputProps) => {
     }
   };
 
-  // Обработчик изменения содержимого textarea
   const handleChange = () => {
     adjustTextareaHeight();
   };

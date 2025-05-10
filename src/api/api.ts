@@ -281,11 +281,13 @@ export const deleteUnusedAttachment = (uploadedFilename: string) => {
 export const createMessage = (
   channelId: string,
   content: string,
-  attachments: MessageAttachmentUploadSchema[]
+  attachments: MessageAttachmentUploadSchema[],
+  referencedMessageId?: string
 ): Promise<MessageSchema> => {
   return baseFetch(() =>
     axiosWithToken.post<MessageSchema>(`/channels/${channelId}/messages`, {
       content,
+      referencedMessageId,
       attachments,
     })
   );

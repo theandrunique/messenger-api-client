@@ -9,6 +9,7 @@ import useSmartChannel from "../../../../api/hooks/useSmartChannel";
 import useGatewayEvents from "../../../../gateway/useGatewayEvents";
 import { GatewayEventType } from "../../../../gateway/types";
 import { useCurrentUserId } from "../../../../components/CurrentUserProvider";
+import ReplyContextProvider from "../ReplyContextProvider";
 
 const ChannelContainer = () => {
   const { channelId } = useParams();
@@ -18,9 +19,6 @@ const ChannelContainer = () => {
 
   useGatewayEvents({
     [GatewayEventType.CHANNEL_MEMBER_REMOVE]: (e) => {
-      console.log(`Event: `, e);
-      console.log(`Current channel: ${channelId}`);
-      console.log("UserId: ", currentUserId);
       if (e.user.id === currentUserId && e.channelId === channelId) {
         navigate("/messenger");
       }
@@ -46,9 +44,11 @@ const ChannelContainer = () => {
         className="flex flex-col h-full"
         channelId={channelId}
       >
-        <ChannelContainerHeader channel={data} />
-        <MessagesContainer selectedChannel={data} />
-        <MessageInputContainer channelId={channelId} />
+        <ReplyContextProvider>
+          <ChannelContainerHeader channel={data} />
+          <MessagesContainer selectedChannel={data} />
+          <MessageInputContainer channelId={channelId} />
+        </ReplyContextProvider>
       </MessageAttachmentsUploader>
 
       <Outlet />
