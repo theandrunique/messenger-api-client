@@ -5,10 +5,7 @@ import {
 } from "@tanstack/react-query";
 import { getMessages } from "../api";
 import { MessageSchema } from "../../schemas/message";
-import {
-  MessageCreateEventSchema,
-  MessageUpdateEventSchema,
-} from "../../schemas/gateway";
+import { MessageCreateEventSchema, MessageUpdateEventSchema } from "../../gateway/types";
 
 const limit = 50;
 
@@ -87,6 +84,26 @@ export const updateUseMessagesOnMessageUpdate = (
           page.map((message) =>
             message.id === event.message.id ? event.message : message
           )
+        ),
+      };
+    }
+  );
+};
+
+export const updateUseMessagesOnMessageDelete = (
+  queryClient: QueryClient,
+  channelId: string,
+  messageId: string
+) => {
+  queryClient.setQueryData(
+    ["/channels/{channelId}/messages", channelId],
+    (oldData: InfiniteData<MessageSchema[]> | undefined) => {
+      if (!oldData) return;
+
+      return {
+        ...oldData,
+        pages: oldData.pages.map((page) =>
+          page.filter((message) => message.id !== messageId)
         ),
       };
     }

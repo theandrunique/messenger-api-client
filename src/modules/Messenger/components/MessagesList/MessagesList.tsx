@@ -4,6 +4,7 @@ import { MessageSchema } from "../../../../schemas/message";
 import { isMetaMessage } from "../MessageCard/utils.ts";
 import MessageGroup from "../MessageGroup/MessageGroup.tsx";
 import DateDivider from "./DateDivider";
+import MessageDeleteModal from "../MessageCard/MessageDeleteModal.tsx";
 
 const groupMessagesByAuthor = (
   messages: MessageSchema[]
@@ -74,27 +75,31 @@ const MessagesList = ({ messages, channel, bottomRef }: MessagesListProps) => {
   const messageGroupsByDate = groupMessagesByDate(messages);
 
   return (
-    <div className="flex flex-col-reverse gap-2 mt-2" ref={containerRef}>
-      <div ref={bottomRef}></div>
-      {messageGroupsByDate.map(([date, messages]) => {
-        const authorGroups = groupMessagesByAuthor(messages);
+    <>
+      <div className="flex flex-col-reverse gap-2 mt-2" ref={containerRef}>
+        <div ref={bottomRef}></div>
+        {messageGroupsByDate.map(([date, messages]) => {
+          const authorGroups = groupMessagesByAuthor(messages);
 
-        return (
-          <div key={date}>
-            <DateDivider timestamp={messages[0].timestamp} />
-            <div className="flex flex-col-reverse gap-2">
-              {authorGroups.map((group) => (
-                <MessageGroup
-                  messages={group}
-                  channel={channel}
-                  isWideLayout={isWideLayout}
-                />
-              ))}
+          return (
+            <div key={date}>
+              <DateDivider timestamp={messages[0].timestamp} />
+              <div className="flex flex-col-reverse gap-2">
+                {authorGroups.map((group) => (
+                  <MessageGroup
+                    messages={group}
+                    channel={channel}
+                    isWideLayout={isWideLayout}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        );
-      })}
-    </div>
+          );
+        })}
+      </div>
+
+      <MessageDeleteModal />
+    </>
   );
 };
 

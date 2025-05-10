@@ -5,7 +5,7 @@ import Loading from "../../../../components/Loading";
 import MessagesList from "../MessagesList/MessagesList";
 import useMessageAck from "./hooks/useMessageAck";
 import useGatewayEvents from "../../../../gateway/useGatewayEvents";
-import { GatewayEventType } from "../../../../schemas/gateway";
+import { GatewayEventType } from "../../../../gateway/types";
 
 interface MessagesContainerProps {
   selectedChannel: ChannelSchema;

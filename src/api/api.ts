@@ -293,6 +293,15 @@ export const createMessage = (
   );
 };
 
+export const deleteMessage = (
+  channelId: string,
+  messageId: string
+): Promise<void> => {
+  return baseFetch(() =>
+    axiosWithToken.delete(`/channels/${channelId}/messages/${messageId}`)
+  )
+}
+
 export const uploadFile = async (
   uploadUrl: string,
   file: File,

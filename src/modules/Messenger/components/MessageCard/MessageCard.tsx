@@ -6,6 +6,7 @@ import MessageAttachments from "./MessageAttachments";
 import MessageStatus from "./MessageStatus";
 import { useReplyContext } from "../ReplyContextProvider";
 import RepliedMessage from "./RepliedMessage";
+import { useMessageDeleteModal } from "./MessageDeleteModal";
 
 function getBubbleBorderRadius({
   forceLeftAlign,
@@ -60,6 +61,7 @@ const MessageCard = ({
   maxReadAt,
 }: MessageCard) => {
   const replyContext = useReplyContext();
+  const deleteModal = useMessageDeleteModal();
 
   const borderRadius = getBubbleBorderRadius({
     forceLeftAlign,
@@ -85,7 +87,7 @@ const MessageCard = ({
       icon: CornerUpRight,
     },
     {
-      onClick: () => alert("omwg"),
+      onClick: () => deleteModal.open(message),
       icon: Trash,
       content: "Delete",
     },

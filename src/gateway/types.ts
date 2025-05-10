@@ -10,6 +10,7 @@ export enum GatewayEventType {
   CHANNEL_MEMBER_ADD = "CHANNEL_MEMBER_ADD",
   CHANNEL_MEMBER_REMOVE = "CHANNEL_MEMBER_REMOVE",
   MESSAGE_ACK = "MESSAGE_ACK",
+  MESSAGE_DELETE = "MESSAGE_DELETE",
 }
 
 export type GatewayEventSchemas = {
@@ -20,6 +21,7 @@ export type GatewayEventSchemas = {
   [GatewayEventType.CHANNEL_UPDATE]: ChannelUpdateEventSchema;
   [GatewayEventType.CHANNEL_MEMBER_ADD]: ChannelMemberAddEventSchema;
   [GatewayEventType.CHANNEL_MEMBER_REMOVE]: ChannelMemberRemoveEventSchema;
+  [GatewayEventType.MESSAGE_DELETE]: MessageDeleteEventSchema;
 };
 
 export type GatewayEventHandlers = {
@@ -62,4 +64,9 @@ export interface MessageAckEventSchema {
   messageId: string;
   channelId: string;
   memberId: string;
+}
+
+export interface MessageDeleteEventSchema {
+  channelId: string;
+  messageId: string;
 }

@@ -1,14 +1,8 @@
 import { QueryClient, useQuery } from "@tanstack/react-query";
 import { getChannels } from "../api";
-import {
-  ChannelMemberAddEventSchema,
-  ChannelMemberRemoveEventSchema,
-  ChannelUpdateEventSchema,
-  MessageAckEventSchema,
-  MessageCreateEventSchema,
-} from "../../schemas/gateway";
 import { ChannelSchema } from "../../schemas/channel";
 import { selectBiggest } from "../../utils";
+import { ChannelMemberAddEventSchema, ChannelMemberRemoveEventSchema, ChannelUpdateEventSchema, MessageAckEventSchema, MessageCreateEventSchema } from "../../gateway/types";
 
 const useUserChannels = () => {
   const context = useQuery({

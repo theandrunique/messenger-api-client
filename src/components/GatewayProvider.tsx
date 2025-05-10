@@ -13,6 +13,7 @@ import {
 } from "../api/hooks/useUserChannels";
 import {
   updateUseMessagesOnMessageCreate,
+  updateUseMessagesOnMessageDelete,
   updateUseMessagesOnMessageUpdate,
 } from "../api/hooks/useMessages";
 import { invalidateUseChannel } from "../api/hooks/useChannel";
@@ -72,6 +73,9 @@ export const GatewayProvider = ({
       },
       [GatewayEventType.MESSAGE_UPDATE]: (event) => {
         updateUseMessagesOnMessageUpdate(queryClient, event);
+      },
+      [GatewayEventType.MESSAGE_DELETE]: (e) => {
+        updateUseMessagesOnMessageDelete(queryClient, e.channelId, e.messageId);
       },
       [GatewayEventType.CHANNEL_MEMBER_ADD]: (event) => {
         updateUseUserChannelOnMemberAdd(queryClient, event, currentUserId);
