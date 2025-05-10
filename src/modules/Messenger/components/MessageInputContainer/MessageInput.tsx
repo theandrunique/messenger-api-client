@@ -52,10 +52,23 @@ const MessageInput = ({ onSubmit }: MessageInputProps) => {
     }
   };
 
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const clipboardItems = e.clipboardData.items;
+
+    for (const item of clipboardItems) {
+      if (item.kind === "file") {
+        const file = item.getAsFile();
+        if (file) onFilesSelect([file]);
+        e.preventDefault();
+        return;
+      }
+    }
+  };
+
   useLayoutEffect(() => {
     setText(editMessageContext.message?.content ?? "");
     requestAnimationFrame(adjustTextareaHeight);
-  }, [editMessageContext.message])
+  }, [editMessageContext.message]);
 
   return (
     <div className="relative w-full min-h-[44px]">
@@ -70,12 +83,15 @@ const MessageInput = ({ onSubmit }: MessageInputProps) => {
               <PlusCircle className="w-6 h-6 text-[#9d9d9e]" />
             </Button>
           </Tooltip.Trigger>
-          <Tooltip.Content side="top" align="start">Add an attachment</Tooltip.Content>
+          <Tooltip.Content side="top" align="start">
+            Add an attachment
+          </Tooltip.Content>
         </Tooltip>
       </div>
 
       <div className="flex items-center h-full">
         <Textarea
+          onPaste={handlePaste}
           ref={textareaRef}
           value={text}
           onKeyDown={handleEnterDown}
