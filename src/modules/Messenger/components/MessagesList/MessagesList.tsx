@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef, useState } from "react";
 import { ChannelSchema } from "../../../../schemas/channel";
 import { MessageSchema } from "../../../../schemas/message";
 import { isMetaMessage } from "../MessageCard/utils.ts";
@@ -56,10 +57,24 @@ interface MessagesListProps {
 }
 
 const MessagesList = ({ messages, channel, bottomRef }: MessagesListProps) => {
+  const [isWideLayout, setIsWideLayout] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const observer = new ResizeObserver(([entry]) => {
+      const width = entry.contentRect.width;
+      setIsWideLayout(width > 800);
+    });
+
+    if (containerRef.current) observer.observe(containerRef.current);
+
+    return () => observer.disconnect();
+  }, []);
+
   const messageGroupsByDate = groupMessagesByDate(messages);
 
   return (
-    <div className="flex flex-col-reverse gap-2 mt-2">
+    <div className="flex flex-col-reverse gap-2 mt-2" ref={containerRef}>
       <div ref={bottomRef}></div>
       {messageGroupsByDate.map(([date, messages]) => {
         const authorGroups = groupMessagesByAuthor(messages);
@@ -68,9 +83,13 @@ const MessagesList = ({ messages, channel, bottomRef }: MessagesListProps) => {
           <div key={date}>
             <DateDivider timestamp={messages[0].timestamp} />
             <div className="flex flex-col-reverse gap-2">
-              {authorGroups.map((group) =>
-                <MessageGroup messages={group} channel={channel} />
-              )}
+              {authorGroups.map((group) => (
+                <MessageGroup
+                  messages={group}
+                  channel={channel}
+                  isWideLayout={isWideLayout}
+                />
+              ))}
             </div>
           </div>
         );

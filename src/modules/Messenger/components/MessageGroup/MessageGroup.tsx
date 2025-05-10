@@ -10,9 +10,10 @@ import { isMetaMessage } from "../MessageCard/utils";
 interface MessageGroupProps {
   messages: MessageSchema[];
   channel: ChannelSchema;
+  isWideLayout: boolean;
 }
 
-const MessageGroup = ({ messages, channel }: MessageGroupProps) => {
+const MessageGroup = ({ messages, channel, isWideLayout }: MessageGroupProps) => {
   const currentUserId = useCurrentUserId();
   const isOwnMessage = currentUserId === messages[0].author.id;
   const user = messages[0].author;
@@ -27,23 +28,28 @@ const MessageGroup = ({ messages, channel }: MessageGroupProps) => {
 
   return (
     <div className="w-full flex justify-start gap-2">
-      <div className="sticky bottom-2 self-end text-[0]">
-        <Avatar className="w-8 h-8">
-          <UserAvatar
-            userId={user.id}
-            avatar={user.avatar}
-          />
-          <UserAvatarFallback username={user.username} />
-        </Avatar>
-      </div>
+      {(isWideLayout || !isOwnMessage) && (
+        <div className="sticky bottom-2 self-end text-[0]">
+          <Avatar className="w-8 h-8">
+            <UserAvatar
+              userId={user.id}
+              avatar={user.avatar}
+            />
+            <UserAvatarFallback username={user.username} />
+          </Avatar>
+        </div>
+      )}
 
-      <div className="flex flex-col-reverse gap-0.5 w-full max-w-[calc(100%-3rem)]">
+      <div className="flex flex-col-reverse gap-0.5 w-full">
         {messages.map((message, i) => (
           <MessageCard
             message={message}
             isOwnMessage={isOwnMessage}
             maxReadAt={channel.maxReadMessageId || "0"}
             showAuthor={i === messages.length - 1}
+            isFirstInGroup={i === messages.length - 1}
+            isLastInGroup={i === 0}
+            forceLeftAlign={isWideLayout}
           />
         ))}
       </div>
