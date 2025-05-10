@@ -46,7 +46,6 @@ const MessageGroup = ({ messages, channel, isWideLayout }: MessageGroupProps) =>
             message={message}
             isOwnMessage={isOwnMessage}
             maxReadAt={channel.maxReadMessageId || "0"}
-            showAuthor={i === messages.length - 1}
             isFirstInGroup={i === messages.length - 1}
             isLastInGroup={i === 0}
             forceLeftAlign={isWideLayout}

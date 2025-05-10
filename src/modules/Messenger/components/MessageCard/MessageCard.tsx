@@ -41,7 +41,6 @@ function getBubbleBorderRadius({
 interface MessageCard {
   message: MessageSchema;
   maxReadAt: string;
-  showAuthor?: boolean;
   isOwnMessage: boolean;
   isLastInGroup: boolean;
   isFirstInGroup: boolean;
@@ -55,7 +54,6 @@ const MessageCard = ({
   isFirstInGroup,
   forceLeftAlign,
   maxReadAt,
-  showAuthor = false,
 }: MessageCard) => {
   const borderRadius = getBubbleBorderRadius({
     forceLeftAlign,
@@ -84,7 +82,7 @@ const MessageCard = ({
           maxWidth: "min(90%, 28rem)",
         }}
       >
-        {showAuthor && (
+        {(!isOwnMessage && isFirstInGroup) && (
           <div className={`font-semibold leading-none`}>
             {message.author.globalName}
           </div>
