@@ -75,6 +75,7 @@ const MessageInputContainer = ({ channelId }: MessageInputContainerProps) => {
         );
         replyContext.setReplyMessage(undefined);
         clearMessageAttachments();
+        
       } catch (err) {
         console.log("Error sending message: ", err);
         throw err;

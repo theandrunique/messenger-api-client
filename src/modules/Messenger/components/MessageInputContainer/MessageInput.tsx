@@ -37,8 +37,8 @@ const MessageInput = ({ onSubmit }: MessageInputProps) => {
 
     onSubmit(textareaRef.current.value).then(() => {
       if (textareaRef.current) {
-        textareaRef.current.value = "";
-        textareaRef.current.style.height = "auto";
+        setText("");
+        adjustTextareaHeight();
       }
     });
   };
