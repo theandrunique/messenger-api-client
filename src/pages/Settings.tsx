@@ -1,6 +1,5 @@
 import Navbar from "../components/Navbar";
 import ProfileImageForm from "../modules/Settings/components/ProfileImageForm";
-import ProfileSettingsForm from "../modules/Settings/components/ProfileSettingsForm";
 import ContactsForm from "../modules/Settings/components/ContactsForm";
 import SecurityForm from "../modules/Settings/components/SecurityForm";
 
@@ -27,9 +26,6 @@ const Settings = () => {
         <div className="flex flex-col space-y-8 max-w-5xl mx-auto">
           <SmallHeader content="Profile Picture" />
           <ProfileImageForm />
-
-          <SmallHeader content="Profile Settings" />
-          <ProfileSettingsForm />
 
           <SmallHeader content="Contact" />
           <ContactsForm />

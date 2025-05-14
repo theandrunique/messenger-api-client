@@ -1,71 +1,54 @@
-import { useState } from "react";
 import SimpleCard from "../../../components/SimpleCard";
 import Button from "../../../components/ui/Button";
-import useCurrentUser from "../../../api/hooks/useCurrentUser";
 import { useAuth } from "../../../components/AuthProvider";
-import EnableTotpMfaModalForm from "../modals/EnableTotpMfaModalForm";
+import TotpMfaEnableModal, { useTotpMfaEnableModal } from "../modals/TotpMfaEnableModal";
+import { useLoadedCurrentUser } from "../../../components/CurrentUserProvider";
 
 const SecurityForm = () => {
-  const { currentUser, refetch: updateUser } = useCurrentUser();
-  const [mfaModalOpen, setMfaModalOpen] = useState(false);
+  const currentUser = useLoadedCurrentUser();
   const { handleSignOut } = useAuth();
+  const totpMfaEnableModal = useTotpMfaEnableModal();
+
+  const sections = [
+    {
+      title: "Two-Factor Authentication",
+      content: (
+        <div className="w-full">
+          {currentUser.mfa ? (
+            <div className="font-semibold">Enabled</div>
+          ) : (
+            <Button variant={"primary"} onClick={() => totpMfaEnableModal.setOpen(true)}>
+              Set Up Two-Factor Authentication
+            </Button>
+          )}
+        </div>
+      ),
+    },
+    {
+      title: "Sign Out",
+      content: (
+        <Button variant={"secondary"} onClick={handleSignOut}>
+          Sign Out
+        </Button>
+      ),
+    },
+  ];
 
   return (
     <>
       <SimpleCard className="text-[#efeff1] max-w-5xl">
-        <div className="flex justify-between p-5">
-          <div className="font-semibold">Password</div>
-          <div className="w-3/4">
-            <Button variant={"secondary"}>Change Password</Button>
-          </div>
-        </div>
-
-        <SimpleCard.Divider />
-
-        <div className="flex justify-between p-5">
-          <div className="font-semibold">Two-Factor Authentication</div>
-          <div className="w-3/4">
-            {currentUser?.mfa ? (
-              <Button
-                variant={"secondary"}
-                onClick={() => setMfaModalOpen(true)}
-              >
-                Disable Two-Factor Authentication
-              </Button>
-            ) : (
-              <Button variant={"primary"} onClick={() => setMfaModalOpen(true)}>
-                Set Up Two-Factor Authentication
-              </Button>
-            )}
-          </div>
-        </div>
-
-        <SimpleCard.Divider />
-
-        <div className="flex justify-between p-5">
-          <div className="font-semibold">Sign Out Everywhere</div>
-          <div className="w-3/4">
-            <Button variant={"secondary"}>Sign Out Everywhere</Button>
-          </div>
-        </div>
-
-        <SimpleCard.Divider />
-
-        <div className="flex justify-between p-5">
-          <div className="font-semibold">Sign Out</div>
-          <div className="w-3/4">
-            <Button variant={"secondary"} onClick={handleSignOut}>
-              Sign Out
-            </Button>
-          </div>
-        </div>
+        {sections.map((section) => (
+          <>
+            <div className="flex flex-col sm:grid grid-cols-[25%_1fr] gap-2 p-5 items-start">
+              <div className="font-semibold text-sm">{section.title}</div>
+              <div className="w-full h-full">{section.content}</div>
+            </div>
+            <SimpleCard.Divider />
+          </>
+        ))}
       </SimpleCard>
 
-      <EnableTotpMfaModalForm
-        open={mfaModalOpen}
-        onOpenChange={setMfaModalOpen}
-        onSubmit={updateUser}
-      />
+      <TotpMfaEnableModal />
     </>
   );
 };

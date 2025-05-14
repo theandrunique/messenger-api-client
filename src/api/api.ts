@@ -203,7 +203,7 @@ export const getChannels = (): Promise<ChannelSchema[]> => {
   );
 };
 
-export const removeAvatar = (): Promise<void> => {
+export const deleteAvatar = (): Promise<void> => {
   return baseFetch(() => axiosWithToken.delete("/users/@me/avatar"));
 };
 
