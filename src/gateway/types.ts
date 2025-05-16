@@ -69,4 +69,5 @@ export interface MessageAckEventSchema {
 export interface MessageDeleteEventSchema {
   channelId: string;
   messageId: string;
+  newLastMessage: MessageSchema;
 }

@@ -9,10 +9,10 @@ export enum ChannelType {
 export interface MessageInfoSchema {
   id: string;
   author: UserPublicSchema;
-  targetUser?: UserPublicSchema;
+  targetUser: UserPublicSchema | null;
   content: string;
-  timestamp: Date;
-  editedTimestamp: Date | null;
+  timestamp: string;
+  editedTimestamp: string | null;
   attachmentsCount: number;
   type: MessageType;
   metadata: Record<string, string>;
@@ -26,6 +26,6 @@ export interface ChannelSchema {
   type: ChannelType;
   lastReadMessageId: string | null;
   maxReadMessageId: string | null;
-  lastMessage: MessageInfoSchema;
+  lastMessage: MessageInfoSchema | null;
   members: UserPublicSchema[];
 }

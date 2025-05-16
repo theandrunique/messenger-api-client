@@ -9,7 +9,7 @@ import {
   updateUseUserChannelOnMemberRemove,
   updateUseUserChannelOnMessageAck,
   updateUseUserChannelsOnNewChannel,
-  updateUseUserChannelsOnNewMessage,
+  updateUseUserChannelsOnNewLastMessage,
 } from "../api/hooks/useUserChannels";
 import {
   updateUseMessagesOnMessageCreate,
@@ -68,14 +68,20 @@ export const GatewayProvider = ({
 
     const handlers: Partial<GatewayEventHandlers> = {
       [GatewayEventType.MESSAGE_CREATE]: (event) => {
-        updateUseUserChannelsOnNewMessage(queryClient, event);
         updateUseMessagesOnMessageCreate(queryClient, event);
+        updateUseUserChannelsOnNewLastMessage(queryClient, event.message);
       },
       [GatewayEventType.MESSAGE_UPDATE]: (event) => {
         updateUseMessagesOnMessageUpdate(queryClient, event);
+        updateUseUserChannelsOnNewLastMessage(queryClient, event.message);
       },
       [GatewayEventType.MESSAGE_DELETE]: (e) => {
         updateUseMessagesOnMessageDelete(queryClient, e.channelId, e.messageId);
+        updateUseUserChannelsOnNewLastMessage(
+          queryClient,
+          e.newLastMessage,
+          true
+        );
       },
       [GatewayEventType.CHANNEL_MEMBER_ADD]: (event) => {
         updateUseUserChannelOnMemberAdd(queryClient, event, currentUserId);

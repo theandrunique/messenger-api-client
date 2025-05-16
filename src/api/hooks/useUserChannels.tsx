@@ -1,8 +1,14 @@
 import { QueryClient, useQuery } from "@tanstack/react-query";
 import { getChannels } from "../api";
 import { ChannelSchema } from "../../schemas/channel";
-import { selectBiggest } from "../../utils";
-import { ChannelMemberAddEventSchema, ChannelMemberRemoveEventSchema, ChannelUpdateEventSchema, MessageAckEventSchema, MessageCreateEventSchema } from "../../gateway/types";
+import { compareIds, selectBiggest } from "../../utils";
+import {
+  ChannelMemberAddEventSchema,
+  ChannelMemberRemoveEventSchema,
+  ChannelUpdateEventSchema,
+  MessageAckEventSchema,
+} from "../../gateway/types";
+import { MessageSchema } from "../../schemas/message";
 
 const useUserChannels = () => {
   const context = useQuery({
@@ -16,35 +22,44 @@ const useUserChannels = () => {
 
 export default useUserChannels;
 
-export const updateUseUserChannelsOnNewMessage = (
+export const updateUseUserChannelsOnNewLastMessage = (
   queryClient: QueryClient,
-  event: MessageCreateEventSchema
+  newLastMessage: MessageSchema,
+  force: boolean = false
 ) => {
   queryClient.setQueryData(
     ["/users/@me/channels"],
     (oldChannels: ChannelSchema[] | undefined) => {
       if (!oldChannels) return;
 
-      const message = event.message;
+      return oldChannels.map((channel) => {
+        if (channel.id !== newLastMessage.channelId) return channel;
 
-      return oldChannels.map((channel) =>
-        channel.id === event.message.channelId
-          ? {
-              ...channel,
-              lastMessage: {
-                id: message.id,
-                author: message.author,
-                targetUser: message.targetUser,
-                content: message.content,
-                timestamp: message.timestamp,
-                editedTimestamp: message.editedTimestamp,
-                attachmentsCount: message.attachments.length,
-                type: message.type,
-                metadata: message.metadata,
-              },
-            }
-          : channel
-      );
+        const currentLastMessage = channel.lastMessage;
+
+        const shouldUpdate =
+          force ||
+          !currentLastMessage ||
+          newLastMessage.id === currentLastMessage.id ||
+          compareIds(newLastMessage.id, currentLastMessage.id);
+
+        if (!shouldUpdate) return channel;
+
+        return {
+          ...channel,
+          lastMessage: {
+            id: newLastMessage.id,
+            author: newLastMessage.author,
+            targetUser: newLastMessage.targetUser,
+            content: newLastMessage.content,
+            timestamp: newLastMessage.timestamp,
+            editedTimestamp: newLastMessage.editedTimestamp,
+            attachmentsCount: newLastMessage.attachments.length,
+            type: newLastMessage.type,
+            metadata: newLastMessage.metadata,
+          },
+        };
+      });
     }
   );
 };

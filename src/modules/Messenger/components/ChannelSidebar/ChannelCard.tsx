@@ -27,7 +27,7 @@ const ReadStatus = ({
 
   return (
     <div className="text-fuchsia-400">
-      {channel.maxReadMessageId === channel.lastMessage.id ? (
+      {channel.maxReadMessageId && channel.lastMessage && channel.maxReadMessageId >= channel.lastMessage.id ? (
         <CheckCheck className="w-4 h-4" />
       ) : (
         <Check className="w-4 h-4" />
