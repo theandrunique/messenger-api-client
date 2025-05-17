@@ -15,7 +15,7 @@ const EditMessageContext = createContext<{
   onAttachmentRemove: (id: string) => void;
 } | null>(null);
 
-export const useEditMessage = () => {
+export const useEditContextMessage = () => {
   const context = useContext(EditMessageContext);
   if (context === null) {
     throw new Error("useReplyContext must be used within ReplyContextProvider");

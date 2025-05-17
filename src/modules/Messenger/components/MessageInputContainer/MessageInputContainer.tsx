@@ -2,37 +2,34 @@ import { createMessage, updateMessage } from "../../../../api/api";
 import MessageAttachmentCard, {
   ExistedAttachment,
 } from "./MessageAttachmentCard";
-import { useMessageAttachmentsUploader } from "../MessageAttachmentsUploader";
 import MessageInput from "./MessageInput";
-import { useReplyContext } from "../ReplyContextProvider";
 import { CornerUpLeft, X, Pencil } from "lucide-react";
 import Button from "../../../../components/ui/Button";
-import { useEditMessage } from "../EditMessageProvider";
+import { useEditContextMessage } from "../EditMessageProvider";
+import { useAttachmentsUploader } from "../AttachmentUploaderProvider";
+import { useReplyMessageContext } from "../ReplyMessageProvider";
 
 interface MessageInputContainerProps {
   channelId: string;
 }
 
 const MessageInputContainer = ({ channelId }: MessageInputContainerProps) => {
-  const {
-    messageAttachments,
-    onMessageAttachmentRemove,
-    clearMessageAttachments,
-  } = useMessageAttachmentsUploader();
-  const replyContext = useReplyContext();
-  const editMessageContext = useEditMessage();
+  const attachmentsUploaderContext = useAttachmentsUploader();
+
+  const replyMessageContext = useReplyMessageContext();
+  const editMessageContext = useEditContextMessage();
 
   const onSubmit = async (messageContent: string) => {
     if (
       !messageContent.trim() &&
-      messageAttachments.length === 0 &&
+      attachmentsUploaderContext.attachments.length === 0 &&
       editMessageContext.attachments.length === 0
     )
       return;
 
     if (editMessageContext.message) {
       try {
-        const readyAttachments = messageAttachments.filter(
+        const readyAttachments = attachmentsUploaderContext.attachments.filter(
           (f) => f.status === "success" && f.cloudAttachment !== null
         );
 
@@ -53,14 +50,14 @@ const MessageInputContainer = ({ channelId }: MessageInputContainerProps) => {
             )
         );
         editMessageContext.set(undefined);
-        clearMessageAttachments();
+        attachmentsUploaderContext.clearAttachments();
       } catch (err) {
         console.log("Error updating message: ", err);
         throw err;
       }
     } else {
       try {
-        const readyAttachments = messageAttachments.filter(
+        const readyAttachments = attachmentsUploaderContext.attachments.filter(
           (f) => f.status === "success" && f.cloudAttachment !== null
         );
 
@@ -71,11 +68,10 @@ const MessageInputContainer = ({ channelId }: MessageInputContainerProps) => {
             uploadedFilename: f.cloudAttachment?.uploadFilename as string, // make TS happy :)
             filename: f.file.name,
           })),
-          replyContext.replyMessage?.id
+          replyMessageContext.replyMessage?.id
         );
-        replyContext.setReplyMessage(undefined);
-        clearMessageAttachments();
-        
+        replyMessageContext.set(undefined);
+        attachmentsUploaderContext.clearAttachments();
       } catch (err) {
         console.log("Error sending message: ", err);
         throw err;
@@ -114,7 +110,7 @@ const MessageInputContainer = ({ channelId }: MessageInputContainerProps) => {
           </div>
         </div>
       )}
-      {replyContext.replyMessage !== undefined &&
+      {replyMessageContext.replyMessage !== undefined &&
         editMessageContext.message === undefined && (
           <div className="border-t border-x rounded-lg border-[#38383f] mb-[-10px] pb-[10px] bg-[#18181b]">
             <div className="px-3 py-1 flex gap-2 items-center justify-between text-[#efeff1]">
@@ -122,53 +118,53 @@ const MessageInputContainer = ({ channelId }: MessageInputContainerProps) => {
                 <CornerUpLeft className="w-6 h-6 shrink-0 text-[#a970ff]" />
                 <div className="overflow-hidden">
                   <div className="font-semibold text-[#a970ff]">
-                    {replyContext.replyMessage.author.globalName}
+                    {replyMessageContext.replyMessage.author.globalName}
                   </div>
                   <div className="truncate text-sm">
                     <span className="opacity-70">
-                      {replyContext.replyMessage.attachments
+                      {replyMessageContext.replyMessage.attachments
                         .map((a) => a.filename)
                         .join(", ")}
                     </span>
-                    {replyContext.replyMessage.content.length > 0 &&
-                      replyContext.replyMessage.attachments.length > 0 &&
+                    {replyMessageContext.replyMessage.content.length > 0 &&
+                      replyMessageContext.replyMessage.attachments.length > 0 &&
                       ", "}
-                    {replyContext.replyMessage.content}
+                    {replyMessageContext.replyMessage.content}
                   </div>
                 </div>
               </div>
               <Button
                 variant="icon"
-                onClick={() => replyContext.setReplyMessage(undefined)}
+                onClick={() => replyMessageContext.set(undefined)}
               >
                 <X className="w-5 h-5" />
               </Button>
             </div>
           </div>
         )}
-      {(messageAttachments.length > 0 ||
+      {(attachmentsUploaderContext.clearAttachments.length > 0 ||
         editMessageContext.attachments.length > 0) && (
-          <div className="border-t border-x rounded-lg border-[#38383f] mb-[-10px] pb-[10px] bg-[#18181b]">
-            <div className="flex gap-x-2 gap-y-1 overflow-x-auto p-2 px-3">
-              {messageAttachments.map((attachment) => (
-                <MessageAttachmentCard
-                  attachment={attachment}
-                  onRemove={onMessageAttachmentRemove}
-                />
-              ))}
-              {editMessageContext.attachments.map((attachment) => (
-                <ExistedAttachment
-                  attachment={attachment}
-                  onRemove={() =>
-                    editMessageContext.onAttachmentRemove(attachment.id)
-                  }
-                />
-              ))}
-            </div>
+        <div className="border-t border-x rounded-lg border-[#38383f] mb-[-10px] pb-[10px] bg-[#18181b]">
+          <div className="flex gap-x-2 gap-y-1 overflow-x-auto p-2 px-3">
+            {attachmentsUploaderContext.attachments.map((attachment) => (
+              <MessageAttachmentCard
+                attachment={attachment}
+                onRemove={attachmentsUploaderContext.onRemove}
+              />
+            ))}
+            {editMessageContext.attachments.map((attachment) => (
+              <ExistedAttachment
+                attachment={attachment}
+                onRemove={() =>
+                  editMessageContext.onAttachmentRemove(attachment.id)
+                }
+              />
+            ))}
           </div>
-        )}
+        </div>
+      )}
 
-      <MessageInput onSubmit={onSubmit} />
+      <MessageInput onSubmit={onSubmit} channelId={channelId} />
     </div>
   );
 };

@@ -4,10 +4,10 @@ import { MessageSchema, MessageType } from "../../../../schemas/message";
 import cn from "../../../../utils/cn";
 import MessageAttachments from "./MessageAttachments";
 import MessageStatus from "./MessageStatus";
-import { useReplyContext } from "../ReplyContextProvider";
 import RepliedMessage from "./RepliedMessage";
 import { useMessageDeleteModal } from "./MessageDeleteModal";
-import { useEditMessage } from "../EditMessageProvider";
+import { useEditContextMessage } from "../EditMessageProvider";
+import { useReplyMessageContext } from "../ReplyMessageProvider";
 
 function isDefined<T>(value: T): value is NonNullable<T> {
   return value !== undefined && value !== null;
@@ -65,9 +65,9 @@ const MessageCard = ({
   forceLeftAlign,
   maxReadAt,
 }: MessageCard) => {
-  const replyContext = useReplyContext();
-  const editMessage = useEditMessage();
   const deleteModal = useMessageDeleteModal();
+  const replyMessageContext = useReplyMessageContext();
+  const editMessageContext = useEditContextMessage();
 
   const borderRadius = getBubbleBorderRadius({
     forceLeftAlign,
@@ -79,13 +79,13 @@ const MessageCard = ({
   const contextMenuButtons = [
     {
       content: "Reply",
-      onClick: () => replyContext.setReplyMessage(message),
+      onClick: () => replyMessageContext.set(message),
       icon: CornerUpLeft,
     },
     isOwnMessage
       ? {
           content: "Edit",
-          onClick: () => editMessage.set(message),
+          onClick: () => editMessageContext.set(message),
           icon: Pencil,
         }
       : undefined,

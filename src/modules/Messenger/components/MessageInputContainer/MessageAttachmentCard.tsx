@@ -1,10 +1,10 @@
 import { FileIcon, X, CircleAlert } from "lucide-react";
-import MessageAttachmentInfo from "../../types/MessageAttachmentInfo";
 import cn from "../../../../utils/cn";
 import Button from "../../../../components/ui/Button";
 import Spinner from "../../../../components/Spinner";
 import Tooltip from "../../../../components/Tooltip";
 import { AttachmentSchema } from "../../../../schemas/message";
+import { PendingAttachment } from "../AttachmentUploaderProvider";
 
 const formatFileSize = (size: number) => {
   if (size < 1024) return `${size} B`;
@@ -16,8 +16,8 @@ const MessageAttachmentCard = ({
   attachment,
   onRemove,
 }: {
-  attachment: MessageAttachmentInfo;
-  onRemove: (messageAttachment: MessageAttachmentInfo) => void;
+  attachment: PendingAttachment;
+  onRemove: (attachment: PendingAttachment) => void;
 }) => {
   const file = attachment.file;
   const status = attachment.status;

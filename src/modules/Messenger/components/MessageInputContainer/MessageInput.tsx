@@ -1,27 +1,28 @@
 import { PlusCircle, SendHorizonal } from "lucide-react";
 import Button from "../../../../components/ui/Button";
 import { ChangeEvent, useLayoutEffect, useRef, useState } from "react";
-import { useMessageAttachmentsUploader } from "../MessageAttachmentsUploader";
 import Textarea from "../../../../components/ui/Textarea";
 import "./input.css";
 import Tooltip from "../../../../components/Tooltip";
-import { useEditMessage } from "../EditMessageProvider";
+import { useEditContextMessage } from "../EditMessageProvider";
+import { useAttachmentsUploader } from "../AttachmentUploaderProvider";
 
 interface MessageInputProps {
   onSubmit: (messageContent: string) => Promise<void>;
+  channelId: string;
 }
 
-const MessageInput = ({ onSubmit }: MessageInputProps) => {
-  const { onFilesSelect } = useMessageAttachmentsUploader();
+const MessageInput = ({ onSubmit, channelId }: MessageInputProps) => {
+  const attachmentsUploader = useAttachmentsUploader();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const editMessageContext = useEditMessage();
+  const editMessageContext = useEditContextMessage();
   const [text, setText] = useState("");
 
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
 
     const files = Array.from(e.target.files);
-    onFilesSelect(files);
+    attachmentsUploader.upload(files, channelId);
     e.target.value = "";
   };
 
@@ -58,7 +59,7 @@ const MessageInput = ({ onSubmit }: MessageInputProps) => {
     for (const item of clipboardItems) {
       if (item.kind === "file") {
         const file = item.getAsFile();
-        if (file) onFilesSelect([file]);
+        if (file) attachmentsUploader.upload([file], channelId);
         e.preventDefault();
         return;
       }
