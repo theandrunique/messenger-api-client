@@ -1,6 +1,6 @@
 import { QueryClient, useQuery } from "@tanstack/react-query";
 import { getChannels } from "../api";
-import { ChannelSchema } from "../../schemas/channel";
+import { ChannelSchema, ChannelType } from "../../schemas/channel";
 import { compareIds, selectBiggest } from "../../utils";
 import {
   ChannelMemberAddEventSchema,
@@ -25,7 +25,6 @@ export default useUserChannels;
 export const updateUseUserChannelsOnNewLastMessage = (
   queryClient: QueryClient,
   newLastMessage: MessageSchema,
-  force: boolean = false
 ) => {
   queryClient.setQueryData(
     ["/users/@me/channels"],
@@ -33,12 +32,11 @@ export const updateUseUserChannelsOnNewLastMessage = (
       if (!oldChannels) return;
 
       return oldChannels.map((channel) => {
-        if (channel.id !== newLastMessage.channelId) return channel;
+        if (channel.id !== newLastMessage?.channelId) return channel;
 
         const currentLastMessage = channel.lastMessage;
 
         const shouldUpdate =
-          force ||
           !currentLastMessage ||
           newLastMessage.id === currentLastMessage.id ||
           compareIds(newLastMessage.id, currentLastMessage.id);
@@ -60,6 +58,52 @@ export const updateUseUserChannelsOnNewLastMessage = (
           },
         };
       });
+    }
+  );
+};
+
+export const updateUseUserChannelsOnMessageDelete = (
+  queryClient: QueryClient,
+  channelId: string,
+  messageId: string,
+  newLastMessage: MessageSchema | null,
+) => {
+  queryClient.setQueryData(
+    ["/users/@me/channels"],
+    (oldChannels: ChannelSchema[] | undefined) => {
+      if (!oldChannels) return;
+
+      const updatedChannels: ChannelSchema[] = [];
+
+      for (const channel of oldChannels) {
+        if (channel.id !== channelId) {
+          updatedChannels.push(channel);
+          continue;
+        }
+        if (channel.lastMessage?.id !== messageId) {
+          updatedChannels.push(channel);
+          continue;
+        }
+        if (newLastMessage === null && channel.type === ChannelType.DM) {
+          continue;
+        }
+        updatedChannels.push({
+          ...channel,
+          lastMessage: newLastMessage !== null ? {
+            id: newLastMessage.id,
+            author: newLastMessage.author,
+            targetUser: newLastMessage.targetUser,
+            content: newLastMessage.content,
+            timestamp: newLastMessage.timestamp,
+            editedTimestamp: newLastMessage.editedTimestamp,
+            attachmentsCount: newLastMessage.attachments.length,
+            type: newLastMessage.type,
+            metadata: newLastMessage.metadata,
+          } : null,
+        });
+      }
+
+      return updatedChannels;
     }
   );
 };

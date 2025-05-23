@@ -142,7 +142,7 @@ const MessageInputContainer = ({ channelId }: MessageInputContainerProps) => {
             </div>
           </div>
         )}
-      {(attachmentsUploaderContext.clearAttachments.length > 0 ||
+      {(attachmentsUploaderContext.attachments.length > 0 ||
         editMessageContext.attachments.length > 0) && (
         <div className="border-t border-x rounded-lg border-[#38383f] mb-[-10px] pb-[10px] bg-[#18181b]">
           <div className="flex gap-x-2 gap-y-1 overflow-x-auto p-2 px-3">

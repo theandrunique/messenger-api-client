@@ -40,7 +40,9 @@ const AttachmentsDropAreaProvider = ({
     e.preventDefault();
     setIsDragging(false);
     const files = Array.from(e.dataTransfer.files);
-    attachmentsUploader.upload(files, channelId);
+    if (files.length > 0) {
+      attachmentsUploader.upload(files, channelId);
+    }
   };
 
   return (
