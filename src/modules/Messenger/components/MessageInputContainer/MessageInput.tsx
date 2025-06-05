@@ -1,11 +1,14 @@
 import { PlusCircle, SendHorizonal } from "lucide-react";
 import Button from "../../../../components/ui/Button";
-import { ChangeEvent, useLayoutEffect, useRef, useState } from "react";
+import { ChangeEvent, useLayoutEffect, useRef } from "react";
 import Textarea from "../../../../components/ui/Textarea";
 import "./input.css";
 import Tooltip from "../../../../components/Tooltip";
 import { useEditContextMessage } from "../EditMessageProvider";
 import { useAttachmentsUploader } from "../AttachmentUploaderProvider";
+import useMessageInputTextStore from "./useMessageInputTextStore";
+import notifications from "../../../../utils/notifications";
+import { ApiError } from "../../../../schemas/common";
 
 interface MessageInputProps {
   onSubmit: (messageContent: string) => Promise<void>;
@@ -16,11 +19,14 @@ const MessageInput = ({ onSubmit, channelId }: MessageInputProps) => {
   const attachmentsUploader = useAttachmentsUploader();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const editMessageContext = useEditContextMessage();
-  const [text, setText] = useState("");
+
+  const text = useMessageInputTextStore(
+    (state) => state.content[channelId] ?? ""
+  );
+  const setText = useMessageInputTextStore((state) => state.set);
 
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
-
     const files = Array.from(e.target.files);
     attachmentsUploader.upload(files, channelId);
     e.target.value = "";
@@ -36,21 +42,17 @@ const MessageInput = ({ onSubmit, channelId }: MessageInputProps) => {
   const handleSubmit = () => {
     if (!textareaRef.current) return;
 
-    onSubmit(textareaRef.current.value).then(() => {
-      if (textareaRef.current) {
-        setText("");
-        adjustTextareaHeight();
-      }
-    });
-  };
-
-  const adjustTextareaHeight = () => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      const maxHeight = 100;
-      const newHeight = Math.min(textareaRef.current.scrollHeight, maxHeight);
-      textareaRef.current.style.height = `${newHeight}px`;
-    }
+    onSubmit(textareaRef.current.value)
+      .then(() => {
+        setText(channelId, "");
+      })
+      .catch((err) => {
+        if (err instanceof ApiError) {
+          notifications.error(err.message);
+        } else {
+          notifications.error("Something went wrong");
+        }
+      });
   };
 
   const handlePaste = (e: React.ClipboardEvent) => {
@@ -67,9 +69,21 @@ const MessageInput = ({ onSubmit, channelId }: MessageInputProps) => {
   };
 
   useLayoutEffect(() => {
-    setText(editMessageContext.message?.content ?? "");
-    requestAnimationFrame(adjustTextareaHeight);
+    setText(channelId, editMessageContext.message?.content ?? "");
   }, [editMessageContext.message]);
+
+  useLayoutEffect(() => {
+    requestAnimationFrame(adjustTextareaHeight);
+  }, [text]);
+
+  const adjustTextareaHeight = () => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      const maxHeight = 100;
+      const newHeight = Math.min(textareaRef.current.scrollHeight, maxHeight);
+      textareaRef.current.style.height = `${newHeight}px`;
+    }
+  };
 
   return (
     <div className="relative w-full min-h-[44px]">
@@ -97,8 +111,7 @@ const MessageInput = ({ onSubmit, channelId }: MessageInputProps) => {
           value={text}
           onKeyDown={handleEnterDown}
           onChange={(e) => {
-            setText(e.target.value);
-            adjustTextareaHeight();
+            setText(channelId, e.target.value);
           }}
           placeholder="Send a message"
           className="w-full px-11 py-2.5 rounded-lg bg-[#0e0e10] resize-none overflow-y-auto scrollbar-transparent h-full align-middle placeholder:align-middle"

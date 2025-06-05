@@ -46,13 +46,13 @@ const ChannelInfoDialog = ({
             <Dialog.Title>Channel Info</Dialog.Title>
 
             <div className="flex gap-5 items-center px-4 py-3">
-              <Avatar className="w-16 h-16">
+              <Avatar className="w-16 h-16 shrink-0">
                 <ChannelImage channelId={data.id} image={data.image} />
                 <ChannelImageFallback name={data.name} />
               </Avatar>
 
-              <div className="flex flex-col gap-1">
-                <div className="font-semibold text-xl">{data.name}</div>
+              <div className="flex flex-col gap-1 min-w-0">
+                <div className="font-semibold text-xl overflow-hidden whitespace-nowrap truncate">{data.name}</div>
                 <div className="text-sm opacity-50">
                   {data.members.length} members
                 </div>

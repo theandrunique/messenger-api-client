@@ -28,7 +28,7 @@ const AttachmentsUploaderContext = createContext<
       upload: (files: File[], channelId: string) => void;
       onRemove: (messageAttachments: PendingAttachment) => void;
       attachments: PendingAttachment[];
-      clearAttachments: () => void;
+      clearAttachments: (channelId: string) => void;
       attach: (attachment: PendingAttachment, messageNonce: string) => void;
     }
   | undefined
@@ -122,8 +122,8 @@ const AttachmentsUploaderProvider = ({ children }: PropsWithChildren) => {
     setAttachments((prev) => prev.filter((f) => f !== attachment));
   };
 
-  const clearAttachments = () => {
-    setAttachments([]);
+  const clearAttachments = (channelId: string) => {
+    setAttachments((prev) => prev.filter((f) => f.channelId !== channelId));
   };
 
   const attach = (attachment: PendingAttachment, messageNonce: string) => {

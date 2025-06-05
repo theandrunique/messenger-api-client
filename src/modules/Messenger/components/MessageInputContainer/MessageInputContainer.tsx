@@ -8,6 +8,7 @@ import Button from "../../../../components/ui/Button";
 import { useEditContextMessage } from "../EditMessageProvider";
 import { useAttachmentsUploader } from "../AttachmentUploaderProvider";
 import { useReplyMessageContext } from "../ReplyMessageProvider";
+import { useMemo } from "react";
 
 interface MessageInputContainerProps {
   channelId: string;
@@ -19,17 +20,26 @@ const MessageInputContainer = ({ channelId }: MessageInputContainerProps) => {
   const replyMessageContext = useReplyMessageContext();
   const editMessageContext = useEditContextMessage();
 
+  const attachments = useMemo(
+    () => {
+      return attachmentsUploaderContext.attachments.filter(
+        (f) => f.channelId === channelId
+      )
+    },
+    [attachmentsUploaderContext.attachments, channelId]
+  );
+
   const onSubmit = async (messageContent: string) => {
     if (
       !messageContent.trim() &&
-      attachmentsUploaderContext.attachments.length === 0 &&
+      attachments.length === 0 &&
       editMessageContext.attachments.length === 0
     )
       return;
 
     if (editMessageContext.message) {
       try {
-        const readyAttachments = attachmentsUploaderContext.attachments.filter(
+        const readyAttachments = attachments.filter(
           (f) => f.status === "success" && f.cloudAttachment !== null
         );
 
@@ -50,14 +60,14 @@ const MessageInputContainer = ({ channelId }: MessageInputContainerProps) => {
             )
         );
         editMessageContext.set(undefined);
-        attachmentsUploaderContext.clearAttachments();
+        attachmentsUploaderContext.clearAttachments(channelId);
       } catch (err) {
         console.log("Error updating message: ", err);
         throw err;
       }
     } else {
       try {
-        const readyAttachments = attachmentsUploaderContext.attachments.filter(
+        const readyAttachments = attachments.filter(
           (f) => f.status === "success" && f.cloudAttachment !== null
         );
 
@@ -71,7 +81,7 @@ const MessageInputContainer = ({ channelId }: MessageInputContainerProps) => {
           replyMessageContext.replyMessage?.id
         );
         replyMessageContext.set(undefined);
-        attachmentsUploaderContext.clearAttachments();
+        attachmentsUploaderContext.clearAttachments(channelId);
       } catch (err) {
         console.log("Error sending message: ", err);
         throw err;
@@ -142,11 +152,11 @@ const MessageInputContainer = ({ channelId }: MessageInputContainerProps) => {
             </div>
           </div>
         )}
-      {(attachmentsUploaderContext.attachments.length > 0 ||
+      {(attachments.length > 0 ||
         editMessageContext.attachments.length > 0) && (
         <div className="border-t border-x rounded-lg border-[#38383f] mb-[-10px] pb-[10px] bg-[#18181b]">
           <div className="flex gap-x-2 gap-y-1 overflow-x-auto p-2 px-3">
-            {attachmentsUploaderContext.attachments.map((attachment) => (
+            {attachments.map((attachment) => (
               <MessageAttachmentCard
                 attachment={attachment}
                 onRemove={attachmentsUploaderContext.onRemove}

@@ -160,17 +160,15 @@ const ChannelContainerHeader = ({
     return (
       <>
         <div className="border-b border-[#35353b] px-3 py-2 flex items-center justify-between">
-          <div className="flex items-center justify-center gap-3 ">
+          <div className="flex items-center justify-center gap-3 min-w-0">
             <BackToChannelsButton />
-            <div className="sm:hidden w-10 h-10">
-              <Avatar>
-                <ChannelImage channelId={channel.id} image={channel.image} />
-                <ChannelImageFallback name={channel.name} />
-              </Avatar>
-            </div>
-            <div className="flex flex-col">
+            <Avatar className="sm:hidden w-10 h-10 shrink-0">
+              <ChannelImage channelId={channel.id} image={channel.image} />
+              <ChannelImageFallback name={channel.name} />
+            </Avatar>
+            <div className="flex flex-col min-w-0">
               <h2
-                className="text-xl font-bold text-white cursor-pointer"
+                className="text-xl font-bold text-white cursor-pointer whitespace-nowrap truncate overflow-hidden"
                 onClick={() => setIsInfoOpen(true)}
               >
                 {channel.name}
