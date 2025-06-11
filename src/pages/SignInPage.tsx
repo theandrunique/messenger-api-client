@@ -34,6 +34,7 @@ function SignInPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    resetField,
   } = useForm<SignInSchema>({ resolver: zodResolver(schema) });
 
   const onSubmit: SubmitHandler<SignInSchema> = async (data) => {
@@ -104,7 +105,15 @@ function SignInPage() {
         </div>
       </div>
 
-      <Dialog open={isTotpMfaOpen} onOpenChange={setIsTotpMfaOpen}>
+      <Dialog
+        open={isTotpMfaOpen}
+        onOpenChange={(open) => {
+          setIsTotpMfaOpen(open);
+          if (!open) {
+            resetField("totp");
+          }
+        }}
+      >
         <Dialog.Content>
           <div className="w-[430px] flex flex-col items-center text-[#efeff1]">
             <h2 className="font-bold text-2xl text-center mb-4">
@@ -123,7 +132,10 @@ function SignInPage() {
                 {isSubmitting ? "Submitting..." : "Submit"}
               </Button>
             </div>
-            <ErrorMessage message={errors.totp?.message} className="text-right" />
+            <ErrorMessage
+              message={errors.totp?.message}
+              className="text-right"
+            />
             <ErrorMessage message={errors.root?.message} />
           </div>
         </Dialog.Content>
